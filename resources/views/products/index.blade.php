@@ -53,6 +53,7 @@
                                             <th data-table-sort>Cost Price</th>
                                             <th data-table-sort>Selling Price</th>
                                             <th data-table-sort>Status</th>
+                                            <th data-table-sort>Action</th>
                                         </tr>
                                     </thead>
 
@@ -63,24 +64,36 @@
                                                 <td>
                                                     <h5 class="m-0 fs-base">{{ $product->product_name }}</h5>
                                                     @if($product->product_type)
-                                                        <span class="text-muted fs-xs">{{ $product->product_type }}</span>
+                                                     <span class="text-muted fs-xs">{{ $product->product_type }}</span>
                                                     @endif
                                                 </td>
                                                 <td>{{ $product->category ? $product->category->category_name : 'N/A' }}</td>
                                                 <td>{{ $product->stock ? $product->stock->stock_quantity : 0 }}</td>
-                                                <td>${{ number_format($product->price ? $product->price->unit_cost : 0, 2) }}</td>
-                                                <td>${{ number_format($product->price ? $product->price->unit_price : 0, 2) }}</td>
+                                                <td>GHs {{ number_format($product->price ? $product->price->unit_cost : 0, 2) }}</td>
+                                                <td>GHs {{ number_format($product->price ? $product->price->unit_price : 0, 2) }}</td>
                                                 <td>
                                                     @if(($product->stock ? $product->stock->stock_quantity : 0) > 0)
-                                                        <span class="badge bg-success-subtle text-success"> In Stock </span>
+                                                        <span class="badge bg-success-subtle text-success">IN STOCK</span>
                                                     @else
-                                                        <span class="badge bg-danger-subtle text-danger"> Out of Stock </span>
+                                                        <span class="badge bg-danger-subtle text-danger">OUT OF STOCK</span>
                                                     @endif
+                                                </td>
+                                                <td>
+                                                    <div class="btn-group">
+                                                        <button type="button" class="btn btn-sm btn-outline-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                                                            Action
+                                                        </button>
+                                                        <ul class="dropdown-menu">
+                                                            <li><a class="dropdown-item" href="{{ route('products.edit', $product->product_id) }}">Edit</a></li>
+                                                            <li><a class="dropdown-item" href="{{ route('products.show', $product->product_id) }}">View</a></li>
+                                                            <li><a class="dropdown-item" href="{{ route('products.destroy', $product->product_id) }}" onclick="event.preventDefault(); document.getElementById('delete-form-{{ $product->product_id }}').submit();">Delete</a></li>
+                                                        </ul>
+                                                    </div>
                                                 </td>
                                             </tr>
                                         @empty
                                             <tr>
-                                                <td colspan="7" class="text-center py-4 text-muted">
+                                                <td colspan="8" class="text-center py-4 text-muted">
                                                     No products found. Click "Add Product" to create one.
                                                 </td>
                                             </tr>
@@ -105,7 +118,6 @@
             <!-- end row -->
         </div>
         <!-- container -->
-
         <!-- Footer Start -->
         <footer class="footer">
             <div class="container-fluid">
@@ -127,7 +139,6 @@
             </div>
         </footer>
         <!-- end Footer -->
-
     </div>
 
     <!-- Add Product Modal -->
@@ -159,11 +170,11 @@
                         </div>
                         <div class="row">
                             <div class="col-md-6 mb-3">
-                                <label for="cost_price" class="form-label">Cost Price ($)</label>
+                                <label for="cost_price" class="form-label">Cost Price (GHs)</label>
                                 <input type="number" step="0.01" class="form-control" id="cost_price" name="cost_price" required min="0" placeholder="0.00">
                             </div>
                             <div class="col-md-6 mb-3">
-                                <label for="selling_price" class="form-label">Selling Price ($)</label>
+                                <label for="selling_price" class="form-label">Selling Price (GHs)</label>
                                 <input type="number" step="0.01" class="form-control" id="selling_price" name="selling_price" required min="0" placeholder="0.00">
                             </div>
                         </div>

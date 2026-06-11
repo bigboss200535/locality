@@ -5,6 +5,7 @@ use App\Http\Controllers\DashboardController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\XMLValidationController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\ProductCategoryController;
 
 // Routes with no authentications
 Route::get('/', function () {
@@ -33,6 +34,16 @@ Route::middleware(['auth', 'verified'])->group(function (){
     Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('products', [ProductController::class, 'index'])->name('products');
     Route::post('products', [ProductController::class, 'store'])->name('products.store');
+    Route::get('products/{product}', [ProductController::class, 'edit'])->name('products.edit');
+    Route::get('products/{product}/show', [ProductController::class, 'show'])->name('products.show');
+    Route::delete('products/{product}/delete', [ProductController::class, 'destroy'])->name('products.destroy');
+
+    // Product Category Routes
+    Route::get('/product-categories', [ProductCategoryController::class, 'index'])->name('product-categories');
+    Route::post('/product-categories', [ProductCategoryController::class, 'store'])->name('product-categories.store');
+    Route::put('/product-categories/{category}', [ProductCategoryController::class, 'update'])->name('product-categories.update');
+    Route::patch('/product-categories/{category}/toggle-status', [ProductCategoryController::class, 'toggleStatus'])->name('product-categories.toggle-status');
+    Route::delete('/product-categories/{category}', [ProductCategoryController::class, 'destroy'])->name('product-categories.destroy');
 });
 
 Route::middleware('auth')->group(function () {

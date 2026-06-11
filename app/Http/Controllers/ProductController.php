@@ -24,10 +24,10 @@ class ProductController extends Controller
         if ($categories->isEmpty()) {
             $user = auth()->user();
             $tenantId = $user->tenant_id ?? '04eb01b4-8348-4a61-be64-3790946de696';
-            $storeId = $user->store_id ?? 'default-store';
+            $storeId = $user->store_id ?? 'Default-Store';
 
             ProductCategory::create([
-                'category_id' => 'default-category',
+                'category_id' => 'Default-Category',
                 'category_name' => 'General',
                 'tenant_id' => $tenantId,
                 'store_id' => $storeId,
@@ -55,8 +55,8 @@ class ProductController extends Controller
         $user = auth()->user();
         $userId = $user ? $user->user_id : null;
         $username = $user ? ($user->firstname . ' ' . $user->othername) : 'System';
-        $tenantId = $user->tenant_id ?? '04eb01b4-8348-4a61-be64-3790946de696';
-        $storeId = $user->store_id ?? 'default-store';
+        $tenantId = $user->tenant_id;
+        $storeId = $user->store_id ?? 'Default-Store';
 
         $productId = (string) Str::uuid();
 

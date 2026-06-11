@@ -1,5 +1,5 @@
 <!-- Brand Logo -->
-    <a href="#" class="logo">
+    <a href="{{ url('/dashboard') }}" class="logo">
         <span class="logo logo-light">
             <span class="logo-lg"><img src="{{ asset('images/logo.png') }}" alt="logo" /></span>
             <span class="logo-sm"><img src="{{ asset('images/logo-sm.png') }}" alt="small logo" /></span>
@@ -28,7 +28,7 @@
                     <a href="#" class="link-reset">
                         <img src="{{ asset('images/users/user-1.jpg') }}" alt="user-image" class="rounded-circle mb-2 avatar-md" />
                         <span class="sidenav-user-name fw-bold">{{ Auth::user()->othername }}</span>
-                        <span class="fs-12 fw-semibold" data-lang="user-role">Art Director</span>
+                        <span class="fs-12 fw-semibold" data-lang="user-role">Login User</span>
                     </a>
                 </div>
                 <div>
@@ -79,7 +79,7 @@
             <ul class="side-nav">
                 <!-- <li class="side-nav-title mt-2" data-lang="main">Menu</li> -->
                 <li class="side-nav-item">
-                    <a data-bs-toggle="collapse" href="#dashboards" aria-expanded="false" aria-controls="dashboards" class="side-nav-link">
+                    <a data-bs-toggle="collapse" href="{{ url('/dashboard') }}" aria-expanded="false" aria-controls="dashboards" class="side-nav-link">
                         <span class="menu-icon"><i class="fa fa-dashboard"></i></span>
                         <span class="menu-text" data-lang="dashboards">Dashboard</span>
                         <!-- <span class="menu-arrow"></span> -->
@@ -100,13 +100,13 @@
                                 </a>
                             </li>
                             <li class="side-nav-item">
-                                <a href="#" class="side-nav-link">
+                                <a href="{{ url('/products') }}" class="side-nav-link">
                                     <span class="menu-text" data-lang="apps-product-list"> Product </span>
                                 </a>
                             </li>
                             <li class="side-nav-item">
-                                <a href="#" class="side-nav-link">
-                                    <span class="menu-text" data-lang="apps-product-list"> Product Group</span>
+                                <a href="{{ url('/product-categories') }}" class="side-nav-link">
+                                    <span class="menu-text" data-lang="apps-product-list"> Product Category</span>
                                 </a>
                             </li>
                              <li class="side-nav-item">
