@@ -115,7 +115,7 @@
                                 </a>
                             </li>
                              <li class="side-nav-item">
-                                <a href="#" class="side-nav-link">
+                                <a href="{{ url('/inventory') }}" class="side-nav-link">
                                     <span class="menu-text" data-lang="apps-product-list"> Stock Adjustment</span>
                                 </a>
                             </li>
@@ -124,16 +124,16 @@
                     </div>
                 </li>
                 <li class="side-nav-item">
-                    <a data-bs-toggle="collapse" href="#tasks" aria-expanded="false" aria-controls="tasks" class="side-nav-link">
+                    <a data-bs-toggle="collapse" href="#sales" aria-expanded="false" aria-controls="sales" class="side-nav-link">
                         <span class="menu-icon"><i class="fa fa-list-check"></i></span>
-                        <span class="menu-text" data-lang="tasks">Sales</span>
+                        <span class="menu-text" data-lang="sales">Sales</span>
                         <span class="menu-arrow"></span>
                     </a>
-                    <div class="collapse" id="tasks">
+                    <div class="collapse" id="sales">
                         <ul class="sub-menu">
                             <li class="side-nav-item">
                                 <a href="apps-task-list.html" class="side-nav-link">
-                                    <span class="menu-text" data-lang="apps-task-list">Task List</span>
+                                    <span class="menu-text" data-lang="apps-task-list">Current Sales</span>
                                 </a>
                             </li>
                             <li class="side-nav-item">

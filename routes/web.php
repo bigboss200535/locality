@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProductCategoryController;
 use App\Http\Controllers\ProductPriceController;
+use App\Http\Controllers\ProductStockController;
 // Routes with no authentications
 Route::get('/', function () {
     return view('get-started');
@@ -48,6 +49,12 @@ Route::middleware(['auth', 'verified'])->group(function (){
     Route::post('/product-prices', [ProductPriceController::class, 'store'])->name('product-prices.store');
     Route::put('/product-prices/{product}', [ProductPriceController::class, 'update'])->name('product-prices.update');
     Route::delete('/product-prices/{product}', [ProductPriceController::class, 'destroy'])->name('product-prices.destroy');
+    
+    // Product Inventory / Stock Routes
+    Route::get('/inventory', [ProductStockController::class, 'index'])->name('inventory.index');
+    Route::post('/inventory', [ProductStockController::class, 'store'])->name('inventory.store');
+    Route::put('/inventory/{product}', [ProductStockController::class, 'update'])->name('inventory.update');
+    Route::delete('/inventory/{product}', [ProductStockController::class, 'destroy'])->name('inventory.destroy');
     
     // User Profile Routes
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
