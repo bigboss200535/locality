@@ -123,10 +123,32 @@ return new class extends Migration
             $table->foreign('store_id')->references('store_id')->on('stores');
         });
 
+         Schema::create('receipts', function (Blueprint $table) {
+            $table->string('receipt_id', 50)->primary();
+            $table->timestamp('receipt_date')->index();
+            $table->string('receipt_number', 50);
+            $table->string('tenant_id', 50)->nullable();
+            $table->string('store_id', 50);
+            $table->timestamp('transaction_time')->nullable();
+            $table->string('user_id', 100)->nullable();
+            $table->timestamp('added_date')->nullable();
+            $table->timestamp('updated_date')->nullable();
+            $table->string('tenant_status', 100)->nullable();
+            $table->string('added_by', 100)->nullable();
+            $table->string('updated_by', 100)->nullable();
+            $table->string('archived', 100)->default('No')->index();
+            $table->string('archived_by', 100)->nullable()->index();
+            $table->timestamp('archived_date')->nullable()->index();
+                // key
+            $table->foreign('tenant_id')->references('tenant_id')->on('tenants');
+            $table->foreign('store_id')->references('store_id')->on('stores');
+        });
+        
         Schema::create('product_sales', function (Blueprint $table) {
             $table->string('sales_id', 50)->primary();
             $table->string('product_id', 50);
             $table->string('payment_id', 50);
+            $table->string('receipt_number', 50)->index();
             $table->string('tenant_id', 50)->nullable();
             $table->string('store_id', 50);
             $table->integer('quantity')->nullable();
@@ -232,8 +254,6 @@ return new class extends Migration
         Schema::dropIfExists('expiry_management_details');
         Schema::dropIfExists('product_expiry_management');
         Schema::dropIfExists('stock_taking');
-        
-        
-         
+        Schema::dropIfExists('receipts'); 
     }
 };

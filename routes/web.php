@@ -7,6 +7,7 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProductCategoryController;
 use App\Http\Controllers\ProductPriceController;
 use App\Http\Controllers\ProductStockController;
+use App\Http\Controllers\SalesController;
 // Routes with no authentications
 Route::get('/', function () {
     return view('get-started');
@@ -55,6 +56,10 @@ Route::middleware(['auth', 'verified'])->group(function (){
     Route::post('/inventory', [ProductStockController::class, 'store'])->name('inventory.store');
     Route::put('/inventory/{product}', [ProductStockController::class, 'update'])->name('inventory.update');
     Route::delete('/inventory/{product}', [ProductStockController::class, 'destroy'])->name('inventory.destroy');
+
+    // Sales Routes
+    Route::get('/sales', [SalesController::class, 'index'])->name('sales.index');
+    Route::post('/sales', [SalesController::class, 'store'])->name('sales.store');
     
     // User Profile Routes
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

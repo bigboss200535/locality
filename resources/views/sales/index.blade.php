@@ -1,10 +1,93 @@
 <x-app-layout>
-<!-- Begin page -->
-    <!-- Topbar End -->
-    <!-- ============================================================== -->
     <!-- Start Main Content -->
-    <!-- ============================================================== -->
-    <div class="content-page">
+    <div class="content-page" x-data="{
+        products: [
+            @foreach($products as $product)
+            {
+                product_id: '{{ $product->product_id }}',
+                product_name: '{{ addslashes($product->product_name) }}',
+                product_type: '{{ addslashes($product->product_type) }}',
+                category_name: '{{ addslashes($product->category ? $product->category->category_name : 'N/A') }}',
+                unit_price: {{ $product->price ? $product->price->unit_price : 0 }},
+                unit_cost: {{ $product->price ? $product->price->unit_cost : 0 }},
+                stock_quantity: {{ $product->stock ? $product->stock->stock_quantity : 0 }}
+            },
+            @endforeach
+        ],
+        searchQuery: '',
+        cart: [],
+        paymentMethod: 'Cash',
+        addToCart(product) {
+            if (product.stock_quantity <= 0) {
+                alert('This product is out of stock!');
+                return;
+            }
+            let existing = this.cart.find(item => item.product_id === product.product_id);
+            if (existing) {
+                if (existing.quantity >= product.stock_quantity) {
+                    alert('Cannot exceed available stock (' + product.stock_quantity + ')');
+                    return;
+                }
+                existing.quantity++;
+                this.applyQuantityDiscount(existing);
+            } else {
+                this.cart.push({
+                    product_id: product.product_id,
+                    product_name: product.product_name,
+                    unit_price: product.unit_price,
+                    quantity: 1,
+                    discount: 0,
+                    max_stock: product.stock_quantity
+                });
+            }
+        },
+        removeFromCart(productId) {
+            this.cart = this.cart.filter(item => item.product_id !== productId);
+        },
+        updateQuantity(item, qty) {
+            let newQty = parseInt(qty);
+            if (isNaN(newQty) || newQty <= 0) newQty = 1;
+            if (newQty > item.max_stock) {
+                alert('Cannot exceed available stock (' + item.max_stock + ')');
+                newQty = item.max_stock;
+            }
+            item.quantity = newQty;
+            this.applyQuantityDiscount(item);
+        },
+        applyQuantityDiscount(item) {
+            // Bulk quantity discount rules:
+            // - Buy 5 or more items: get 5% discount
+            // - Buy 10 or more items: get 10% discount
+            let discountPct = 0;
+            if (item.quantity >= 10) {
+                discountPct = 0.10;
+            } else if (item.quantity >= 5) {
+                discountPct = 0.05;
+            }
+            item.discount = parseFloat((item.unit_price * item.quantity * discountPct).toFixed(2));
+        },
+        calculateLineTotal(item) {
+            return ((item.unit_price * item.quantity) - item.discount).toFixed(2);
+        },
+        subtotal() {
+            return this.cart.reduce((sum, item) => sum + (item.unit_price * item.quantity), 0).toFixed(2);
+        },
+        totalDiscount() {
+            return this.cart.reduce((sum, item) => sum + item.discount, 0).toFixed(2);
+        },
+        grandTotal() {
+            return (this.subtotal() - this.totalDiscount()).toFixed(2);
+        },
+        filteredProducts() {
+            if (!this.searchQuery) return this.products;
+            let query = this.searchQuery.toLowerCase();
+            return this.products.filter(p => 
+                p.product_name.toLowerCase().includes(query) || 
+                (p.product_type && p.product_type.toLowerCase().includes(query)) ||
+                p.category_name.toLowerCase().includes(query)
+            );
+        }
+    }">
         <div class="container-fluid">
             <div class="page-title-head d-flex align-items-center"></div>
 
@@ -28,101 +111,157 @@
             @endif
            
             <div class="row">
-                <div class="col-xxl-12 col-lg-12">
-                    <div data-table data-table-rows-per-page="5" class="card card-h-100">
-                        <div class="card-header justify-content-between">
-                            <h4 class="card-title">Products <span class="text-muted fs-base fw-normal">({{ $products->count() }} Products)</span></h4>
-                            <div>
-                                <button type="button" class="btn btn-sm btn-primary me-1" data-bs-toggle="modal" data-bs-target="#addProductModal">
-                                    <i class="fa fa-plus me-1"></i> Add Product
-                                </button>
-                                <!-- <a href="#" class="btn btn-sm btn-default"> <i class="fa fa-cloud-upload me-1"></i> Export </a> -->
-                                <!-- <a href="#" class="btn btn-sm btn-light"> <i class="fa fa-download me-1"></i> Import </a> -->
+                <!-- Products Selection (Left) -->
+                <div class="col-xxl-8 col-lg-8 mb-4">
+                    <div class="card card-h-100">
+                        <div class="card-header justify-content-between align-items-center">
+                            <h4 class="card-title">Products Directory <span class="text-muted fs-base fw-normal">(<span x-text="filteredProducts().length"></span> Products)</span></h4>
+                            <div class="w-50">
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light border-light-subtle"><i class="fa fa-search"></i></span>
+                                    <input type="text" x-model="searchQuery" class="form-control" placeholder="Search by name, category or brand...">
+                                </div>
                             </div>
                         </div>
 
                         <div class="card-body p-0">
-                            <div class="table-responsive">
+                            <div class="table-responsive" style="max-height: 550px; overflow-y: auto;">
                                 <table class="table table-custom table-centered table-hover w-100 mb-0">
-                                    <thead class="bg-light align-middle bg-opacity-25 thead-sm">
+                                    <thead class="bg-light align-middle bg-opacity-25 thead-sm sticky-top" style="z-index: 5;">
                                         <tr class="text-uppercase table-nowrap fs-xxs">
-                                            <th data-table-sort>#ID</th>
-                                            <th data-table-sort>Product</th>
-                                            <th data-table-sort>Product Category</th>
-                                            <th data-table-sort>Store Name</th>
-                                            <th data-table-sort>Stock Quantity</th>
-                                            <th data-table-sort>Cost Price</th>
-                                           
-                                            <th data-table-sort>Date Added</th>
-                                            <th data-table-sort>Status</th>
-                                            <th data-table-sort>Action</th>
+                                            <th>Product Name</th>
+                                            <th>Category</th>
+                                            <th>Available Stock</th>
+                                            <th>Price (GHs)</th>
+                                            <th class="text-end">Action</th>
                                         </tr>
                                     </thead>
 
                                     <tbody class="text-nowrap">
-                                        @forelse ($products as $product)
+                                        <template x-for="product in filteredProducts()" :key="product.product_id">
                                             <tr>
-                                                <td>#{{ substr($product->product_id, 0, 8) }}</td>
                                                 <td>
-                                                    <h5 class="m-0 fs-base">{{ strtoupper($product->product_name) }}</h5>
-                                                    @if($product->product_type)
-                                                     <span class="text-muted fs-xs">{{ strtoupper($product->product_type )}}</span>
-                                                    @endif
+                                                    <h5 class="m-0 fs-base" x-text="product.product_name.toUpperCase()"></h5>
+                                                    <span class="text-muted fs-xs" x-show="product.product_type" x-text="product.product_type"></span>
                                                 </td>
-                                                <td>{{ $product->category ? $product->category->category_name : 'N/A' }}</td>
-                                                <td>{{ $product->store ? $product->store->store_name : 'N/A'}}</td>
-                                                <td>{{ $product->stock ? $product->stock->stock_quantity : 0 }}</td>
-                                                <td>GHs {{ number_format($product->price ? $product->price->unit_cost : 0, 2) }}</td>
-                                               
-                                                <td>{{ $product->added_date ? \Carbon\Carbon::parse($product->added_date)->format('d M Y, h:i A') : 'N/A' }}</td>
+                                                <td x-text="product.category_name"></td>
                                                 <td>
-                                                    @if(($product->stock ? $product->stock->stock_quantity : 0) > 0)
-                                                        <span class="badge bg-success-subtle text-success">IN STOCK</span>
-                                                    @else
-                                                        <span class="badge bg-danger-subtle text-danger">OUT OF STOCK</span>
-                                                    @endif
+                                                    <span class="badge" :class="product.stock_quantity > 10 ? 'bg-success-subtle text-success' : (product.stock_quantity > 0 ? 'bg-warning-subtle text-warning' : 'bg-danger-subtle text-danger')" x-text="product.stock_quantity + ' available'"></span>
                                                 </td>
-                                                <td>
-                                                    <div class="btn-group">
-                                                        <button type="button" class="btn btn-sm btn-outline-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-                                                            Action
-                                                        </button>
-                                                        <ul class="dropdown-menu">
-                                                            <li><a class="dropdown-item" href="{{ route('products.edit', $product->product_id) }}">Edit</a></li>
-                                                            <li><a class="dropdown-item" href="{{ route('products.show', $product->product_id) }}">View</a></li>
-                                                            <li><a class="dropdown-item" href="{{ route('products.destroy', $product->product_id) }}" onclick="event.preventDefault(); document.getElementById('delete-form-{{ $product->product_id }}').submit();">Delete</a></li>
-                                                        </ul>
-                                                    </div>
+                                                <td>GHs <span x-text="product.unit_price.toFixed(2)"></span></td>
+                                                <td class="text-end">
+                                                    <button type="button" class="btn btn-sm btn-primary" :disabled="product.stock_quantity <= 0" @click="addToCart(product)">
+                                                        <i class="fa fa-shopping-cart me-1"></i> Add to Cart
+                                                    </button>
                                                 </td>
                                             </tr>
-                                        @empty
+                                        </template>
+                                        <template x-if="filteredProducts().length === 0">
                                             <tr>
-                                                <td colspan="8" class="text-center py-4 text-muted">
-                                                    No products found. Click "Add Product" to create one.
+                                                <td colspan="5" class="text-center py-5 text-muted">
+                                                    No products found matching your search query.
                                                 </td>
                                             </tr>
-                                        @endforelse
+                                        </template>
                                     </tbody>
                                 </table>
                             </div>
                         </div>
+                    </div>
+                </div>
 
-                        <div class="card-footer border-0">
-                            <div class="d-flex justify-content-between align-items-center">
-                                <div data-table-pagination-info="products"></div>
-                                <div data-table-pagination></div>
+                <!-- Shopping Cart (Right) -->
+                <div class="col-xxl-4 col-lg-4 mb-4">
+                    <div class="card card-h-100">
+                        <div class="card-header bg-light bg-opacity-50">
+                            <h4 class="card-title d-flex align-items-center"><i class="fa fa-shopping-cart me-2"></i> Product Cart</h4>
+                        </div>
+                        <div class="card-body d-flex flex-column p-0">
+                            <!-- Cart Items -->
+                            <div class="flex-grow-1 p-3" style="max-height: 380px; overflow-y: auto;">
+                                <template x-if="cart.length === 0">
+                                    <div class="text-center py-5 text-muted">
+                                        <i class="fa fa-bag-shopping fs-1 text-light mb-3"></i>
+                                        <p class="mb-0">Your cart is empty.</p>
+                                        <p class="fs-xs">Add products from the directory on the left.</p>
+                                    </div>
+                                </template>
+
+                                <template x-if="cart.length > 0">
+                                    <div class="d-flex flex-column gap-3">
+                                        <template x-for="item in cart" :key="item.product_id">
+                                            <div class="border-bottom border-light-subtle pb-3">
+                                                <div class="d-flex justify-content-between align-items-start mb-2">
+                                                    <div>
+                                                        <h6 class="m-0 fs-base" x-text="item.product_name.toUpperCase()"></h6>
+                                                        <small class="text-muted">GHs <span x-text="item.unit_price.toFixed(2)"></span> per unit</small>
+                                                    </div>
+                                                    <button type="button" class="btn btn-sm btn-link text-danger p-0 border-0" @click="removeFromCart(item.product_id)">
+                                                        <i class="fa fa-trash-can"></i>
+                                                    </button>
+                                                </div>
+                                                <div class="d-flex justify-content-between align-items-center">
+                                                    <!-- Quantity input with step counters -->
+                                                    <div class="input-group input-group-sm w-50">
+                                                        <button class="btn btn-outline-secondary" type="button" @click="updateQuantity(item, item.quantity - 1)">-</button>
+                                                        <input type="text" class="form-control text-center" :value="item.quantity" @change="updateQuantity(item, $event.target.value)">
+                                                        <button class="btn btn-outline-secondary" type="button" @click="updateQuantity(item, item.quantity + 1)">+</button>
+                                                    </div>
+                                                    <div class="text-end">
+                                                        <template x-if="item.discount > 0">
+                                                            <div class="text-success fs-xs mb-1">Discount: -GHs <span x-text="item.discount.toFixed(2)"></span></div>
+                                                        </template>
+                                                        <div class="fw-semibold">GHs <span x-text="calculateLineTotal(item)"></span></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </template>
+                                    </div>
+                                </template>
+                            </div>
+
+                            <!-- Cart Summary -->
+                            <div class="bg-light p-3 border-top border-light-subtle">
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span class="text-muted">Subtotal</span>
+                                    <span class="fw-semibold">GHs <span x-text="subtotal()"></span></span>
+                                </div>
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span class="text-success d-flex align-items-center">Quantity Discounts <i class="fa fa-circle-info text-success ms-1" title="Discounts applied: 5+ items gets 5% off, 10+ items gets 10% off"></i></span>
+                                    <span class="text-success fw-semibold">-GHs <span x-text="totalDiscount()"></span></span>
+                                </div>
+                                <hr class="my-2 border-light-subtle">
+                                <div class="d-flex justify-content-between mb-3">
+                                    <span class="fs-base fw-bold">Grand Total</span>
+                                    <span class="fs-base fw-bold text-primary">GHs <span x-text="grandTotal()"></span></span>
+                                </div>
+
+                                <!-- Payment Method & Checkout -->
+                                <form action="{{ route('sales.store') }}" method="POST" @submit="document.getElementById('cart_data').value = JSON.stringify(cart)">
+                                    @csrf
+                                    <input type="hidden" id="cart_data" name="cart_data">
+                                    
+                                    <div class="mb-3">
+                                        <label for="payment_method" class="form-label fs-xs fw-semibold text-uppercase text-muted">Payment Method</label>
+                                        <select class="form-select" id="payment_method" name="payment_method" x-model="paymentMethod" required>
+                                            <option value="Cash">Cash</option>
+                                            <option value="Mobile Money">Mobile Money (MoMo)</option>
+                                            <option value="Card">Visa / Mastercard</option>
+                                        </select>
+                                    </div>
+
+                                    <button type="submit" class="btn btn-primary w-100 py-2 d-flex align-items-center justify-content-center" :disabled="cart.length === 0">
+                                        <i class="fa fa-check-circle me-2"></i> Complete Sale & Checkout
+                                    </button>
+                                </form>
                             </div>
                         </div>
                     </div>
                 </div>
-                <!-- end col-->
-
-                
             </div>
-            <!-- end row -->
         </div>
-        <!-- container -->
-        <!-- Footer Start -->
+
+        <!-- Footer -->
         <footer class="footer">
             <div class="container-fluid">
                 <div class="row">
@@ -142,61 +281,5 @@
                 </div>
             </div>
         </footer>
-        <!-- end Footer -->
     </div>
-
-    <!-- Add Product Modal -->
-    <div class="modal fade" id="addProductModal" tabindex="-1" aria-labelledby="addProductModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="addProductModalLabel">Add New Product</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <form action="{{ route('products.store') }}" method="POST">
-                    @csrf
-                    <div class="modal-body">
-                        <div class="mb-3">
-                            <label for="product_name" class="form-label">Product Name</label>
-                            <input type="text" class="form-control" id="product_name" name="product_name" required placeholder="e.g. iPhone 15 Pro">
-                        </div>
-                        <div class="mb-3">
-                            <label for="product_type" class="form-label">Product Type / Subtitle</label>
-                            <input type="text" class="form-control" id="product_type" name="product_type" placeholder="e.g. 256GB, Titanium Blue">
-                        </div>
-                        <div class="mb-3">
-                            <label for="category_id" class="form-label">Category</label>
-                            <select class="form-select" id="category_id" name="category_id" required>
-                                @foreach($categories as $category)
-                                    <option value="{{ $category->category_id }}">{{ $category->category_name }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label for="cost_price" class="form-label">Cost Price (GHs)</label>
-                                <input type="number" step="0.01" class="form-control" id="cost_price" name="cost_price" required min="0" placeholder="0.00">
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label for="selling_price" class="form-label">Selling Price (GHs)</label>
-                                <input type="number" step="0.01" class="form-control" id="selling_price" name="selling_price" required min="0" placeholder="0.00">
-                            </div>
-                        </div>
-                        <div class="mb-3">
-                            <label for="stock_quantity" class="form-label">Initial Stock Quantity</label>
-                            <input type="number" class="form-control" id="stock_quantity" name="stock_quantity" required min="0" placeholder="0">
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-primary">Save Product</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-
-    <!-- ============================================================== -->
-    <!-- End of Main Content -->
-    <!-- ============================================================== -->
 </x-app-layout>

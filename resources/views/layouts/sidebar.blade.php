@@ -132,18 +132,8 @@
                     <div class="collapse" id="sales">
                         <ul class="sub-menu">
                             <li class="side-nav-item">
-                                <a href="apps-task-list.html" class="side-nav-link">
+                                <a href="{{ url('/sales') }}" class="side-nav-link">
                                     <span class="menu-text" data-lang="apps-task-list">Current Sales</span>
-                                </a>
-                            </li>
-                            <li class="side-nav-item">
-                                <a href="apps-task-details.html" class="side-nav-link">
-                                    <span class="menu-text" data-lang="apps-task-details">Task Details</span>
-                                </a>
-                            </li>
-                            <li class="side-nav-item">
-                                <a href="apps-task-create.html" class="side-nav-link">
-                                    <span class="menu-text" data-lang="apps-task-create">Create Task</span>
                                 </a>
                             </li>
                         </ul>
