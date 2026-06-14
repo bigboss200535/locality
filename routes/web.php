@@ -3,10 +3,9 @@
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\DashboardController;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\XMLValidationController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProductCategoryController;
-
+use App\Http\Controllers\ProductPriceController;
 // Routes with no authentications
 Route::get('/', function () {
     return view('get-started');
@@ -19,7 +18,6 @@ Route::get('/login', function () {
 Route::get('/get-started', function () {
     return view('get-started');
 });
-
 
 Route::get('/forget-password', function () {
     return view('forget-password');
@@ -44,12 +42,23 @@ Route::middleware(['auth', 'verified'])->group(function (){
     Route::put('/product-categories/{category}', [ProductCategoryController::class, 'update'])->name('product-categories.update');
     Route::patch('/product-categories/{category}/toggle-status', [ProductCategoryController::class, 'toggleStatus'])->name('product-categories.toggle-status');
     Route::delete('/product-categories/{category}', [ProductCategoryController::class, 'destroy'])->name('product-categories.destroy');
-});
-
-Route::middleware('auth')->group(function () {
+    
+    // Product Prices Routes
+    Route::get('/product-prices', [ProductPriceController::class, 'index'])->name('product-prices');
+    Route::post('/product-prices', [ProductPriceController::class, 'store'])->name('product-prices.store');
+    Route::put('/product-prices/{product}', [ProductPriceController::class, 'update'])->name('product-prices.update');
+    Route::delete('/product-prices/{product}', [ProductPriceController::class, 'destroy'])->name('product-prices.destroy');
+    
+    // User Profile Routes
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+});
+
+Route::middleware('auth')->group(function () {
+    // Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    // Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    // Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
 require __DIR__.'/auth.php';

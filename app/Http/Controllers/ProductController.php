@@ -13,7 +13,7 @@ class ProductController extends Controller
 {
     public function index()
     {
-        $products = Product::with(['category', 'price', 'stock'])
+        $products = Product::with(['category', 'price', 'stock', 'store'])
             ->where('archived', 'No')
             ->orderBy('added_date', 'desc')
             ->get();

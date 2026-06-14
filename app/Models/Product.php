@@ -51,4 +51,14 @@ class Product extends Model
     {
         return $this->hasOne(ProductStock::class, 'product_id', 'product_id');
     }
+    
+     public function store()
+    {
+        return $this->hasOne(Stores::class, 'store_id', 'store_id');
+    }
+
+     public function tenant()
+    {
+        return $this->hasOne(Tenant::class, 'tenant_id', 'tenant_id');
+    }
 }

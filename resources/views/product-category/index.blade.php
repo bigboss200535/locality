@@ -62,12 +62,12 @@
                                                 </td>
                                                 <td>
                                                     @if($category->status === 'Active')
-                                                        <span class="badge bg-success-subtle text-success">Active</span>
+                                                        <span class="badge bg-success-subtle text-success">ACTIVE</span>
                                                     @else
-                                                        <span class="badge bg-warning-subtle text-warning">Inactive</span>
+                                                        <span class="badge bg-warning-subtle text-danger">INACTIVE</span>
                                                     @endif
                                                 </td>
-                                                <td>{{ $category->added_by ?? 'N/A' }}</td>
+                                                <td>{{ strtoupper($category->added_by) ?? 'N/A' }}</td>
                                                 <td>{{ $category->added_date ? \Carbon\Carbon::parse($category->added_date)->format('d M Y, h:i A') : 'N/A' }}</td>
                                                 <td>
                                                     <div class="btn-group">

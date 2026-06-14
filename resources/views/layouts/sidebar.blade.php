@@ -110,7 +110,7 @@
                                 </a>
                             </li>
                              <li class="side-nav-item">
-                                <a href="#" class="side-nav-link">
+                                <a href="{{ url('/product-prices') }}" class="side-nav-link">
                                     <span class="menu-text" data-lang="apps-product-list"> Price List</span>
                                 </a>
                             </li>

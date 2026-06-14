@@ -37,8 +37,8 @@ return new class extends Migration
             $table->string('product_type', 150)->nullable();
             $table->string('category_id', 50)->nullable();
             $table->string('tenant_id', 50)->nullable();
-            $table->string('expirable', 50)->nullable(); //yes/no
-            $table->string('store_id', 50);
+            $table->string('expirable', 50)->default('No'); //yes/no
+            $table->string('store_id', 50)->nullable();
             $table->string('user_id', 100)->nullable();
             $table->timestamp('added_date')->nullable();
             $table->timestamp('updated_date')->nullable();
