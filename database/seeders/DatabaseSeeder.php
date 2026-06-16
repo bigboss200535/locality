@@ -3,6 +3,8 @@
 namespace Database\Seeders;
 
 use App\Models\User;
+use App\Models\Stores;
+use App\Models\Role;
 use App\Models\Tenant;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -18,18 +20,82 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        User::factory(10)->create();
-        Tenant::factory(10)->create();
+        Role::create([
+            'role_id' => '1001',
+            'usage' => '0',
+            'role_name' => 'DEVELOPER',
+            'role_description' => 'SYSTEM DEVELOPER',
+            'added_date' =>  now(),
+            'user_id' => 'e4c06f74-4b4e-4669-9137-1729876865a3'
+        ]);
+
+        Role::create([
+            'role_id' => '1002',
+            'usage' => '1',
+            'role_name' => 'ADMIN ADMINISTRATOR',
+            'role_description' => 'SYSTEM ADMINISTRATOR',
+            'added_date' =>  now(),
+            'user_id' => 'e4c06f74-4b4e-4669-9137-1729876865a3'
+        ]);
+
+        Role::create([
+            'role_id' => '1003',
+            'usage' => '1',
+            'role_name' => 'REVENUE OFFICER',
+            'role_description' => 'SYSTEM USER',
+            'added_date' =>  now(),
+            'user_id' => 'e4c06f74-4b4e-4669-9137-1729876865a3'
+        ]);
+
+        Role::create([
+            'role_id' => '1004',
+            'usage' => '1',
+            'role_name' => 'SALES OFFICER',
+            'role_description' => 'SYSTEM USER',
+            'added_date' =>  now(),
+            'user_id' => 'e4c06f74-4b4e-4669-9137-1729876865a3'
+        ]);
+
+        Role::create([
+            'role_id' => '1005',
+            'usage' => '1',
+            'role_name' => 'DATA ENTRY OFFICER',
+            'role_description' => 'SYSTEM USER',
+            'added_date' =>  now(),
+            'user_id' => 'e4c06f74-4b4e-4669-9137-1729876865a3'
+        ]);
+
+        Tenant::create([
+            'tenant_id' => '40401',
+            'tenant_name' => 'JOSHUA ENTERPRISES',
+            'tenant_description' => 'SALES',
+            'type_of_business' => 'PRODUCT SALES',
+            'added_date' =>  now(),
+            'user_id' => 'e4c06f74-4b4e-4669-9137-1729876865a3'
+        ]);
+
+        Stores::create([
+            'store_id' => '200201',
+            'tenant_id' => '40401',
+            'store_name' => 'HERBAL SHOP',
+            'store_description' => 'PRODUCT SALES',
+            'added_date' =>  now(),
+            'user_id' => 'e4c06f74-4b4e-4669-9137-1729876865a3'
+        ]);
 
         User::factory()->create([
-            'user_id' => Str::uuid(),
+            'user_id' => 'e4c06f74-4b4e-4669-9137-1729876865a3',
             'firstname' => 'Mohammed',
             'othername' => 'Alhassan',
+            'role_id' => '1001',
             'email' => 'bigboss200535@gmail.com',
             'email_verified_at' => now(),
             'password' =>  Hash::make('password'),
             'telephone' => '233245340461',
             'telephone_verify' => 'Yes',
+            'user_no' => 'e4c06f74-4b4e-4669-9137-1729876865a3',
         ]);
+
+        // User::factory(100)->create();
     }
 }

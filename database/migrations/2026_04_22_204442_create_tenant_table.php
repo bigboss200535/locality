@@ -16,10 +16,10 @@ return new class extends Migration
             $table->string('category_name', 150)->nullable();
             $table->string('tenant_id', 50)->nullable();
             $table->string('store_id', 50);
-            $table->string('user_id', 100)->nullable();
+            $table->string('user_id', 50)->nullable();
             $table->timestamp('added_date')->nullable();
             $table->timestamp('updated_date')->nullable();
-            $table->string('status', 100)->nullable();
+            $table->string('status', 50)->default('Active')->nullable();
             $table->string('added_by', 100)->nullable();
             $table->string('updated_by', 100)->nullable();
             $table->string('archived', 100)->default('No')->index();
@@ -28,6 +28,7 @@ return new class extends Migration
 
             $table->foreign('tenant_id')->references('tenant_id')->on('tenants');
             $table->foreign('store_id')->references('store_id')->on('stores');
+            $table->foreign('user_id')->references('user_id')->on('users');
             // $table->timestamps();
         });
 
@@ -35,14 +36,15 @@ return new class extends Migration
             $table->string('product_id', 50)->primary();
             $table->string('product_name', 150)->nullable();
             $table->string('product_type', 150)->nullable();
-            $table->string('category_id', 50)->nullable();
-            $table->string('tenant_id', 50)->nullable();
             $table->string('expirable', 50)->default('No'); //yes/no
+            $table->string('stockable', 50)->default('No'); //yes/no
+            $table->string('category_id', 50)->nullable();
             $table->string('store_id', 50)->nullable();
-            $table->string('user_id', 100)->nullable();
+            $table->string('tenant_id', 50)->nullable();
+            $table->string('user_id', 50)->nullable();
             $table->timestamp('added_date')->nullable();
             $table->timestamp('updated_date')->nullable();
-            $table->string('status', 100)->nullable();
+            $table->string('status', 50)->default('Active')->nullable();
             $table->string('added_by', 100)->nullable();
             $table->string('updated_by', 100)->nullable();
             $table->string('archived', 100)->default('No')->index();
@@ -51,6 +53,8 @@ return new class extends Migration
             // key
             $table->foreign('tenant_id')->references('tenant_id')->on('tenants');
             $table->foreign('store_id')->references('store_id')->on('stores');
+            $table->foreign('user_id')->references('user_id')->on('users');
+            $table->foreign('category_id')->references('category_id')->on('product_category');
         });
 
         Schema::create('product_prices', function (Blueprint $table) {
@@ -59,10 +63,10 @@ return new class extends Migration
             $table->float('unit_price')->nullable();
             $table->string('tenant_id', 50)->nullable();
             $table->string('store_id', 50);
-            $table->string('user_id', 100)->nullable();
+            $table->string('user_id', 50)->nullable();
             $table->timestamp('added_date')->nullable();
             $table->timestamp('updated_date')->nullable();
-            $table->string('status', 100)->nullable();
+            $table->string('status', 50)->default('Active')->nullable();
             $table->string('added_by', 100)->nullable();
             $table->string('updated_by', 100)->nullable();
             $table->string('archived', 100)->default('No')->index();
@@ -71,6 +75,7 @@ return new class extends Migration
                 //key 
             $table->foreign('tenant_id')->references('tenant_id')->on('tenants');
             $table->foreign('store_id')->references('store_id')->on('stores');
+            $table->foreign('user_id')->references('user_id')->on('users');
         });
             
 
@@ -82,12 +87,12 @@ return new class extends Migration
             $table->string('stocked_by', 100)->nullable();
             $table->string('tenant_id', 50)->nullable();
             $table->string('store_id', 50);
-            $table->string('user_id', 100)->nullable();
+            $table->string('user_id', 50)->nullable();
             $table->string('expirable', 100)->nullable();
             $table->date('expiry_date')->nullable();
             $table->timestamp('added_date')->nullable();
             $table->timestamp('updated_date')->nullable();
-            $table->string('status', 100)->nullable();
+            $table->string('status', 50)->default('Active')->nullable();
             $table->string('added_by', 100)->nullable();
             $table->string('updated_by', 100)->nullable();
             $table->string('archived', 100)->default('No')->index();
@@ -96,6 +101,7 @@ return new class extends Migration
                 // key
             $table->foreign('tenant_id')->references('tenant_id')->on('tenants');
             $table->foreign('store_id')->references('store_id')->on('stores');
+            $table->foreign('user_id')->references('user_id')->on('users');
         });
 
         Schema::create('bills_payment', function (Blueprint $table) {
@@ -107,12 +113,12 @@ return new class extends Migration
             $table->string('tenant_id', 50)->nullable();
             $table->string('store_id', 50);
             $table->timestamp('transaction_time')->nullable();
-            $table->string('user_id', 100)->nullable();
+            $table->string('user_id', 50)->nullable();
             $table->string('expirable', 100)->nullable();
             $table->date('expiry_date')->nullable();
             $table->timestamp('added_date')->nullable();
             $table->timestamp('updated_date')->nullable();
-            $table->string('tenant_status', 100)->nullable();
+             $table->string('status', 50)->default('Active')->nullable();
             $table->string('added_by', 100)->nullable();
             $table->string('updated_by', 100)->nullable();
             $table->string('archived', 100)->default('No')->index();
@@ -121,6 +127,7 @@ return new class extends Migration
                 // key
             $table->foreign('tenant_id')->references('tenant_id')->on('tenants');
             $table->foreign('store_id')->references('store_id')->on('stores');
+            $table->foreign('user_id')->references('user_id')->on('users');
         });
 
          Schema::create('receipts', function (Blueprint $table) {
@@ -130,10 +137,10 @@ return new class extends Migration
             $table->string('tenant_id', 50)->nullable();
             $table->string('store_id', 50);
             $table->timestamp('transaction_time')->nullable();
-            $table->string('user_id', 100)->nullable();
+            $table->string('user_id', 50)->nullable();
             $table->timestamp('added_date')->nullable();
             $table->timestamp('updated_date')->nullable();
-            $table->string('tenant_status', 100)->nullable();
+             $table->string('status', 50)->default('Active')->nullable();
             $table->string('added_by', 100)->nullable();
             $table->string('updated_by', 100)->nullable();
             $table->string('archived', 100)->default('No')->index();
@@ -142,6 +149,7 @@ return new class extends Migration
                 // key
             $table->foreign('tenant_id')->references('tenant_id')->on('tenants');
             $table->foreign('store_id')->references('store_id')->on('stores');
+            $table->foreign('user_id')->references('user_id')->on('users');
         });
         
         Schema::create('product_sales', function (Blueprint $table) {
@@ -155,12 +163,12 @@ return new class extends Migration
             $table->float('unit_cost')->nullable();
             $table->float('total')->nullable();
             $table->timestamp('transaction_time')->nullable();
-            $table->string('user_id', 100)->nullable();
+            $table->string('user_id', 50)->nullable();
             $table->string('expirable', 100)->nullable();
             $table->date('expiry_date')->nullable();
             $table->timestamp('added_date')->nullable();
             $table->timestamp('updated_date')->nullable();
-            $table->string('tenant_status', 100)->nullable();
+            $table->string('status', 50)->default('Active')->nullable();
             $table->string('added_by', 100)->nullable();
             $table->string('updated_by', 100)->nullable();
             $table->string('archived', 100)->default('No')->index();
@@ -169,6 +177,7 @@ return new class extends Migration
                 // key
             $table->foreign('tenant_id')->references('tenant_id')->on('tenants');
             $table->foreign('store_id')->references('store_id')->on('stores');
+             $table->foreign('user_id')->references('user_id')->on('users');
         });
 
         Schema::create('expiry_management_details', function (Blueprint $table) {
@@ -178,14 +187,14 @@ return new class extends Migration
             $table->integer('stocked_qty')->nullable();
             // $table->integer('expiry_date')->nullable();
             $table->text('comments')->nullable();
-            $table->string('user_id', 100)->nullable();
+            $table->string('user_id', 50)->nullable();
             $table->string('tenant_id', 50)->nullable();
             $table->string('store_id', 50);
             $table->string('expirable', 100)->nullable();
             $table->date('expiry_date')->nullable();
             $table->timestamp('added_date')->nullable();
             $table->timestamp('updated_date')->nullable();
-            $table->string('tenant_status', 100)->nullable();
+             $table->string('status', 50)->default('Active')->nullable();
             $table->string('added_by', 100)->nullable();
             $table->string('updated_by', 100)->nullable();
             $table->string('archived', 100)->default('No')->index();
@@ -194,6 +203,7 @@ return new class extends Migration
                 // keys
             $table->foreign('tenant_id')->references('tenant_id')->on('tenants');
             $table->foreign('store_id')->references('store_id')->on('stores');
+             $table->foreign('user_id')->references('user_id')->on('users');
         });
 
         Schema::create('product_expiry_management', function (Blueprint $table) {
@@ -202,12 +212,12 @@ return new class extends Migration
             $table->text('comments')->nullable();
             $table->string('store_id', 50);
             $table->string('tenant_id', 50)->nullable();
-            $table->string('user_id', 100)->nullable();
+            $table->string('user_id', 50)->nullable();
             $table->string('expirable', 100)->nullable();
             $table->date('expiry_date')->nullable();
             $table->timestamp('added_date')->nullable();
             $table->timestamp('updated_date')->nullable();
-            $table->string('tenant_status', 100)->nullable();
+             $table->string('status', 50)->default('Active')->nullable();
             $table->string('added_by', 100)->nullable();
             $table->string('updated_by', 100)->nullable();
             $table->string('archived', 100)->default('No')->index();
@@ -216,6 +226,7 @@ return new class extends Migration
              // key
             $table->foreign('tenant_id')->references('tenant_id')->on('tenants');
             $table->foreign('store_id')->references('store_id')->on('stores');
+             $table->foreign('user_id')->references('user_id')->on('users');
         });
 
         Schema::create('stock_taking', function (Blueprint $table) {
@@ -224,8 +235,8 @@ return new class extends Migration
             $table->integer('product_qty')->nullable();
             $table->string('store_id', 50);
             $table->string('tenant_id', 50)->nullable();
-            $table->string('user_id', 100)->nullable();
-            $table->string('status', 100)->nullable();
+            $table->string('user_id', 50)->nullable();
+             $table->string('status', 50)->default('Active')->nullable();
             $table->string('approved_by')->nullable();
             $table->timestamp('added_date')->nullable();
             $table->timestamp('updated_date')->nullable();
@@ -238,6 +249,7 @@ return new class extends Migration
              // key
             $table->foreign('tenant_id')->references('tenant_id')->on('tenants');
             $table->foreign('store_id')->references('store_id')->on('stores');
+            $table->foreign('user_id')->references('user_id')->on('users');
         });
     }
 

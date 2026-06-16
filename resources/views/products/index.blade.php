@@ -167,6 +167,7 @@
                         <div class="mb-3">
                             <label for="category_id" class="form-label">Category</label>
                             <select class="form-select" id="category_id" name="category_id" required>
+                                <option value="" disabled selected>-Select-</option>
                                 @foreach($categories as $category)
                                     <option value="{{ $category->category_id }}">{{ $category->category_name }}</option>
                                 @endforeach

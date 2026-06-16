@@ -4,12 +4,20 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Employee;
+use App\Models\User;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 
 class DashboardController extends Controller
 {
    public function index()  
    {
+        $last = User::findOrFail(Auth::user()->user_id);
+        $last->last_login = now(); //last login timestamp
+        $last->save();
+
         // $active_employee = User::where('archived', 'No')->take(5)->get();
+
         // greetings
             // $current_hour = Carbon::now()->format('H');
 

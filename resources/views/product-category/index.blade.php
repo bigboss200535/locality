@@ -197,6 +197,24 @@
                             <label for="category_name" class="form-label">Category Name</label>
                             <input type="text" class="form-control" id="category_name" name="category_name" required placeholder="e.g. Electronics">
                         </div>
+                        <div class="mb-3">
+                            <label for="tenant_name" class="form-label">Tenant Name</label>
+                            <select class="form-control text-start" id="tenant_name" name="tenant_name" required>
+                                <option value="" disabled selected>Select Tenant...</option>
+                                @foreach($tenants as $tenant)
+                                    <option value="{{ $tenant->tenant_id }}">{{ $tenant->tenant_name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                         <div class="mb-3">
+                            <label for="store_name" class="form-label">Store Name</label>
+                            <select class="form-control text-start" id="store_name" name="store_name" required>
+                                <option value="" disabled selected>Select Store...</option>
+                                @foreach($stores as $store)
+                                    <option value="{{ $store->store_id }}">{{ $store->store_name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>

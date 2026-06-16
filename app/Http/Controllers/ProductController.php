@@ -23,16 +23,19 @@ class ProductController extends Controller
         // If categories are empty, create default category to ensure dropdown works
         if ($categories->isEmpty()) {
             $user = auth()->user();
-            $tenantId = $user->tenant_id ?? '04eb01b4-8348-4a61-be64-3790946de696';
-            $storeId = $user->store_id ?? 'Default-Store';
+            $tenantId = $user->tenant_id;
+            // $storeId = $user->store_id;
 
             ProductCategory::create([
-                'category_id' => 'Default-Category',
-                'category_name' => 'General',
+                'category_id' => (string) Str::uuid(),
+                'category_name' => 'GENERAL PRODUCT',
                 'tenant_id' => $tenantId,
-                'store_id' => $storeId,
-                'status' => 'Active',
+                'user_id' => $user->user_id,
+                'store_id' => $user->store_id,
+                'added_by' => $user->firstname . ' ' . $user->othername,
+                'added_date' => now(),
                 'archived' => 'No',
+                'status' => 'Active',
             ]);
 
             $categories = ProductCategory::where('archived', 'No')->get();
@@ -47,6 +50,8 @@ class ProductController extends Controller
             'product_name' => 'required|string|max:150',
             'product_type' => 'nullable|string|max:150',
             'category_id' => 'required|string|max:50',
+            'store_id' => 'nullable|string|max:50',
+            'tenant_id' => 'nullable|string|max:50',
             'cost_price' => 'required|numeric|min:0',
             'selling_price' => 'required|numeric|min:0',
             'stock_quantity' => 'required|integer|min:0',
@@ -54,9 +59,9 @@ class ProductController extends Controller
 
         $user = auth()->user();
         $userId = $user ? $user->user_id : null;
-        $username = $user ? ($user->firstname . ' ' . $user->othername) : 'System';
+        $username = $user->firstname . ' ' . $user->othername;
         $tenantId = $user->tenant_id;
-        $storeId = $user->store_id ?? 'Default-Store';
+        $storeId = $user->store_id;
 
         $productId = (string) Str::uuid();
 
@@ -66,8 +71,8 @@ class ProductController extends Controller
             'product_name' => $request->product_name,
             'product_type' => $request->product_type,
             'category_id' => $request->category_id,
-            'tenant_id' => $tenantId,
-            'store_id' => $storeId,
+            'tenant_id' => $request->tenant_id ?? $tenantId,
+            'store_id' => $request->store_id ?? $storeId,
             'user_id' => $userId,
             'added_date' => now(),
             'status' => 'Active',
@@ -80,8 +85,8 @@ class ProductController extends Controller
             'product_id' => $productId,
             'unit_cost' => $request->cost_price,
             'unit_price' => $request->selling_price,
-            'tenant_id' => $tenantId,
-            'store_id' => $storeId,
+            'tenant_id' => $request->tenant_id ?? $tenantId,
+            'store_id' => $request->store_id ?? $storeId,
             'user_id' => $userId,
             'added_date' => now(),
             'status' => 'Active',
@@ -96,8 +101,8 @@ class ProductController extends Controller
             'stock_quantity' => $request->stock_quantity,
             'stock_date' => now(),
             'stocked_by' => $username,
-            'tenant_id' => $tenantId,
-            'store_id' => $storeId,
+            'tenant_id' => $request->tenant_id ?? $tenantId,
+            'store_id' => $request->store_id ?? $storeId,
             'user_id' => $userId,
             'added_date' => now(),
             'status' => 'Active',

@@ -4,10 +4,10 @@
         products: [
             @foreach($products as $product)
             {
-                product_id: '{{ $product->product_id }}',
-                product_name: '{{ addslashes($product->product_name) }}',
-                product_type: '{{ addslashes($product->product_type) }}',
-                category_name: '{{ addslashes($product->category ? $product->category->category_name : 'N/A') }}',
+                product_id: {!! json_encode($product->product_id) !!},
+                product_name: {!! json_encode($product->product_name) !!},
+                product_type: {!! json_encode($product->product_type) !!},
+                category_name: {!! json_encode($product->category ? $product->category->category_name : 'N/A') !!},
                 unit_price: {{ $product->price ? $product->price->unit_price : 0 }},
                 unit_cost: {{ $product->price ? $product->price->unit_cost : 0 }},
                 stock_quantity: {{ $product->stock ? $product->stock->stock_quantity : 0 }}
@@ -82,9 +82,9 @@
             if (!this.searchQuery) return this.products;
             let query = this.searchQuery.toLowerCase();
             return this.products.filter(p => 
-                p.product_name.toLowerCase().includes(query) || 
+                (p.product_name && p.product_name.toLowerCase().includes(query)) || 
                 (p.product_type && p.product_type.toLowerCase().includes(query)) ||
-                p.category_name.toLowerCase().includes(query)
+                (p.category_name && p.category_name.toLowerCase().includes(query))
             );
         }
     }">
@@ -174,7 +174,7 @@
                 <div class="col-xxl-4 col-lg-4 mb-4">
                     <div class="card card-h-100">
                         <div class="card-header bg-light bg-opacity-50">
-                            <h4 class="card-title d-flex align-items-center"><i class="fa fa-shopping-cart me-2"></i> Product Cart</h4>
+                            <h4 class="card-title d-flex align-items-center"><i class="fa fa-shopping-cart me-2"></i> POS Cart</h4>
                         </div>
                         <div class="card-body d-flex flex-column p-0">
                             <!-- Cart Items -->
@@ -237,9 +237,9 @@
                                 </div>
 
                                 <!-- Payment Method & Checkout -->
-                                <form action="{{ route('sales.store') }}" method="POST" @submit="document.getElementById('cart_data').value = JSON.stringify(cart)">
+                                <form action="{{ route('sales.store') }}" method="POST">
                                     @csrf
-                                    <input type="hidden" id="cart_data" name="cart_data">
+                                    <input type="hidden" name="cart_data" :value="JSON.stringify(cart)">
                                     
                                     <div class="mb-3">
                                         <label for="payment_method" class="form-label fs-xs fw-semibold text-uppercase text-muted">Payment Method</label>

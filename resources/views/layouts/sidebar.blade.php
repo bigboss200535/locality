@@ -99,14 +99,15 @@
                                     <span class="menu-text" data-lang="apps-product-grid"></span>
                                 </a>
                             </li>
-                            <li class="side-nav-item">
-                                <a href="{{ url('/products') }}" class="side-nav-link">
-                                    <span class="menu-text" data-lang="apps-product-list"> Product </span>
-                                </a>
-                            </li>
+                           
                             <li class="side-nav-item">
                                 <a href="{{ url('/product-categories') }}" class="side-nav-link">
                                     <span class="menu-text" data-lang="apps-product-list"> Product Category</span>
+                                </a>
+                            </li>
+                             <li class="side-nav-item">
+                                <a href="{{ url('/products') }}" class="side-nav-link">
+                                    <span class="menu-text" data-lang="apps-product-list"> Product </span>
                                 </a>
                             </li>
                              <li class="side-nav-item">
