@@ -87,11 +87,13 @@
                 </li>
                 <li class="side-nav-title mt-2" data-lang="apps">Main Menu</li>
                 <li class="side-nav-item">
+                     @if(auth()->user()->role_id === '1001' || auth()->user()->role_id === '1002' || auth()->user()->role_id === '1003')
                     <a data-bs-toggle="collapse" href="#product" aria-expanded="false" aria-controls="product" class="side-nav-link">
                         <span class="menu-icon"><i class="fa fa-user"></i></span>
                         <span class="menu-text" data-lang="projects">Inventory</span>
                         <span class="menu-arrow"></span>
                     </a>
+                    @endif
                     <div class="collapse" id="product">
                         <ul class="sub-menu">
                             <li class="side-nav-item">
@@ -99,28 +101,34 @@
                                     <span class="menu-text" data-lang="apps-product-grid"></span>
                                 </a>
                             </li>
-                           
+                             @if(auth()->user()->role_id === '1001' || auth()->user()->role_id === '1002' || auth()->user()->role_id === '1003')
                             <li class="side-nav-item">
                                 <a href="{{ url('/product-categories') }}" class="side-nav-link">
                                     <span class="menu-text" data-lang="apps-product-list"> Product Category</span>
                                 </a>
                             </li>
+                            @endif
+                            @if(auth()->user()->role_id === '1001' || auth()->user()->role_id === '1002' || auth()->user()->role_id === '1003')
                              <li class="side-nav-item">
                                 <a href="{{ url('/products') }}" class="side-nav-link">
                                     <span class="menu-text" data-lang="apps-product-list"> Product </span>
                                 </a>
                             </li>
+                              @endif
+                              @if(auth()->user()->role_id === '1001' || auth()->user()->role_id === '1002' || auth()->user()->role_id === '1003')
                              <li class="side-nav-item">
                                 <a href="{{ url('/product-prices') }}" class="side-nav-link">
                                     <span class="menu-text" data-lang="apps-product-list"> Price List</span>
                                 </a>
                             </li>
+                            @endif
+                            @if(auth()->user()->role_id === '1001' || auth()->user()->role_id === '1002' || auth()->user()->role_id === '1003')
                              <li class="side-nav-item">
                                 <a href="{{ url('/inventory') }}" class="side-nav-link">
                                     <span class="menu-text" data-lang="apps-product-list"> Stock Adjustment</span>
                                 </a>
                             </li>
-                            
+                            @endif
                         </ul>
                     </div>
                 </li>

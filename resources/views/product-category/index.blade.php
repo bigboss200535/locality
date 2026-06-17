@@ -33,9 +33,11 @@
                         <div class="card-header justify-content-between">
                             <h4 class="card-title">Product Categories <span class="text-muted fs-base fw-normal">({{ $categories->count() }} Categories)</span></h4>
                             <div>
+                             @if(auth()->user()->role_id === '1001' || auth()->user()->role_id === '1002' || auth()->user()->role_id === '1003')
                                 <button type="button" class="btn btn-sm btn-primary me-1" data-bs-toggle="modal" data-bs-target="#addCategoryModal">
                                     <i class="fa fa-plus me-1"></i> Add Category
                                 </button>
+                                @endif
                             </div>
                         </div>
 
@@ -46,10 +48,18 @@
                                         <tr class="text-uppercase table-nowrap fs-xxs">
                                             <th data-table-sort>#ID</th>
                                             <th data-table-sort>Category Name</th>
+                                             @if(auth()->user()->role_id === '1001' || auth()->user()->role_id === '1002' || auth()->user()->role_id === '1003')
+                                                <th data-table-sort>Store Name</th>
+                                             @endif
+                                             @if(auth()->user()->role_id === '1001')
+                                                <th data-table-sort>Tenant Name</th>
+                                            @endif
                                             <th data-table-sort>Status</th>
                                             <th data-table-sort>Added By</th>
                                             <th data-table-sort>Added Date</th>
+                                            @if(auth()->user()->role_id === '1001' || auth()->user()->role_id === '1002' || auth()->user()->role_id === '1003')
                                             <th data-table-sort>Action</th>
+                                            @endif
                                         </tr>
                                     </thead>
 
@@ -58,8 +68,18 @@
                                             <tr>
                                                 <td>#{{ substr($category->category_id, 0, 8) }}</td>
                                                 <td>
-                                                    <h5 class="m-0 fs-base">{{ $category->category_name }}</h5>
+                                                    <h5 class="m-0 fs-base">{{ strtoupper($category->category_name) }}</h5>
                                                 </td>
+                                                 @if(auth()->user()->role_id === '1001' || auth()->user()->role_id === '1002' || auth()->user()->role_id === '1003')
+                                                <td>
+                                                    <h5 class="m-0 fs-base">{{ strtoupper($category->store->store_name) ?? 'N/A'}}</h5>
+                                                </td>
+                                                 @endif
+                                                 @if(auth()->user()->role_id === '1001')
+                                                 <td>
+                                                    <h5 class="m-0 fs-base">{{ strtoupper($category->tenant->tenant_name) ?? 'N/A'}}</h5>
+                                                </td>
+                                                @endif
                                                 <td>
                                                     @if($category->status === 'Active')
                                                         <span class="badge bg-success-subtle text-success">ACTIVE</span>
@@ -69,29 +89,30 @@
                                                 </td>
                                                 <td>{{ strtoupper($category->added_by) ?? 'N/A' }}</td>
                                                 <td>{{ $category->added_date ? \Carbon\Carbon::parse($category->added_date)->format('d M Y, h:i A') : 'N/A' }}</td>
-                                                <td>
-                                                    <div class="btn-group">
-                                                        <button type="button" class="btn btn-sm btn-outline-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-                                                            Action
-                                                        </button>
-                                                        <ul class="dropdown-menu">
-                                                            <li>
-                                                                <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#editCategoryModal-{{ $category->category_id }}">
-                                                                    Edit
-                                                                </a>
-                                                            </li>
-                                                            <li>
-                                                                <a class="dropdown-item" href="#" onclick="event.preventDefault(); document.getElementById('toggle-form-{{ $category->category_id }}').submit();">
-                                                                    {{ $category->status === 'Active' ? 'Disable' : 'Enable' }}
-                                                                </a>
-                                                            </li>
-                                                            <li>
-                                                                <a class="dropdown-item text-danger" href="#" onclick="event.preventDefault(); if(confirm('Are you sure you want to delete this category?')) { document.getElementById('delete-form-{{ $category->category_id }}').submit(); }">
-                                                                    Delete
-                                                                </a>
-                                                            </li>
-                                                        </ul>
-                                                    </div>
+                                                  @if(auth()->user()->role_id === '1001' || auth()->user()->role_id === '1002' || auth()->user()->role_id === '1003')
+                                                    <td>
+                                                        <div class="btn-group">
+                                                            <button type="button" class="btn btn-sm btn-outline-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                                                                Action
+                                                            </button>
+                                                            <ul class="dropdown-menu">
+                                                                <li>
+                                                                    <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#editCategoryModal-{{ $category->category_id }}">
+                                                                        Edit
+                                                                    </a>
+                                                                </li>
+                                                                <li>
+                                                                    <a class="dropdown-item" href="#" onclick="event.preventDefault(); document.getElementById('toggle-form-{{ $category->category_id }}').submit();">
+                                                                        {{ $category->status === 'Active' ? 'Disable' : 'Enable' }}
+                                                                    </a>
+                                                                </li>
+                                                                <li>
+                                                                    <a class="dropdown-item text-danger" href="#" onclick="event.preventDefault(); if(confirm('Are you sure you want to delete this category?')) { document.getElementById('delete-form-{{ $category->category_id }}').submit(); }">
+                                                                        Delete
+                                                                    </a>
+                                                                </li>
+                                                            </ul>
+                                                        </div>
 
                                                     <!-- Edit Category Modal -->
                                                     <div class="modal fade" id="editCategoryModal-{{ $category->category_id }}" tabindex="-1" aria-labelledby="editCategoryModalLabel-{{ $category->category_id }}" aria-hidden="true">
@@ -131,6 +152,7 @@
                                                         @method('DELETE')
                                                     </form>
                                                 </td>
+                                                @endif
                                             </tr>
                                         @empty
                                             <tr>

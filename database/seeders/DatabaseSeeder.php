@@ -32,14 +32,23 @@ class DatabaseSeeder extends Seeder
         Role::create([
             'role_id' => '1002',
             'usage' => '1',
-            'role_name' => 'ADMIN ADMINISTRATOR',
-            'role_description' => 'SYSTEM ADMINISTRATOR',
+            'role_name' => 'SUPER ADMINISTRATOR',
+            'role_description' => 'SUPER ADMINISTRATOR',
             'added_date' =>  now(),
             'user_id' => 'e4c06f74-4b4e-4669-9137-1729876865a3'
         ]);
 
         Role::create([
             'role_id' => '1003',
+            'usage' => '1',
+            'role_name' => 'ADMINISTRATOR',
+            'role_description' => 'ADMINISTRATOR',
+            'added_date' =>  now(),
+            'user_id' => 'e4c06f74-4b4e-4669-9137-1729876865a3'
+        ]);
+
+        Role::create([
+            'role_id' => '1004',
             'usage' => '1',
             'role_name' => 'REVENUE OFFICER',
             'role_description' => 'SYSTEM USER',
@@ -48,7 +57,7 @@ class DatabaseSeeder extends Seeder
         ]);
 
         Role::create([
-            'role_id' => '1004',
+            'role_id' => '1005',
             'usage' => '1',
             'role_name' => 'SALES OFFICER',
             'role_description' => 'SYSTEM USER',
@@ -57,7 +66,7 @@ class DatabaseSeeder extends Seeder
         ]);
 
         Role::create([
-            'role_id' => '1005',
+            'role_id' => '1006',
             'usage' => '1',
             'role_name' => 'DATA ENTRY OFFICER',
             'role_description' => 'SYSTEM USER',

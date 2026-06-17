@@ -48,7 +48,8 @@
                                             <th data-table-sort>Product Category</th>
                                             <th data-table-sort>Store Name</th>
                                             <th data-table-sort>Stock Quantity</th>
-                                            <th data-table-sort>Cost Price</th>
+                                            <th data-table-sort>Cost Price (GHs)</th>
+                                            <th data-table-sort>Stocked Value (GHs)</th>
                                             <th data-table-sort>Date Added</th>
                                             <th data-table-sort>Status</th>
                                             <th data-table-sort>Action</th>
@@ -74,7 +75,8 @@
                                                         <span class="badge bg-soft-warning text-warning">0 (No Stock Record)</span>
                                                     @endif
                                                 </td>
-                                                <td>GHs {{ number_format($product->price ? $product->price->unit_cost : 0, 2) }}</td>
+                                                <td>{{ number_format($product->price ? $product->price->unit_cost : 0, 2) }}</td>
+                                                <td>{{ number_format(($product->price ? $product->price->unit_cost : 0) * ($product->stock ? $product->stock->stock_quantity : 0), 2) }}</td>
                                                 <td>{{ $product->added_date ? \Carbon\Carbon::parse($product->added_date)->format('d M Y, h:i A') : 'N/A' }}</td>
                                                 <td>
                                                     @if(($product->stock ? $product->stock->stock_quantity : 0) > 0)

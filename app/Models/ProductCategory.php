@@ -28,4 +28,14 @@ class ProductCategory extends Model
         'archived_by',
         'archived_date'
     ];
+
+     public function store()
+    {
+        return $this->hasOne(Stores::class, 'store_id', 'store_id');
+    }
+
+     public function tenant()
+    {
+        return $this->hasOne(Tenant::class, 'tenant_id', 'tenant_id');
+    }
 }

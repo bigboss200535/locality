@@ -49,6 +49,8 @@ class SalesController extends Controller
         $storeId = $user->store_id ?? 'Default-Store';
 
         $paymentId = (string) Str::uuid();
+        $subtotal = 0;
+        $totalDiscount = 0;
 
         foreach ($cart as $item) {
             $productId = $item['product_id'];
@@ -56,8 +58,12 @@ class SalesController extends Controller
             $unitPrice = floatval($item['unit_price']);
             $discount = floatval($item['discount'] ?? 0);
 
+            $lineSubtotal = $unitPrice * $quantity;
+            $subtotal += $lineSubtotal;
+            $totalDiscount += $discount;
+
             // Total price is (unit_price * quantity) - discount
-            $total = ($unitPrice * $quantity) - $discount;
+            $total = $lineSubtotal - $discount;
 
             // Save sale record
             ProductSales::create([
@@ -87,6 +93,21 @@ class SalesController extends Controller
             }
         }
 
-        return redirect()->route('sales.index')->with('success', 'Sale completed successfully!');
+        $grandTotal = $subtotal - $totalDiscount;
+
+        return redirect()->route('sales.index')->with([
+            'success' => 'Sale completed successfully!',
+            'receipt' => [
+                'invoice_no' => 'INV-' . strtoupper(substr($paymentId, 0, 8)),
+                'payment_id' => $paymentId,
+                'items' => $cart,
+                'payment_method' => $request->payment_method,
+                'subtotal' => $subtotal,
+                'discount' => $totalDiscount,
+                'grand_total' => $grandTotal,
+                'date' => now()->format('d M Y, h:i A'),
+                'added_by' => $username,
+            ]
+        ]);
     }
 }

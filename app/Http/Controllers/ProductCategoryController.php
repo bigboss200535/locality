@@ -16,10 +16,15 @@ class ProductCategoryController extends Controller
         $tenantId = $user->tenant_id ?? '04eb01b4-8348-4a61-be64-3790946de696';
         $storeId = $user->store_id ?? 'default-store';
 
-        $categories = ProductCategory::where('archived', 'No')
+         $categories = ProductCategory::with(['store', 'tenant'])
             ->where('tenant_id', $tenantId)
             ->where('store_id', $storeId)
             ->get();
+
+        // $categories = ProductCategory::where('archived', 'No')
+        //     ->where('tenant_id', $tenantId)
+        //     ->where('store_id', $storeId)
+        //     ->get();
 
         $tenants = Tenant::all();
         $stores = Stores::all();

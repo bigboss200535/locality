@@ -13,7 +13,7 @@ class ProductController extends Controller
 {
     public function index()
     {
-        $products = Product::with(['category', 'price', 'stock', 'store'])
+        $products = Product::with(['category', 'price', 'stock', 'store', 'tenant'])
             ->where('archived', 'No')
             ->orderBy('added_date', 'desc')
             ->get();
@@ -60,8 +60,8 @@ class ProductController extends Controller
         $user = auth()->user();
         $userId = $user ? $user->user_id : null;
         $username = $user->firstname . ' ' . $user->othername;
-        $tenantId = $user->tenant_id;
-        $storeId = $user->store_id;
+        $tenantId = $request->tenant_id ?? $user->tenant_id;
+        $storeId = $request->store_id ?? $user->store_id;
 
         $productId = (string) Str::uuid();
 
@@ -71,8 +71,8 @@ class ProductController extends Controller
             'product_name' => $request->product_name,
             'product_type' => $request->product_type,
             'category_id' => $request->category_id,
-            'tenant_id' => $request->tenant_id ?? $tenantId,
-            'store_id' => $request->store_id ?? $storeId,
+            'tenant_id' => $tenantId,
+            'store_id' => $storeId,
             'user_id' => $userId,
             'added_date' => now(),
             'status' => 'Active',
@@ -85,8 +85,8 @@ class ProductController extends Controller
             'product_id' => $productId,
             'unit_cost' => $request->cost_price,
             'unit_price' => $request->selling_price,
-            'tenant_id' => $request->tenant_id ?? $tenantId,
-            'store_id' => $request->store_id ?? $storeId,
+            'tenant_id' => $tenantId,
+            'store_id' => $storeId,
             'user_id' => $userId,
             'added_date' => now(),
             'status' => 'Active',
@@ -101,8 +101,8 @@ class ProductController extends Controller
             'stock_quantity' => $request->stock_quantity,
             'stock_date' => now(),
             'stocked_by' => $username,
-            'tenant_id' => $request->tenant_id ?? $tenantId,
-            'store_id' => $request->store_id ?? $storeId,
+            'tenant_id' => $tenantId,
+            'store_id' => $storeId,
             'user_id' => $userId,
             'added_date' => now(),
             'status' => 'Active',

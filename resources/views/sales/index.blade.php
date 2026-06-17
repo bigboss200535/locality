@@ -79,9 +79,11 @@
             return (this.subtotal() - this.totalDiscount()).toFixed(2);
         },
         filteredProducts() {
-            if (!this.searchQuery) return this.products;
+            // Filter products to only those with stock_quantity > 0
+            let activeProducts = this.products.filter(p => p.stock_quantity > 0);
+            if (!this.searchQuery) return activeProducts;
             let query = this.searchQuery.toLowerCase();
-            return this.products.filter(p => 
+            return activeProducts.filter(p => 
                 (p.product_name && p.product_name.toLowerCase().includes(query)) || 
                 (p.product_type && p.product_type.toLowerCase().includes(query)) ||
                 (p.category_name && p.category_name.toLowerCase().includes(query))
@@ -107,6 +109,83 @@
                         @endforeach
                     </ul>
                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            @endif
+
+            @if(session('receipt'))
+                <!-- Receipt Modal -->
+                <div class="modal fade show" id="receiptModal" tabindex="-1" aria-labelledby="receiptModalLabel" aria-modal="true" role="dialog" style="display: block; background: rgba(0,0,0,0.5); z-index: 1050;">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="receiptModalLabel"><i class="fa fa-receipt me-2"></i> Payment Receipt</h5>
+                                <button type="button" class="btn-close" onclick="document.getElementById('receiptModal').style.display='none'"></button>
+                            </div>
+                            <div class="modal-body text-start" id="printable-receipt" style="white-space: normal;">
+                                <div class="text-center mb-4">
+                                    <h4 class="mb-1">PACES POS</h4>
+                                    <p class="text-muted fs-sm mb-0">Official Sale Receipt</p>
+                                </div>
+                                <div class="row mb-3 fs-xs text-muted">
+                                    <div class="col-6">
+                                        <strong>Invoice:</strong> {{ session('receipt.invoice_no') }}<br>
+                                        <strong>Date:</strong> {{ session('receipt.date') }}
+                                    </div>
+                                    <div class="col-6 text-end">
+                                        <strong>Cashier:</strong> {{ session('receipt.added_by') }}<br>
+                                        <strong>Method:</strong> {{ session('receipt.payment_method') }}
+                                    </div>
+                                </div>
+                                <table class="table table-sm table-borderless fs-sm mb-3">
+                                    <thead>
+                                        <tr class="border-bottom text-uppercase fs-xxs text-muted">
+                                            <th>Item</th>
+                                            <th class="text-center">Qty</th>
+                                            <th class="text-end">Price</th>
+                                            <th class="text-end">Total</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach(session('receipt.items') as $item)
+                                            <tr>
+                                                <td>
+                                                    <strong>{{ strtoupper($item['product_name']) }}</strong>
+                                                    @if(floatval($item['discount']) > 0)
+                                                        <br><small class="text-success">Discount: -GHs {{ number_format($item['discount'], 2) }}</small>
+                                                    @endif
+                                                </td>
+                                                <td class="text-center">{{ $item['quantity'] }}</td>
+                                                <td class="text-end">GHs {{ number_format($item['unit_price'], 2) }}</td>
+                                                <td class="text-end">GHs {{ number_format((floatval($item['unit_price']) * intval($item['quantity'])) - floatval($item['discount']), 2) }}</td>
+                                            </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                                <div class="border-top pt-3 fs-sm">
+                                    <div class="d-flex justify-content-between mb-1">
+                                        <span class="text-muted">Subtotal</span>
+                                        <span>GHs {{ number_format(session('receipt.subtotal'), 2) }}</span>
+                                    </div>
+                                    <div class="d-flex justify-content-between mb-1">
+                                        <span class="text-success">Discount</span>
+                                        <span class="text-success">-GHs {{ number_format(session('receipt.discount'), 2) }}</span>
+                                    </div>
+                                    <div class="d-flex justify-content-between fw-bold fs-base border-top pt-2">
+                                        <span>Grand Total</span>
+                                        <span class="text-primary">GHs {{ number_format(session('receipt.grand_total'), 2) }}</span>
+                                    </div>
+                                </div>
+                                <div class="text-center mt-4">
+                                    <p class="text-muted fs-xs mb-0">Thank you for your business!</p>
+                                    <p class="text-muted fs-xxs">Powered by WebEdge Technologies</p>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" onclick="document.getElementById('receiptModal').style.display='none'">Close</button>
+                                <button type="button" class="btn btn-primary" onclick="window.print()"><i class="fa fa-print me-1"></i> Print Receipt</button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             @endif
            

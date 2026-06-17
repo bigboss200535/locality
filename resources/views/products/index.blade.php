@@ -33,9 +33,11 @@
                         <div class="card-header justify-content-between">
                             <h4 class="card-title">Products <span class="text-muted fs-base fw-normal">({{ $products->count() }} Products)</span></h4>
                             <div>
+                                 @if(auth()->user()->role_id === '1001' || auth()->user()->role_id === '1002' || auth()->user()->role_id === '1003')
                                 <button type="button" class="btn btn-sm btn-primary me-1" data-bs-toggle="modal" data-bs-target="#addProductModal">
                                     <i class="fa fa-plus me-1"></i> Add Product
                                 </button>
+                                @endif
                                 <!-- <a href="#" class="btn btn-sm btn-default"> <i class="fa fa-cloud-upload me-1"></i> Export </a> -->
                                 <!-- <a href="#" class="btn btn-sm btn-light"> <i class="fa fa-download me-1"></i> Import </a> -->
                             </div>
@@ -49,13 +51,21 @@
                                             <th data-table-sort>#ID</th>
                                             <th data-table-sort>Product</th>
                                             <th data-table-sort>Product Category</th>
+                                        @if(auth()->user()->role_id === '1001' || auth()->user()->role_id === '1002' || auth()->user()->role_id === '1003')
                                             <th data-table-sort>Store Name</th>
-                                            <th data-table-sort>Stock Quantity</th>
-                                            <th data-table-sort>Cost Price</th>
+                                        @endif
                                            
+                                        @if(auth()->user()->role_id === '1001')
+                                            <th data-table-sort>Tenant Name</th>
+                                        @endif
+                                            <!-- <th data-table-sort>Stock Quantity</th> -->
+                                            <th data-table-sort>Stockable</th>
+                                            <th data-table-sort>Expirable</th>
                                             <th data-table-sort>Date Added</th>
                                             <th data-table-sort>Status</th>
+                                             @if(auth()->user()->role_id === '1001' || auth()->user()->role_id === '1002' || auth()->user()->role_id === '1003')
                                             <th data-table-sort>Action</th>
+                                            @endif
                                         </tr>
                                     </thead>
 
@@ -69,19 +79,43 @@
                                                      <span class="text-muted fs-xs">{{ strtoupper($product->product_type )}}</span>
                                                     @endif
                                                 </td>
-                                                <td>{{ $product->category ? $product->category->category_name : 'N/A' }}</td>
-                                                <td>{{ $product->store ? $product->store->store_name : 'N/A'}}</td>
-                                                <td>{{ $product->stock ? $product->stock->stock_quantity : 0 }}</td>
-                                                <td>GHs {{ number_format($product->price ? $product->price->unit_cost : 0, 2) }}</td>
-                                               
-                                                <td>{{ $product->added_date ? \Carbon\Carbon::parse($product->added_date)->format('d M Y, h:i A') : 'N/A' }}</td>
                                                 <td>
-                                                    @if(($product->stock ? $product->stock->stock_quantity : 0) > 0)
-                                                        <span class="badge bg-success-subtle text-success">IN STOCK</span>
+                                                     <span class="badge bg-primary-subtle text-primary">{{ $product->category ? $product->category->category_name : 'N/A' }}</span>
+                                                 </td>
+                                            @if(auth()->user()->role_id === '1001' || auth()->user()->role_id === '1002' || auth()->user()->role_id === '1003')
+                                                <td>{{ $product->store ? $product->store->store_name : 'N/A'}}</td>
+                                            @endif
+                                            @if(auth()->user()->role_id === '1001')
+                                                <td>{{ $product->tenant ? $product->tenant->tenant_name : 'N/A'}}</td>
+                                            @endif
+                                                <!-- <td>{{ $product->stock ? $product->stock->stock_quantity : 0 }}</td> -->
+                                                <!-- <td>{{ $product->stockable }}</td> -->
+                                                <td>
+                                                    @if($product->stockable == 'Yes')
+                                                        <span class="badge bg-success-subtle text-success">YES</span>
                                                     @else
-                                                        <span class="badge bg-danger-subtle text-danger">OUT OF STOCK</span>
+                                                        <span class="badge bg-danger-subtle text-danger">NO</span>
                                                     @endif
                                                 </td>
+                                                 <!-- <td>{{ $product->expirable }}</td> -->
+                                                 <td>
+                                                    @if($product->expirable == 'Yes')
+                                                        <span class="badge bg-success-subtle text-success">YES</span>
+                                                    @else
+                                                        <span class="badge bg-danger-subtle text-danger">NO</span>
+                                                    @endif
+                                                </td>
+                                                <!-- <td>GHs {{ number_format($product->price ? $product->price->unit_cost : 0, 2) }}</td> -->
+                                                <!-- <td> {{  strtoupper($product->added_by)  }}</td> -->
+                                                <td>{{ $product->added_date ? \Carbon\Carbon::parse($product->added_date)->format('d M Y, h:i A') : 'N/A' }}</td>
+                                                <td>
+                                                    @if($product->status == 'Active' )
+                                                        <span class="badge bg-success-subtle text-success">ACTIVE</span>
+                                                    @else
+                                                        <span class="badge bg-danger-subtle text-danger">INACTIVE</span>
+                                                    @endif
+                                                </td>
+                                                 @if(auth()->user()->role_id === '1001' || auth()->user()->role_id === '1002' || auth()->user()->role_id === '1003')
                                                 <td>
                                                     <div class="btn-group">
                                                         <button type="button" class="btn btn-sm btn-outline-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
@@ -94,6 +128,7 @@
                                                         </ul>
                                                     </div>
                                                 </td>
+                                                @endif
                                             </tr>
                                         @empty
                                             <tr>

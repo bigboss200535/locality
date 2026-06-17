@@ -67,8 +67,25 @@
                             <!-- <p class="text-center text-muted my-3 auth-line">
                                 <span> Continue with Email </span>
                             </p> -->
-                             <x-auth-session-status class="mb-4" :status="session('status')" />
+                             <!-- <x-auth-session-status class="mb-4" :status="session('status')" /> -->
+                             <!-- Notifications -->
+                            @if(session('success'))
+                                <div class="alert alert-success alert-dismissible fade show mb-4" role="alert">
+                                    <i class="fa fa-check-circle me-1"></i> {{ session('success') }}
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                </div>
+                            @endif
 
+                            @if($errors->any())
+                                <div class="alert alert-danger alert-dismissible fade show mb-4" role="alert">
+                                    <ul class="mb-0">
+                                        @foreach($errors->all() as $error)
+                                            <li>{{ $error }}</li>
+                                        @endforeach
+                                    </ul>
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                </div>
+                            @endif
                                <form method="POST" action="{{ route('login') }}">
                                 @csrf
                                 <div class="mb-3">
@@ -78,8 +95,8 @@
                                     </label>
                                     <div class="input-group">
                                          <x-text-input id="email" placeholder="you&#64;example.com" class="form-control" type="email" name="email" :value="old('email')" autofocus />
-                                         <br>
-                                         <x-input-error :messages="$errors->get('email')" class="mt-2" style="color:red"/>
+                                         <!-- <br> -->
+                                         <!-- <x-input-error :messages="$errors->get('email')" class="mt-2" style="color:red"/> -->
                                     </div>
                                 </div>
                                 <div class="mb-3">
@@ -89,8 +106,8 @@
                                     </label>
                                     <div class="input-group">
                                         <x-text-input id="password" placeholder="••••••••" class="form-control" type="password" name="password"/>
-                                        <br>
-                                        <x-input-error :messages="$errors->get('password')" class="mt-2" style="color:red"/>
+                                        <!-- <br> -->
+                                        <!-- <x-input-error :messages="$errors->get('password')" class="mt-2" style="color:red"/> -->
                                     </div>
                                 </div>
                                 <div class="d-flex justify-content-between align-items-center mb-3">
