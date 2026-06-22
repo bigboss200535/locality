@@ -22,7 +22,7 @@
                 alert('This product is out of stock!');
                 return;
             }
-            let existing = this.cart.find(item => item.product_id === product.product_id);
+            let existing = this.cart.find(item => String(item.product_id) === String(product.product_id));
             if (existing) {
                 if (existing.quantity >= product.stock_quantity) {
                     alert('Cannot exceed available stock (' + product.stock_quantity + ')');
@@ -70,25 +70,43 @@
             return ((item.unit_price * item.quantity) - item.discount).toFixed(2);
         },
         subtotal() {
-            return this.cart.reduce((sum, item) => sum + (item.unit_price * item.quantity), 0).toFixed(2);
-        },
-        totalDiscount() {
-            return this.cart.reduce((sum, item) => sum + item.discount, 0).toFixed(2);
-        },
-        grandTotal() {
-            return (this.subtotal() - this.totalDiscount()).toFixed(2);
-        },
+                return this.cart.reduce(
+                    (sum,item)=>sum+(item.unit_price*item.quantity),
+                    0
+                );
+            }
+
+            totalDiscount() {
+                return this.cart.reduce(
+                    (sum,item)=>sum+item.discount,
+                    0
+                );
+            }
+
+            grandTotal() {
+                return (this.subtotal()-this.totalDiscount()).toFixed(2);
+            },
         filteredProducts() {
             // Filter products to only those with stock_quantity > 0
-            let activeProducts = this.products.filter(p => p.stock_quantity > 0);
-            if (!this.searchQuery) return activeProducts;
-            let query = this.searchQuery.toLowerCase();
-            return activeProducts.filter(p => 
-                (p.product_name && p.product_name.toLowerCase().includes(query)) || 
-                (p.product_type && p.product_type.toLowerCase().includes(query)) ||
-                (p.category_name && p.category_name.toLowerCase().includes(query))
-            );
-        }
+            const query = this.searchQuery.trim().toLowerCase();
+
+            return this.products.filter(product => {
+
+                if (product.stock_quantity <= 0)
+                    return false;
+
+                if (!query)
+                    return true;
+
+                return [
+                    product.product_id,
+                    product.product_name,
+                    product.product_type,
+                    product.category_name
+                ]
+                .map(v => String(v ?? '').toLowerCase())
+                .some(v => v.includes(query));
+});
     }">
         <div class="container-fluid">
             <div class="page-title-head d-flex align-items-center"></div>
@@ -318,8 +336,8 @@
                                 <!-- Payment Method & Checkout -->
                                 <form action="{{ route('sales.store') }}" method="POST">
                                     @csrf
-                                    <input type="hidden" name="cart_data" :value="JSON.stringify(cart)">
-                                    
+                                    <!-- <input type="hidden" name="cart_data" :value="JSON.stringify(cart)"> -->
+                                    <input x-model="serializedCart" type="hidden" name="cart_data">
                                     <div class="mb-3">
                                         <label for="payment_method" class="form-label fs-xs fw-semibold text-uppercase text-muted">Payment Method</label>
                                         <select class="form-select" id="payment_method" name="payment_method" x-model="paymentMethod" required>

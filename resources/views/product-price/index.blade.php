@@ -49,7 +49,7 @@
                                             <th data-table-sort>Cost Price</th>
                                             <th data-table-sort>Selling Price</th>
                                             <th data-table-sort>Date Added</th>
-                                            <th data-table-sort>Added by</th>
+                                            <th data-table-sort>Status</th>
                                             <th data-table-sort>Action</th>
                                         </tr>
                                     </thead>
@@ -64,7 +64,9 @@
                                                      <span class="text-muted fs-xs">{{ $product->category ? $product->category->category_name : 'N/A' }}</span>
                                                     @endif
                                                 </td>
-                                                <td>{{ $product->category ? $product->category->category_name : 'N/A' }}</td>
+                                                <td>
+                                                     <span class="badge bg-primary-subtle text-primary">{{ $product->category ? $product->category->category_name : 'N/A' }}</span>
+                                                 </td>
                                                 <td>{{ $product->store ? $product->store->store_name : 'N/A'}}</td>
                                                 <td>
                                                     @if($product->price)
@@ -81,7 +83,13 @@
                                                     @endif
                                                 </td>
                                                 <td>{{ $product->added_date ? \Carbon\Carbon::parse($product->added_date)->format('d M Y, h:i A') : 'N/A' }}</td>
-                                                <td>{{ $product->price ? strtoupper($product->price->added_by) : 'N/A' }}</td>
+                                                <td>
+                                                    @if($product->status === 'Active')
+                                                        <span class="badge bg-success-subtle text-success">ACTIVE</span>
+                                                    @else
+                                                        <span class="badge bg-warning-subtle text-danger">INACTIVE</span>
+                                                    @endif
+                                                </td>
                                                 <td>
                                                     <div class="btn-group">
                                                         <button type="button" class="btn btn-sm btn-outline-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">

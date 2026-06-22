@@ -8,6 +8,8 @@ use App\Http\Controllers\ProductCategoryController;
 use App\Http\Controllers\ProductPriceController;
 use App\Http\Controllers\ProductStockController;
 use App\Http\Controllers\SalesController;
+use App\Http\Controllers\ProductManagementController;
+use App\Http\Controllers\UserController;
 // Routes with no authentications
 Route::get('/', function () {
     return view('get-started');
@@ -60,11 +62,22 @@ Route::middleware(['auth', 'verified'])->group(function (){
     // Sales Routes
     Route::get('/sales', [SalesController::class, 'index'])->name('sales.index');
     Route::post('/sales', [SalesController::class, 'store'])->name('sales.store');
+
+    // Spoilage Management Routes
+    Route::get('/spoilages', [ProductManagementController::class, 'spoilages'])->name('spoilages.index');
+    Route::post('/spoilages', [ProductManagementController::class, 'storeSpoilage'])->name('spoilages.store');
+    Route::delete('/spoilages/{spoilage}', [ProductManagementController::class, 'destroySpoilage'])->name('spoilages.destroy');
     
     // User Profile Routes
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+    // User Management Routes
+    Route::get('/users', [UserController::class, 'index'])->name('users.index');
+    Route::post('/users', [UserController::class, 'store'])->name('users.store');
+    Route::put('/users/{user}', [UserController::class, 'update'])->name('users.update');
+    Route::delete('/users/{user}', [UserController::class, 'destroy'])->name('users.destroy');
 });
 
 Route::middleware('auth')->group(function () {

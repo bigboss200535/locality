@@ -13,22 +13,24 @@ class ProductCategoryController extends Controller
     public function index()
     {
         $user = auth()->user();
-        $tenantId = $user->tenant_id ?? '04eb01b4-8348-4a61-be64-3790946de696';
-        $storeId = $user->store_id ?? 'default-store';
+        $tenantId = $user->tenant_id;
+        $storeId = $user->store_id;
 
          $categories = ProductCategory::with(['store', 'tenant'])
             ->where('tenant_id', $tenantId)
             ->where('store_id', $storeId)
             ->get();
 
-        // $categories = ProductCategory::where('archived', 'No')
-        //     ->where('tenant_id', $tenantId)
-        //     ->where('store_id', $storeId)
-        //     ->get();
+        if ($user->role_id === '1001') {
+            $tenants = Tenant::where('archived', 'No')->get();
+            $stores = Stores::where('archived', 'No')->get();
 
-        $tenants = Tenant::all();
-        $stores = Stores::all();
-
+        } else if ($user->role_id === '1003' || $user->role_id === '1002') {
+              $tenants = Tenant::where('archived', 'No')->where('tenant_id', $tenantId)->first();
+              $stores = Stores::where('archived', 'No')->where('tenant_id', $tenantId)->get();
+        } else {
+            $stores = Stores::where('archived', 'No')->where('store_id', $storeId)->get();
+        }
         return view('product-category.index', compact('categories', 'tenants', 'stores'));
     }
 
@@ -38,6 +40,7 @@ class ProductCategoryController extends Controller
             'category_name' => 'required|string|max:150',
             'tenant_name' => 'nullable|string|max:150',
             'store_name' => 'nullable|string|max:150',
+            
         ]);
 
         $user = auth()->user();
@@ -46,9 +49,19 @@ class ProductCategoryController extends Controller
         $tenantId = $user->tenant_id ?? '04eb01b4-8348-4a61-be64-3790946de696';
         $storeId = $user->store_id ?? 'default-store';
 
+        $check_category = ProductCategory::where('category_name', $request->category_name)
+            ->where('tenant_id', $tenantId)
+            ->where('store_id', $storeId)
+            ->where('archived', 'No')
+            ->first();
+
+        if ($check_category) {
+            return redirect()->back()->with('error', 'Product Category already exists.');
+        }
+
         ProductCategory::create([
             'category_id' => (string) Str::uuid(),
-            'category_name' => $request->category_name,
+            'category_name' => strtoupper($request->category_name),
             'tenant_id' => $request->tenant_name ?? $tenantId,
             'store_id' => $request->store_name ?? $storeId,
             'user_id' => $userId,

@@ -15,8 +15,12 @@ return new class extends Migration
           $table->string('tenant_id', 50)->primary();
           $table->string('tenant_name', 300);
           $table->string('tenant_description', 300)->nullable();
+          $table->string('telephone', 50)->nullable();
+          $table->string('location', 250)->nullable();
+          $table->string('slogan', 250)->nullable();
+          $table->string('email', 50)->index();
           $table->string('type_of_business', 300)->nullable();
-          $table->string('user_id', 50)->nullable();
+          $table->string('user_id', 50)->index();
           $table->timestamp('added_date')->nullable();
           $table->timestamp('updated_date')->nullable();
           $table->string('status', 50)->default('Active')->nullable();
@@ -67,13 +71,14 @@ return new class extends Migration
             $table->string('user_id', 50)->primary();
             $table->string('firstname', 300);
             $table->string('othername', 300);
-            $table->string('tenant_id', 50)->nullable();
-            $table->string('store_id', 50)->nullable();
+            $table->string('tenant_id', 50)->nullable()->index();
+            $table->string('store_id', 50)->nullable()->index();
             $table->string('role_id', 50)->nullable();
             $table->string('provider', 200)->nullable(); // e.g. Google, Facebook, etc.
             $table->string('provider_id', 200)->nullable(); // ID from the provider
             $table->text('avatar')->nullable(); // URL or base64 string for the user's avatar
             $table->string('email', 100)->unique();
+            $table->string('blocked', 50)->default('No');
             $table->timestamp('last_login')->nullable();
             $table->string('telephone', 50)->unique()->nullable();
             $table->string('telephone_verify', 50)->default('No');
@@ -113,7 +118,6 @@ return new class extends Migration
         Schema::create('user_logs', function (Blueprint $table) {
             $table->string('log_id')->primary();
             $table->string('user_id', 50)->nullable();
-            $table->string('tenant_id', 50)->nullable();
             $table->string('log_name',50)->nullable();
             $table->date('login_date')->nullable();
             $table->date('logout_date')->nullable();
@@ -122,7 +126,8 @@ return new class extends Migration
             $table->timestamp('logout_time')->nullable();
             $table->string('user_ip', 100)->nullable();
             $table->string('user_pc')->nullable();
-            $table->string('store_id', 50)->nullable();
+            $table->string('tenant_id', 50)->nullable()->index();
+            $table->string('store_id', 50)->nullable()->index();
             $table->string('added_id', 100)->nullable();
             $table->timestamp('added_date')->nullable();
             $table->string('status', 100)->default('Active')->index();
@@ -134,6 +139,29 @@ return new class extends Migration
             // key
             $table->foreign('user_id')->references('user_id')->on('users');
             $table->foreign('tenant_id')->references('tenant_id')->on('tenants');
+        });
+
+        Schema::create('user_permissions', function (Blueprint $table) {
+            $table->string('user_id', 50)->primary();
+            $table->string('module', 50);
+            $table->string('delete', 50);
+            $table->string('add', 50);
+            $table->string('edit', 50);
+            $table->string('read', 50);
+            $table->string('tenant_id', 50)->nullable();
+            $table->string('store_id', 50)->nullable()->index();
+            $table->string('added_id', 50)->nullable()->index();
+            $table->string('password_salt', 100)->nullable();
+            $table->string('status', 100)->default('Active')->index();
+            $table->string('added_by', 100)->nullable();
+            $table->string('updated_by', 100)->nullable();
+            $table->string('archived', 100)->default('No')->index();
+            $table->string('archived_by', 100)->nullable()->index();
+            $table->timestamp('archived_date')->nullable()->index();
+             // keys
+            $table->foreign('tenant_id')->references('tenant_id')->on('tenants');
+            $table->foreign('store_id')->references('store_id')->on('stores');
+            $table->foreign('added_id')->references('user_id')->on('users');
         });
     }
 
@@ -148,5 +176,6 @@ return new class extends Migration
         Schema::dropIfExists('sessions');
         Schema::dropIfExists('user_logs');
         Schema::dropIfExists('roles');
+        Schema::dropIfExists('user_permissions');
     }
 };

@@ -52,7 +52,7 @@ class ProductStockController extends Controller
                 'stock_id' => (string) Str::uuid(),
                 'stock_quantity' => $request->stock_quantity,
                 'stock_date' => now(),
-                'stocked_by' => $username,
+                'added_by' => $username,
                 'tenant_id' => $tenantId,
                 'store_id' => $storeId,
                 'user_id' => $userId,

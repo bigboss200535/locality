@@ -66,13 +66,16 @@
                                                      <span class="text-muted fs-xs">{{ strtoupper($product->product_type) }}</span>
                                                     @endif
                                                 </td>
-                                                <td>{{ $product->category ? $product->category->category_name : 'N/A' }}</td>
+                                                <td>
+                                                     <span class="badge bg-primary-subtle text-primary">{{ $product->category ? $product->category->category_name : 'N/A' }}</span>
+                                                 </td>
+                                                <!-- <td>{{ $product->category ? $product->category->category_name : 'N/A' }}</td> -->
                                                 <td>{{ $product->store ? $product->store->store_name : 'N/A'}}</td>
                                                 <td>
                                                     @if($product->stock)
                                                         {{ $product->stock->stock_quantity }}
                                                     @else
-                                                        <span class="badge bg-soft-warning text-warning">0 (No Stock Record)</span>
+                                                        <span class="badge bg-soft-danger text-danger">0 (No Stock Record)</span>
                                                     @endif
                                                 </td>
                                                 <td>{{ number_format($product->price ? $product->price->unit_cost : 0, 2) }}</td>

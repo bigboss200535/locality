@@ -11,9 +11,6 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
-// #[Fillable(['name', 'email', 'password'])]
-// #[Hidden(['password', 'remember_token'])]
-
 class User extends Authenticatable
 {
     /** @use HasFactory<UserFactory> */
@@ -24,40 +21,36 @@ class User extends Authenticatable
     protected $primaryKey = 'user_id';
     public $timestamps = false;
     protected $keyType = 'string';
-    public $incrementing= false;
-
-    /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
-     */
+    public $incrementing = false;
 
     protected $fillable = [
         'user_id',
         'username',
         'password',
-        // 'fullname',
         'firstname',
         'othername', 
-        // 'gender_id',
+        'tenant_id',
+        'store_id',
+        'role_id',
+        'blocked',
         'oldpassword',
         'provider', 
         'provider_id',
         'avatar',
         'last_login',
         'salt',
-        // 'facility_id',
         'telephone',
         'telephone_verified',
         'telephone_verified_at',
-        // 'user_roles_id',
         'mode',
         'email',
         'email_verified',
         'email_verified_at',
         'added_id',
         'added_date',
+        'added_by',
         'udpated_by',
+        'updated_by',
         'status',
         'archived',
         'archived_id',
@@ -71,5 +64,20 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    public function tenant()
+    {
+        return $this->belongsTo(Tenant::class, 'tenant_id', 'tenant_id');
+    }
+
+    public function store()
+    {
+        return $this->belongsTo(Stores::class, 'store_id', 'store_id');
+    }
+
+    public function role()
+    {
+        return $this->belongsTo(Role::class, 'role_id', 'role_id');
     }
 }

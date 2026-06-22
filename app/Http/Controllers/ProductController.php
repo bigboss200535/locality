@@ -28,7 +28,7 @@ class ProductController extends Controller
 
             ProductCategory::create([
                 'category_id' => (string) Str::uuid(),
-                'category_name' => 'GENERAL PRODUCT',
+                'category_name' => 'GENERAL',
                 'tenant_id' => $tenantId,
                 'user_id' => $user->user_id,
                 'store_id' => $user->store_id,
@@ -54,7 +54,9 @@ class ProductController extends Controller
             'tenant_id' => 'nullable|string|max:50',
             'cost_price' => 'required|numeric|min:0',
             'selling_price' => 'required|numeric|min:0',
-            'stock_quantity' => 'required|integer|min:0',
+            // 'stock_quantity' => 'required|integer|min:0',
+            'expirable' => 'required|string|max:20', 
+            'stockable' => 'required|string|max:20',
         ]);
 
         $user = auth()->user();
@@ -72,6 +74,8 @@ class ProductController extends Controller
             'product_type' => $request->product_type,
             'category_id' => $request->category_id,
             'tenant_id' => $tenantId,
+            'expirable' => $request->expirable,
+            'stockable' => $request->stockable,
             'store_id' => $storeId,
             'user_id' => $userId,
             'added_date' => now(),
@@ -95,20 +99,20 @@ class ProductController extends Controller
         ]);
 
         // 3. Create ProductStock
-        ProductStock::create([
-            'stock_id' => (string) Str::uuid(),
-            'product_id' => $productId,
-            'stock_quantity' => $request->stock_quantity,
-            'stock_date' => now(),
-            'stocked_by' => $username,
-            'tenant_id' => $tenantId,
-            'store_id' => $storeId,
-            'user_id' => $userId,
-            'added_date' => now(),
-            'status' => 'Active',
-            'added_by' => $username,
-            'archived' => 'No',
-        ]);
+        // ProductStock::create([
+        //     'stock_id' => (string) Str::uuid(),
+        //     'product_id' => $productId,
+        //     'stock_quantity' => $request->stock_quantity,
+        //     'stock_date' => now(),
+        //     'stocked_by' => $username,
+        //     'tenant_id' => $tenantId,
+        //     'store_id' => $storeId,
+        //     'user_id' => $userId,
+        //     'added_date' => now(),
+        //     'status' => 'Active',
+        //     'added_by' => $username,
+        //     'archived' => 'No',
+        // ]);
 
         return redirect()->route('products')->with('success', 'Product added successfully.');
     }

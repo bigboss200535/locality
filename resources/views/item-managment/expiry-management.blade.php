@@ -90,18 +90,18 @@
                                             @endif
                                             
                                                 <td>
-                                                    @if($product->stockable == 'NO')
-                                                        <span class="badge bg-primary-subtle text-primary">NO</span>
+                                                    @if($product->stockable == 'Yes')
+                                                        <span class="badge bg-success-subtle text-success">YES</span>
                                                     @else
-                                                        <span class="badge bg-info-subtle text-info">YES</span>
+                                                        <span class="badge bg-danger-subtle text-danger">NO</span>
                                                     @endif
                                                 </td>
                                                  <!-- <td>{{ $product->expirable }}</td> -->
                                                  <td>
-                                                    @if($product->expirable == 'YES')
-                                                        <span class="badge bg-info-subtle text-info">YES</span>
+                                                    @if($product->expirable == 'Yes')
+                                                        <span class="badge bg-success-subtle text-success">YES</span>
                                                     @else
-                                                        <span class="badge bg-primary-subtle text-primary">NO</span>
+                                                        <span class="badge bg-danger-subtle text-danger">NO</span>
                                                     @endif
                                                 </td>
                                                 <!-- <td>GHs {{ number_format($product->price ? $product->price->unit_cost : 0, 2) }}</td> -->
@@ -195,7 +195,7 @@
                             <input type="text" class="form-control" id="product_name" name="product_name" required placeholder="e.g. iPhone 15 Pro">
                         </div>
                         <div class="mb-3">
-                            <label for="product_type" class="form-label">Product Type / Variant</label>
+                            <label for="product_type" class="form-label">Product Type / Subtitle</label>
                             <input type="text" class="form-control" id="product_type" name="product_type" placeholder="e.g. 256GB, Titanium Blue">
                         </div>
                         <div class="mb-3">
@@ -217,28 +217,10 @@
                                 <input type="number" step="0.01" class="form-control" id="selling_price" name="selling_price" required min="0" placeholder="0.00">
                             </div>
                         </div>
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label for="expirable" class="form-label">Expirable</label>
-                                <select name="expirable" id="expirable" class="form-control" required>
-                                    <option value="NO">NO</option>
-                                    <option value="YES">YES</option>
-                                </select>
-                                <!-- <input type="text" step="0.01" class="form-control" id="expirable" name="expirable" required min="0" placeholder="0.00"> -->
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label for="stockable" class="form-label">Stocked Product</label>
-                                <select name="stockable" id="stockable" class="form-control" required>
-                                    <option value="NO">NO</option>
-                                    <option value="YES">YES</option>
-                                </select>
-                                <!-- <input type="number" step="0.01" class="form-control" id="stockable" name="stockable" required min="0" placeholder="0.00"> -->
-                            </div>
-                        </div>
-                        <!-- <div class="mb-3">
+                        <div class="mb-3">
                             <label for="stock_quantity" class="form-label">Initial Stock Quantity</label>
-                            <input type="number" class="form-control" id="stock_quantity" name="stock_quantity" required min="0" placeholder="0" value="0" disabled>
-                        </div> -->
+                            <input type="number" class="form-control" id="stock_quantity" name="stock_quantity" required min="0" placeholder="0">
+                        </div>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>

@@ -70,6 +70,7 @@ class SalesController extends Controller
                 'sales_id' => (string) Str::uuid(),
                 'product_id' => $productId,
                 'payment_id' => $paymentId,
+                'receipt_number' =>$tenantId . $storeId . date('Ymd'),
                 'tenant_id' => $tenantId,
                 'store_id' => $storeId,
                 'quantity' => $quantity,
@@ -78,7 +79,7 @@ class SalesController extends Controller
                 'transaction_time' => now(),
                 'user_id' => $userId,
                 'added_date' => now(),
-                'tenant_status' => 'Paid',
+                'status' => 'Paid',
                 'added_by' => $username,
                 'archived' => 'No',
             ]);

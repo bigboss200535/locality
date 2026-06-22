@@ -25,7 +25,7 @@ return new class extends Migration
             $table->string('archived', 100)->default('No')->index();
             $table->string('archived_by', 100)->nullable()->index();
             $table->timestamp('archived_date')->nullable()->index();
-
+            // key
             $table->foreign('tenant_id')->references('tenant_id')->on('tenants');
             $table->foreign('store_id')->references('store_id')->on('stores');
             $table->foreign('user_id')->references('user_id')->on('users');
@@ -35,7 +35,10 @@ return new class extends Migration
         Schema::create('products', function (Blueprint $table) {
             $table->string('product_id', 50)->primary();
             $table->string('product_name', 150)->nullable();
-            $table->string('product_type', 150)->nullable();
+            $table->string('product_type', 150)->nullable();// Variant
+            $table->string('barcode', 150)->nullable();
+            $table->string('qr_code', 150)->nullable();
+            $table->string('supplier_id', 150)->nullable();
             $table->string('expirable', 50)->default('No'); //yes/no
             $table->string('stockable', 50)->default('No'); //yes/no
             $table->string('category_id', 50)->nullable();
@@ -83,13 +86,12 @@ return new class extends Migration
             $table->string('stock_id', 50)->primary();
             $table->string('product_id', 50);
             $table->integer('stock_quantity')->nullable();
+            $table->string('batch_number', 100)->nullable();
+            $table->date('expiry_date')->nullable();
             $table->timestamp('stock_date')->nullable();
-            $table->string('stocked_by', 100)->nullable();
             $table->string('tenant_id', 50)->nullable();
             $table->string('store_id', 50);
             $table->string('user_id', 50)->nullable();
-            $table->string('expirable', 100)->nullable();
-            $table->date('expiry_date')->nullable();
             $table->timestamp('added_date')->nullable();
             $table->timestamp('updated_date')->nullable();
             $table->string('status', 50)->default('Active')->nullable();
@@ -98,11 +100,35 @@ return new class extends Migration
             $table->string('archived', 100)->default('No')->index();
             $table->string('archived_by', 100)->nullable()->index();
             $table->timestamp('archived_date')->nullable()->index();
-                // key
+            // key
             $table->foreign('tenant_id')->references('tenant_id')->on('tenants');
             $table->foreign('store_id')->references('store_id')->on('stores');
             $table->foreign('user_id')->references('user_id')->on('users');
         });
+
+        //  Schema::create('stocked_logs', function (Blueprint $table) {
+        //     $table->string('stock_id', 50)->primary();
+        //     $table->string('product_id', 50);
+        //     $table->integer('stock_quantity')->nullable();
+        //     $table->string('batch_number', 100)->nullable();
+        //     $table->date('expiry_date')->nullable();
+        //     $table->timestamp('stock_date')->nullable();
+        //     $table->string('tenant_id', 50)->nullable();
+        //     $table->string('store_id', 50);
+        //     $table->string('user_id', 50)->nullable();
+        //     $table->timestamp('added_date')->nullable();
+        //     $table->timestamp('updated_date')->nullable();
+        //     $table->string('status', 50)->default('Active')->nullable();
+        //     $table->string('added_by', 100)->nullable();
+        //     $table->string('updated_by', 100)->nullable();
+        //     $table->string('archived', 100)->default('No')->index();
+        //     $table->string('archived_by', 100)->nullable()->index();
+        //     $table->timestamp('archived_date')->nullable()->index();
+        //     // key
+        //     $table->foreign('tenant_id')->references('tenant_id')->on('tenants');
+        //     $table->foreign('store_id')->references('store_id')->on('stores');
+        //     $table->foreign('user_id')->references('user_id')->on('users');
+        // });
 
         Schema::create('bills_payment', function (Blueprint $table) {
             $table->string('payment_id', 50)->primary();
@@ -118,7 +144,7 @@ return new class extends Migration
             $table->date('expiry_date')->nullable();
             $table->timestamp('added_date')->nullable();
             $table->timestamp('updated_date')->nullable();
-             $table->string('status', 50)->default('Active')->nullable();
+            $table->string('status', 50)->default('Active')->nullable();
             $table->string('added_by', 100)->nullable();
             $table->string('updated_by', 100)->nullable();
             $table->string('archived', 100)->default('No')->index();
@@ -140,7 +166,7 @@ return new class extends Migration
             $table->string('user_id', 50)->nullable();
             $table->timestamp('added_date')->nullable();
             $table->timestamp('updated_date')->nullable();
-             $table->string('status', 50)->default('Active')->nullable();
+            $table->string('status', 50)->default('Active')->nullable();
             $table->string('added_by', 100)->nullable();
             $table->string('updated_by', 100)->nullable();
             $table->string('archived', 100)->default('No')->index();
@@ -159,6 +185,9 @@ return new class extends Migration
             $table->string('receipt_number', 50)->index();
             $table->string('tenant_id', 50)->nullable();
             $table->string('store_id', 50);
+            $table->string('refunded', 50)->default('No')->nullable();
+            $table->string('refunded_user_id', 50)->nullable();
+            $table->timestamp('refunded_dated')->nullable();
             $table->integer('quantity')->nullable();
             $table->float('unit_cost')->nullable();
             $table->float('total')->nullable();
@@ -174,18 +203,18 @@ return new class extends Migration
             $table->string('archived', 100)->default('No')->index();
             $table->string('archived_by', 100)->nullable()->index();
             $table->timestamp('archived_date')->nullable()->index();
-                // key
+             // key
             $table->foreign('tenant_id')->references('tenant_id')->on('tenants');
             $table->foreign('store_id')->references('store_id')->on('stores');
              $table->foreign('user_id')->references('user_id')->on('users');
         });
 
-        Schema::create('expiry_management_details', function (Blueprint $table) {
-            // $table->string('expiry_id', 50)->primary();
-            $table->string('batch_id', 50);
+        Schema::create('refunds', function (Blueprint $table) {
+            $table->string('refund_id', 50)->primary();
+            $table->string('payment_receipt', 50);
             $table->string('product_id')->nullable();
-            $table->integer('stocked_qty')->nullable();
-            // $table->integer('expiry_date')->nullable();
+            $table->integer('quantity')->nullable();
+            $table->float('amount_refunded', 10, 2)->nullable();
             $table->text('comments')->nullable();
             $table->string('user_id', 50)->nullable();
             $table->string('tenant_id', 50)->nullable();
@@ -194,7 +223,7 @@ return new class extends Migration
             $table->date('expiry_date')->nullable();
             $table->timestamp('added_date')->nullable();
             $table->timestamp('updated_date')->nullable();
-             $table->string('status', 50)->default('Active')->nullable();
+            $table->string('status', 50)->default('Active')->nullable();
             $table->string('added_by', 100)->nullable();
             $table->string('updated_by', 100)->nullable();
             $table->string('archived', 100)->default('No')->index();
@@ -203,21 +232,50 @@ return new class extends Migration
                 // keys
             $table->foreign('tenant_id')->references('tenant_id')->on('tenants');
             $table->foreign('store_id')->references('store_id')->on('stores');
-             $table->foreign('user_id')->references('user_id')->on('users');
+            $table->foreign('user_id')->references('user_id')->on('users');
         });
 
-        Schema::create('product_expiry_management', function (Blueprint $table) {
-            $table->string('expiry_id', 50)->primary();
-            $table->string('batch_id', 50);
-            $table->text('comments')->nullable();
-            $table->string('store_id', 50);
+        // Schema::create('product_management', function (Blueprint $table) {
+        //     $table->string('management_id', 50)->primary();
+        //     $table->string('batch_id', 50)->nullable();
+        //     $table->string('store_id', 50)->nullable();
+        //     $table->integer('quantity')->nullable();
+        //     $table->string('reason', 50)->nullable(); //expired, damaged, lost, stolen
+        //     $table->string('tenant_id', 50)->nullable();
+        //     $table->string('user_id', 50)->nullable();
+        //     $table->string('expirable', 100)->nullable();
+        //     $table->date('expiry_date')->nullable();
+        //     $table->text('comments')->nullable();
+        //     $table->timestamp('added_date')->nullable();
+        //     $table->timestamp('updated_date')->nullable();
+        //     $table->string('status', 50)->default('Active')->nullable();
+        //     $table->string('added_by', 100)->nullable();
+        //     $table->string('updated_by', 100)->nullable();
+        //     $table->string('archived', 100)->default('No')->index();
+        //     $table->string('archived_by', 100)->nullable()->index();
+        //     $table->timestamp('archived_date')->nullable()->index();
+        //      // key
+        //     $table->foreign('tenant_id')->references('tenant_id')->on('tenants');
+        //     $table->foreign('store_id')->references('store_id')->on('stores');
+        //      $table->foreign('user_id')->references('user_id')->on('users');
+        // });
+
+        Schema::create('product_management', function (Blueprint $table) {
+            $table->string('product_management_id', 50)->primary();
+            $table->string('product_id', 50); 
+            $table->string('batch_id', 50)->nullable(); //if expired, add batch
+            $table->string('store_id', 50)->nullable();
+            $table->integer('unit_cost')->nullable();
+            $table->integer('quantity')->nullable();
+            $table->string('reason', 50)->nullable(); //expired, damaged, lost, stolen
             $table->string('tenant_id', 50)->nullable();
             $table->string('user_id', 50)->nullable();
-            $table->string('expirable', 100)->nullable();
             $table->date('expiry_date')->nullable();
+            $table->date('spoiled_date')->nullable();
+            $table->text('comments')->nullable();
             $table->timestamp('added_date')->nullable();
             $table->timestamp('updated_date')->nullable();
-             $table->string('status', 50)->default('Active')->nullable();
+            $table->string('status', 50)->default('Active')->nullable();
             $table->string('added_by', 100)->nullable();
             $table->string('updated_by', 100)->nullable();
             $table->string('archived', 100)->default('No')->index();
@@ -225,8 +283,9 @@ return new class extends Migration
             $table->timestamp('archived_date')->nullable()->index();
              // key
             $table->foreign('tenant_id')->references('tenant_id')->on('tenants');
+            $table->foreign('product_id')->references('product_id')->on('products');
             $table->foreign('store_id')->references('store_id')->on('stores');
-             $table->foreign('user_id')->references('user_id')->on('users');
+            $table->foreign('user_id')->references('user_id')->on('users');
         });
 
         Schema::create('stock_taking', function (Blueprint $table) {
@@ -236,7 +295,7 @@ return new class extends Migration
             $table->string('store_id', 50);
             $table->string('tenant_id', 50)->nullable();
             $table->string('user_id', 50)->nullable();
-             $table->string('status', 50)->default('Active')->nullable();
+            $table->string('status', 50)->default('Active')->nullable();
             $table->string('approved_by')->nullable();
             $table->timestamp('added_date')->nullable();
             $table->timestamp('updated_date')->nullable();
@@ -263,8 +322,8 @@ return new class extends Migration
         Schema::dropIfExists('product_stocked');
         Schema::dropIfExists('bills_payment');
         Schema::dropIfExists('product_sales');
-        Schema::dropIfExists('expiry_management_details');
-        Schema::dropIfExists('product_expiry_management');
+        Schema::dropIfExists('refunds');
+        Schema::dropIfExists('product_management');
         Schema::dropIfExists('stock_taking');
         Schema::dropIfExists('receipts'); 
     }

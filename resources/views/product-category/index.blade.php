@@ -15,6 +15,12 @@
                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
             @endif
+             @if(session('error'))
+                <div class="alert alert-danger alert-dismissible fade show mb-4" role="alert">
+                    <i class="fa fa-check-circle me-1"></i> {{ session('error') }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            @endif
 
             @if($errors->any())
                 <div class="alert alert-danger alert-dismissible fade show mb-4" role="alert">
@@ -54,9 +60,10 @@
                                              @if(auth()->user()->role_id === '1001')
                                                 <th data-table-sort>Tenant Name</th>
                                             @endif
-                                            <th data-table-sort>Status</th>
-                                            <th data-table-sort>Added By</th>
+                                           
+                                            <!-- <th data-table-sort>Added By</th> -->
                                             <th data-table-sort>Added Date</th>
+                                            <th data-table-sort>Status</th>
                                             @if(auth()->user()->role_id === '1001' || auth()->user()->role_id === '1002' || auth()->user()->role_id === '1003')
                                             <th data-table-sort>Action</th>
                                             @endif
@@ -72,23 +79,24 @@
                                                 </td>
                                                  @if(auth()->user()->role_id === '1001' || auth()->user()->role_id === '1002' || auth()->user()->role_id === '1003')
                                                 <td>
-                                                    <h5 class="m-0 fs-base">{{ strtoupper($category->store->store_name) ?? 'N/A'}}</h5>
+                                                    {{ strtoupper($category->store->store_name) ?? 'N/A'}}
                                                 </td>
                                                  @endif
                                                  @if(auth()->user()->role_id === '1001')
                                                  <td>
-                                                    <h5 class="m-0 fs-base">{{ strtoupper($category->tenant->tenant_name) ?? 'N/A'}}</h5>
+                                                    {{ strtoupper($category->tenant->tenant_name) ?? 'N/A'}}
                                                 </td>
                                                 @endif
-                                                <td>
+                                               
+                                                <!-- <td>{{ strtoupper($category->added_by) ?? 'N/A' }}</td> -->
+                                                <td>{{ $category->added_date ? \Carbon\Carbon::parse($category->added_date)->format('d M Y, h:i A') : 'N/A' }}</td>
+                                                 <td>
                                                     @if($category->status === 'Active')
                                                         <span class="badge bg-success-subtle text-success">ACTIVE</span>
                                                     @else
                                                         <span class="badge bg-warning-subtle text-danger">INACTIVE</span>
                                                     @endif
                                                 </td>
-                                                <td>{{ strtoupper($category->added_by) ?? 'N/A' }}</td>
-                                                <td>{{ $category->added_date ? \Carbon\Carbon::parse($category->added_date)->format('d M Y, h:i A') : 'N/A' }}</td>
                                                   @if(auth()->user()->role_id === '1001' || auth()->user()->role_id === '1002' || auth()->user()->role_id === '1003')
                                                     <td>
                                                         <div class="btn-group">
@@ -217,26 +225,31 @@
                     <div class="modal-body">
                         <div class="mb-3">
                             <label for="category_name" class="form-label">Category Name</label>
-                            <input type="text" class="form-control" id="category_name" name="category_name" required placeholder="e.g. Electronics">
+                            <input type="text" class="form-control" id="category_name" name="category_name" required placeholder="e.g. Electronics" autocomplete="off">
                         </div>
+                         @if(auth()->user()->role_id === '1001')
                         <div class="mb-3">
                             <label for="tenant_name" class="form-label">Tenant Name</label>
                             <select class="form-control text-start" id="tenant_name" name="tenant_name" required>
-                                <option value="" disabled selected>Select Tenant...</option>
+                                <!-- <option value="" disabled selected>Select Tenant...</option> -->
                                 @foreach($tenants as $tenant)
                                     <option value="{{ $tenant->tenant_id }}">{{ $tenant->tenant_name }}</option>
                                 @endforeach
                             </select>
                         </div>
+                        @endif
+                         @if(auth()->user()->role_id === '1001' || auth()->user()->role_id === '1002' || auth()->user()->role_id === '1003')
+                        
                          <div class="mb-3">
                             <label for="store_name" class="form-label">Store Name</label>
                             <select class="form-control text-start" id="store_name" name="store_name" required>
-                                <option value="" disabled selected>Select Store...</option>
+                                <!-- <option value="" disabled selected>Select Store...</option> -->
                                 @foreach($stores as $store)
                                     <option value="{{ $store->store_id }}">{{ $store->store_name }}</option>
                                 @endforeach
                             </select>
                         </div>
+                        @endif
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
