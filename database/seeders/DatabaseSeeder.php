@@ -97,12 +97,14 @@ class DatabaseSeeder extends Seeder
             'firstname' => 'Mohammed',
             'othername' => 'Alhassan',
             'role_id' => '1001',
+            'usage' => '0',
             'email' => 'bigboss200535@gmail.com',
             'email_verified_at' => now(),
             'password' =>  Hash::make('password'),
             'telephone' => '233245340461',
             'telephone_verify' => 'Yes',
             'user_no' => 'e4c06f74-4b4e-4669-9137-1729876865a3',
+            'added_date' => now(),
         ]);
 
         // User::factory(100)->create();

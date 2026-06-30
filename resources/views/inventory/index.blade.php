@@ -89,7 +89,7 @@
                                                     @endif
                                                 </td>
                                                 <td>
-                                                    <div class="btn-group">
+                                                    <div class="">
                                                         <button type="button" class="btn btn-sm btn-outline-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
                                                             Action
                                                         </button>
@@ -97,7 +97,7 @@
                                                             @if($product->stock)
                                                                 <li>
                                                                     <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#editStockModal-{{ $product->product_id }}">
-                                                                        Update Stock
+                                                                        Edit Stock
                                                                     </a>
                                                                 </li>
                                                                 <li>

@@ -27,7 +27,30 @@ class AuthenticatedSessionController extends Controller
     {
         $request->authenticate();
         $request->session()->regenerate();
-        //    return redirect()->intended(RouteServiceProvider::HOME);
+
+        // Additional check (though it's already checked in LoginRequest)
+            // $user = Auth::user();
+            // 
+            // if ($user->isBlocked()) {
+            //     Auth::logout();
+            //     $request->session()->invalidate();
+            //     $request->session()->regenerateToken();
+                
+            //     return redirect('/get-started')->withErrors([
+            //         'email' => 'Your account is Blocked.',
+            //     ]);
+            // }
+
+            // if (!$user->canLogin()) {
+            //     Auth::logout();
+            //     $request->session()->invalidate();
+            //     $request->session()->regenerateToken();
+                
+            //     return redirect('/get-started')->withErrors([
+            //         'email' => 'Your account is not active.',
+            //     ]);
+            // }
+
         return redirect()->intended(route('dashboard', absolute: false));
     }
 

@@ -46,8 +46,12 @@
                                             <th data-table-sort>Full Name</th>
                                             <th data-table-sort>Email / Contact</th>
                                             <th data-table-sort>Role</th>
+                                             @if(auth()->user()->role_id === '1001' || auth()->user()->role_id === '1002' || auth()->user()->role_id === '1003')
                                             <th data-table-sort>Store Name</th>
+                                            @endif
+                                             @if(auth()->user()->role_id === '1001')
                                             <th data-table-sort>Tenant Name</th>
+                                            @endif
                                             <th data-table-sort>Block Status</th>
                                             <th data-table-sort>Date Added</th>
                                             <th data-table-sort>Status</th>
@@ -63,7 +67,7 @@
                                                 <td>#{{ substr($userItem->user_id, 0, 8) }}</td>
                                                 <td>
                                                     <h5 class="m-0 fs-base">{{ strtoupper($userItem->firstname) }} {{ strtoupper($userItem->othername) }}</h5>
-                                                    <span class="text-muted fs-xs">Username: {{ $userItem->username }}</span>
+                                                    <!-- <span class="text-muted fs-xs">Username: {{ $userItem->email }}</span> -->
                                                 </td>
                                                 <td>
                                                     <span class="fs-base fw-semibold">{{ $userItem->email }}</span>
@@ -74,8 +78,12 @@
                                                 <td>
                                                     <span class="badge bg-primary-subtle text-primary">{{ $userItem->role ? strtoupper($userItem->role->role_name) : 'N/A' }}</span>
                                                 </td>
-                                                <td>{{ $userItem->store ? $userItem->store->store_name : 'N/A' }}</td>
+                                                 @if(auth()->user()->role_id === '1001' || auth()->user()->role_id === '1002' || auth()->user()->role_id === '1003')
+                                                 <td>{{ $userItem->store ? $userItem->store->store_name : 'N/A' }}</td>
+                                                 @endif
+                                                 @if(auth()->user()->role_id === '1001')
                                                 <td>{{ $userItem->tenant ? $userItem->tenant->tenant_name : 'N/A' }}</td>
+                                                 @endif  
                                                 <td>
                                                     @if($userItem->blocked === 'Yes')
                                                         <span class="badge bg-danger text-white">BLOCKED</span>
@@ -93,7 +101,7 @@
                                                 </td>
                                                 @if(auth()->user()->role_id === '1001' || auth()->user()->role_id === '1002')
                                                 <td>
-                                                    <div class="btn-group">
+                                                    <div class="">
                                                         <button type="button" class="btn btn-sm btn-outline-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
                                                             Action
                                                         </button>
@@ -117,7 +125,7 @@
                                                 <div class="modal-dialog">
                                                     <div class="modal-content">
                                                         <div class="modal-header">
-                                                            <h5 class="modal-title" id="editUserModalLabel-{{ $userItem->user_id }}">Edit User: {{ $userItem->firstname }}</h5>
+                                                            <h5 class="modal-title" id="editUserModalLabel-{{ $userItem->user_id }}">Edit User: {{ strtoupper($userItem->firstname) .' '. strtoupper($userItem->othername) }}</h5>
                                                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                                         </div>
                                                         <form action="{{ route('users.update', $userItem->user_id) }}" method="POST">
@@ -142,6 +150,7 @@
                                                                     <label for="telephone-{{ $userItem->user_id }}" class="form-label">Telephone</label>
                                                                     <input type="text" class="form-control" id="telephone-{{ $userItem->user_id }}" name="telephone" value="{{ $userItem->telephone }}">
                                                                 </div>
+                                                                 @if(auth()->user()->role_id === '1001')
                                                                 <div class="mb-3">
                                                                     <label for="tenant_id-{{ $userItem->user_id }}" class="form-label">Tenant Name</label>
                                                                     <select class="form-select" id="tenant_id-{{ $userItem->user_id }}" name="tenant_id" required>
@@ -150,6 +159,8 @@
                                                                         @endforeach
                                                                     </select>
                                                                 </div>
+                                                                @endif
+                                                                 @if(auth()->user()->role_id === '1001' || auth()->user()->role_id === '1002' || auth()->user()->role_id === '1003')
                                                                 <div class="mb-3">
                                                                     <label for="store_id-{{ $userItem->user_id }}" class="form-label">Store Name</label>
                                                                     <select class="form-select" id="store_id-{{ $userItem->user_id }}" name="store_id" required>
@@ -158,6 +169,8 @@
                                                                         @endforeach
                                                                     </select>
                                                                 </div>
+                                                                @endif
+                                                                @if(auth()->user()->role_id === '1001' || auth()->user()->role_id === '1002' || auth()->user()->role_id === '1003')
                                                                 <div class="mb-3">
                                                                     <label for="role_id-{{ $userItem->user_id }}" class="form-label">User Role</label>
                                                                     <select class="form-select" id="role_id-{{ $userItem->user_id }}" name="role_id" required>
@@ -166,6 +179,7 @@
                                                                         @endforeach
                                                                     </select>
                                                                 </div>
+                                                                @endif
                                                                 <div class="mb-3">
                                                                     <label for="blocked-{{ $userItem->user_id }}" class="form-label">Block State</label>
                                                                     <select class="form-select" id="blocked-{{ $userItem->user_id }}" name="blocked" required>
@@ -174,13 +188,15 @@
                                                                     </select>
                                                                 </div>
                                                                 <div class="mb-3">
-                                                                    <label for="password-{{ $userItem->user_id }}" class="form-label">New Password (leave blank to keep current)</label>
+                                                                    <label for="password-{{ $userItem->user_id }}" class="form-label">New Password (<b style="color:red">leave blank to keep current</b>)</label>
                                                                     <input type="password" class="form-control" id="password-{{ $userItem->user_id }}" name="password" placeholder="Min 6 characters">
                                                                 </div>
                                                             </div>
                                                             <div class="modal-footer">
-                                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                                                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+                                                              @if(auth()->user()->role_id === '1001' || auth()->user()->role_id === '1002' || auth()->user()->role_id === '1003')
                                                                 <button type="submit" class="btn btn-primary">Update User</button>
+                                                             @endif
                                                             </div>
                                                         </form>
                                                     </div>
@@ -261,6 +277,7 @@
                             <label for="telephone" class="form-label">Telephone</label>
                             <input type="text" class="form-control" id="telephone" name="telephone" placeholder="e.g. +233240000000">
                         </div>
+                         @if(auth()->user()->role_id === '1001')
                         <div class="mb-3">
                             <label for="tenant_id" class="form-label">Tenant Name</label>
                             <select class="form-select" id="tenant_id" name="tenant_id" required>
@@ -270,6 +287,8 @@
                                 @endforeach
                             </select>
                         </div>
+                        @endif
+                         @if(auth()->user()->role_id === '1001' || auth()->user()->role_id === '1002' || auth()->user()->role_id === '1003')
                         <div class="mb-3">
                             <label for="store_id" class="form-label">Store Name</label>
                             <select class="form-select" id="store_id" name="store_id" required>
@@ -279,6 +298,7 @@
                                 @endforeach
                             </select>
                         </div>
+                        @endif
                         <div class="mb-3">
                             <label for="role_id" class="form-label">User Role</label>
                             <select class="form-select" id="role_id" name="role_id" required>

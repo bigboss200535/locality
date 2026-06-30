@@ -50,6 +50,34 @@ class LoginRequest extends FormRequest
             ]);
         }
 
+         // Check user status after successful authentication
+        $user = Auth::user();
+                // Check if user is disabled
+            if ($user->isBlocked()) {
+                Auth::logout();
+                RateLimiter::hit($this->throttleKey());
+                throw ValidationException::withMessages([
+                    'email' => 'Your account has been Blocked. See Administrator.',
+                ]);
+            }
+
+            // Check if user is archived
+            if ($user->isArchived()) {
+                Auth::logout();
+                RateLimiter::hit($this->throttleKey());
+                throw ValidationException::withMessages([
+                    'email' => 'Your Account has been Deleted.',
+                ]);
+            }
+
+            // Check if user is active
+            // if (!$user->isActive()) {
+            //     Auth::logout();
+            //     RateLimiter::hit($this->throttleKey());
+            //     throw ValidationException::withMessages([
+            //         'email' => 'Your account is not active. See Administrator.',
+            //     ]);
+            // }
         RateLimiter::clear($this->throttleKey());
     }
 

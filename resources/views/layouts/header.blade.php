@@ -1,10 +1,20 @@
+         @php
+
+           use App\Models\Stores;
+
+            $stores = 'N/A';
+           if (auth()->check() && auth()->user()->store_id) {
+                $store_name = \App\Models\Stores::where('store_id', auth()->user()->store_id)->value('store_name') ?? 'N/A';
+            }
+
+        @endphp
         <header class="app-topbar">
                         <div class="container-fluid topbar-menu">
                     <div class="d-flex align-items-center gap-2">
                         <!-- Topbar Brand Logo -->
                         <div class="logo-topbar">
                             <!-- Logo light -->
-                            <a href="index.html" class="logo-light">
+                            <a href="#" class="logo-light">
                                 <span class="logo-lg">
                                     <img src="{{ asset('images/logo.png') }}" alt="logo" />
                                 </span>
@@ -14,7 +24,7 @@
                             </a>
 
                             <!-- Logo Dark -->
-                            <a href="index.html" class="logo-dark">
+                            <a href="#" class="logo-dark">
                                 <span class="logo-lg">
                                     <img src="{{ asset('images/logo-black.png') }}" alt="dark logo" />
                                 </span>
@@ -33,7 +43,8 @@
                         <button class="topnav-toggle-button px-2" data-bs-toggle="collapse" data-bs-target="#topnav-menu">
                             <i class="fa fa-menu"></i>
                         </button>
-
+ 
+                          <div>Current Store:: <b style="color:red">{{ $store_name }}</b></div>
                         <!-- <div id="search-box-rounded" class="app-search d-none d-xl-flex">
                             <input type="search" class="form-control rounded-pill topbar-search" name="search" placeholder="Quick Search..." />
                             <i class="ti ti-search app-search-icon text-muted"></i>
@@ -41,6 +52,8 @@
                     </div>
 
                     <div class="d-flex align-items-center gap-2">
+                      
+                          @if(auth()->user()->role_id === '1001')
                         <div id="theme-dropdown" class="topbar-item d-none d-sm-flex">
                             <div class="dropdown">
                                 <button class="topbar-link" data-bs-toggle="dropdown" type="button" aria-haspopup="false" aria-expanded="false">
@@ -69,7 +82,8 @@
                             </div>
                             <!-- end dropdown-->
                         </div>
-
+                        @endif
+                          @if(auth()->user()->role_id === '1001')
                         <div id="notification-dropdown-people" class="topbar-item">
                             <div class="dropdown">
                                 <button class="topbar-link dropdown-toggle drop-arrow-none" data-bs-toggle="dropdown" type="button" data-bs-auto-close="outside" aria-haspopup="false" aria-expanded="false">
@@ -148,26 +162,26 @@
                             </div>
                             <!-- end dropdown-->
                         </div>
-
+                        @endif
                         <!-- <div id="fullscreen-toggler" class="topbar-item d-none d-md-flex">
                             <button class="topbar-link" type="button" data-toggle="fullscreen">
                                 <i class="ti ti-maximize topbar-link-icon"></i>
                                 <i class="ti ti-minimize topbar-link-icon d-none"></i>
                             </button>
                         </div> -->
-
+                          @if(auth()->user()->role_id === '1001')
                         <div id="monochrome-toggler" class="topbar-item d-none d-xl-flex">
                             <button id="monochrome-mode" class="topbar-link" type="button" data-toggle="monochrome">
                                 <i class="fa fa-palette topbar-link-icon"></i>
                             </button>
                         </div>
-
+                        @endif
                         <!-- <div class="topbar-item d-none d-sm-flex">
                             <button class="topbar-link btn-theme-setting" data-bs-toggle="offcanvas" data-bs-target="#theme-settings-offcanvas" type="button">
                                 <i class="ti ti-settings topbar-link-icon"></i>
                             </button>
                         </div> -->
-
+                          @if(auth()->user()->role_id === '1001')
                         <div id="language-selector-rounded" class="topbar-item">
                             <div class="dropdown">
                                 <button class="topbar-link fw-bold" data-bs-toggle="dropdown" type="button" aria-haspopup="false" aria-expanded="false">
@@ -208,7 +222,7 @@
                             </div>
                             <!-- end dropdown-->
                         </div>
-
+                        @endif
                         <div id="user-dropdown-detailed" class="topbar-item nav-user">
                             <div class="dropdown">
                                 <a class="topbar-link dropdown-toggle drop-arrow-none px-2" data-bs-toggle="dropdown" href="#!" aria-haspopup="false" aria-expanded="false">
@@ -228,23 +242,26 @@
                                     </div> -->
 
                                     <!-- My Profile -->
+                                    @if(auth()->user()->role_id === '1001')
                                     <a href="#!" class="dropdown-item">
                                         <i class="ti ti-user-circle me-1 fs-lg align-middle"></i>
                                         <span class="align-middle">Profile</span>
                                     </a>
-
+                                    @endif
+                                    @if(auth()->user()->role_id === '1001')
                                     <!-- Notifications -->
                                     <a href="javascript:void(0);" class="dropdown-item">
                                         <i class="fas fa-envelope me-1 fs-lg align-middle"></i>
                                         <span class="align-middle">Notifications</span>
                                     </a>
-
+                                    @endif
+                                    @if(auth()->user()->role_id === '1001')
                                     <!-- Settings -->
                                     <a href="javascript:void(0);" class="dropdown-item">
                                         <i class="ti ti-settings-2 me-1 fs-lg align-middle"></i>
                                         <span class="align-middle">Account Settings</span>
                                     </a>
-
+                                  @endif
                                     <!-- Support -->
                                     <!-- <a href="javascript:void(0);" class="dropdown-item">
                                         <i class="ti ti-headset me-1 fs-lg align-middle"></i>

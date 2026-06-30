@@ -16,12 +16,14 @@ class Stores extends Model
     protected $primaryKey = 'store_id';
     public $timestamps = false;
     protected $keyType = 'string';
-    public $incrementing= false;
+    public $incrementing = false;
 
-     protected $fillable = [
+    protected $fillable = [
         'store_id',
         'tenant_id',
         'store_name',
+        'telephone',
+        'store_code',
         'store_description',
         'type_of_business', 
         'added_date',
@@ -33,4 +35,15 @@ class Stores extends Model
         'archived_by',
         'archived_date'
     ];
+
+    public function tenant()
+    {
+        return $this->belongsTo(Tenant::class, 'tenant_id', 'tenant_id');
+    }
+
+    // Relationship with User
+    public function users()
+    {
+        return $this->hasMany(User::class, 'store_id', 'store_id');
+    }
 }

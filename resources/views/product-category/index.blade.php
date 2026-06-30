@@ -99,26 +99,32 @@
                                                 </td>
                                                   @if(auth()->user()->role_id === '1001' || auth()->user()->role_id === '1002' || auth()->user()->role_id === '1003')
                                                     <td>
-                                                        <div class="btn-group">
+                                                        <div class="">
                                                             <button type="button" class="btn btn-sm btn-outline-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
                                                                 Action
                                                             </button>
                                                             <ul class="dropdown-menu">
+                                                                  @if(auth()->user()->role_id === '1001' || auth()->user()->role_id === '1002' || auth()->user()->role_id === '1003')
                                                                 <li>
                                                                     <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#editCategoryModal-{{ $category->category_id }}">
                                                                         Edit
                                                                     </a>
                                                                 </li>
+                                                                @endif
+                                                                  @if(auth()->user()->role_id === '1001' || auth()->user()->role_id === '1002' || auth()->user()->role_id === '1003')
                                                                 <li>
                                                                     <a class="dropdown-item" href="#" onclick="event.preventDefault(); document.getElementById('toggle-form-{{ $category->category_id }}').submit();">
                                                                         {{ $category->status === 'Active' ? 'Disable' : 'Enable' }}
                                                                     </a>
                                                                 </li>
+                                                                @endif
+                                                                  @if(auth()->user()->role_id === '1001' || auth()->user()->role_id === '1002')
                                                                 <li>
                                                                     <a class="dropdown-item text-danger" href="#" onclick="event.preventDefault(); if(confirm('Are you sure you want to delete this category?')) { document.getElementById('delete-form-{{ $category->category_id }}').submit(); }">
                                                                         Delete
                                                                     </a>
                                                                 </li>
+                                                                @endif
                                                             </ul>
                                                         </div>
 
@@ -140,8 +146,11 @@
                                                                         </div>
                                                                     </div>
                                                                     <div class="modal-footer">
+                                                                        
                                                                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                                                          @if(auth()->user()->role_id === '1001' || auth()->user()->role_id === '1002' || auth()->user()->role_id === '1003')
                                                                         <button type="submit" class="btn btn-primary">Save Changes</button>
+                                                                        @endif
                                                                     </div>
                                                                 </form>
                                                             </div>
@@ -227,7 +236,7 @@
                             <label for="category_name" class="form-label">Category Name</label>
                             <input type="text" class="form-control" id="category_name" name="category_name" required placeholder="e.g. Electronics" autocomplete="off">
                         </div>
-                         @if(auth()->user()->role_id === '1001')
+                        @if(auth()->user()->role_id === '1001')
                         <div class="mb-3">
                             <label for="tenant_name" class="form-label">Tenant Name</label>
                             <select class="form-control text-start" id="tenant_name" name="tenant_name" required>
@@ -238,12 +247,11 @@
                             </select>
                         </div>
                         @endif
-                         @if(auth()->user()->role_id === '1001' || auth()->user()->role_id === '1002' || auth()->user()->role_id === '1003')
-                        
+                        @if(auth()->user()->role_id === '1001' || auth()->user()->role_id === '1002')
                          <div class="mb-3">
                             <label for="store_name" class="form-label">Store Name</label>
                             <select class="form-control text-start" id="store_name" name="store_name" required>
-                                <!-- <option value="" disabled selected>Select Store...</option> -->
+                                <option value="" disabled selected>Select Store</option>
                                 @foreach($stores as $store)
                                     <option value="{{ $store->store_id }}">{{ $store->store_name }}</option>
                                 @endforeach
@@ -253,7 +261,9 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                         @if(auth()->user()->role_id === '1001' || auth()->user()->role_id === '1002' || auth()->user()->role_id === '1003')
                         <button type="submit" class="btn btn-primary">Save Category</button>
+                        @endif
                     </div>
                 </form>
             </div>

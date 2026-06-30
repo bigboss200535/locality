@@ -9,7 +9,13 @@ use App\Http\Controllers\ProductPriceController;
 use App\Http\Controllers\ProductStockController;
 use App\Http\Controllers\SalesController;
 use App\Http\Controllers\ProductManagementController;
+use App\Http\Controllers\StoresController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\TenantController;
+use App\Http\Controllers\PurchaseOrderController;
+use App\Http\Controllers\SuppliersController;
+use App\Http\Controllers\ProductRequisitionController;
+
 // Routes with no authentications
 Route::get('/', function () {
     return view('get-started');
@@ -37,8 +43,10 @@ Route::middleware(['auth', 'verified'])->group(function (){
     Route::get('products', [ProductController::class, 'index'])->name('products');
     Route::post('products', [ProductController::class, 'store'])->name('products.store');
     Route::get('products/{product}', [ProductController::class, 'edit'])->name('products.edit');
+    Route::put('/products/{product}', [ProductController::class, 'update'])->name('products.update');
     Route::get('products/{product}/show', [ProductController::class, 'show'])->name('products.show');
-    Route::delete('products/{product}/delete', [ProductController::class, 'destroy'])->name('products.destroy');
+    // Route::delete('products/{product}/delete', [ProductController::class, 'destroy'])->name('products.destroy');
+    Route::delete('/products/{product}', [ProductController::class, 'destroy'])->name('products.destroy');
 
     // Product Category Routes
     Route::get('/product-categories', [ProductCategoryController::class, 'index'])->name('product-categories');
@@ -78,12 +86,42 @@ Route::middleware(['auth', 'verified'])->group(function (){
     Route::post('/users', [UserController::class, 'store'])->name('users.store');
     Route::put('/users/{user}', [UserController::class, 'update'])->name('users.update');
     Route::delete('/users/{user}', [UserController::class, 'destroy'])->name('users.destroy');
+
+    //stores management routes
+    Route::get('/stores', [StoresController::class, 'index'])->name('stores.index');
+    Route::post('/stores', [StoresController::class, 'store'])->name('stores.store');
+    Route::put('/stores/{store}', [StoresController::class, 'update'])->name('stores.update');
+    Route::delete('/stores/{store}', [StoresController::class, 'destroy'])->name('stores.destroy');
+
+     //tenant management routes
+    Route::get('/tenants', [TenantController::class, 'index'])->name('tenants.index');
+    Route::post('/tenants', [TenantController::class, 'store'])->name('tenants.store');
+    Route::put('/tenants/{tenant}', [TenantController::class, 'update'])->name('tenants.update');
+    Route::delete('/tenants/{tenant}', [TenantController::class, 'destroy'])->name('tenants.destroy');
+
+    // Purchase Order routes
+    Route::get('/purchase-orders', [PurchaseOrderController::class, 'index'])->name('purchase-orders.index');
+    Route::post('/purchase-orders', [PurchaseOrderController::class, 'store'])->name('purchase-orders.store');
+    Route::put('/purchase-orders/{purchaseOrder}', [PurchaseOrderController::class, 'update'])->name('purchase-orders.update');
+    Route::delete('/purchase-orders/{purchaseOrder}', [PurchaseOrderController::class, 'destroy'])->name('purchase-orders.destroy');
+
+     // suppliers routes
+    Route::get('/suppliers', [SuppliersController::class, 'index'])->name('suppliers.index');
+    Route::post('/suppliers', [SuppliersController::class, 'store'])->name('suppliers.store');
+    Route::put('/suppliers/{supplier}', [SuppliersController::class, 'update'])->name('suppliers.update');
+    Route::delete('/suppliers/{supplier}', [SuppliersController::class, 'destroy'])->name('suppliers.destroy');
+
+    // Requisition routes
+    Route::get('/requisitions', [ProductRequisitionController::class, 'index'])->name('requisitions.index');
+    Route::post('/requisitions', [ProductRequisitionController::class, 'store'])->name('requisitions.store');
+    Route::patch('/requisitions/{requisition}/approve', [ProductRequisitionController::class, 'approve'])->name('requisitions.approve');
+    Route::delete('/requisitions/{requisition}', [ProductRequisitionController::class, 'destroy'])->name('requisitions.destroy');
 });
 
-Route::middleware('auth')->group(function () {
+//Route::middleware('auth')->group(function () {
     // Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     // Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     // Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-});
+//});
 
 require __DIR__.'/auth.php';

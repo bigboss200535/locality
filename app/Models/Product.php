@@ -53,7 +53,7 @@ class Product extends Model
         return $this->hasOne(ProductStock::class, 'product_id', 'product_id');
     }
     
-     public function store()
+    public function store()
     {
         return $this->hasOne(Stores::class, 'store_id', 'store_id');
     }

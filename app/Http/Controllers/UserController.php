@@ -16,12 +16,13 @@ class UserController extends Controller
     {
         $users = User::with(['tenant', 'store', 'role'])
             ->where('archived', 'No')
+            ->where('usage', '1')
             ->orderBy('added_date', 'desc')
             ->get();
 
         $tenants = Tenant::where('archived', 'No')->get();
         $stores = Stores::where('archived', 'No')->get();
-        $roles = Role::where('archived', 'No')->get();
+        $roles = Role::where('archived', 'No')->where('usage', '1')->get();
 
         return view('users.index', compact('users', 'tenants', 'stores', 'roles'));
     }
@@ -33,32 +34,32 @@ class UserController extends Controller
             'othername' => 'required|string|max:150',
             'email' => 'required|email|max:100|unique:users,email',
             'telephone' => 'nullable|string|max:50|unique:users,telephone',
-            'tenant_id' => 'required|string|exists:tenants,tenant_id',
+            'tenant_id' => 'nullable|string|exists:tenants,tenant_id',
             'store_id' => 'required|string|exists:stores,store_id',
             'role_id' => 'required|string|exists:roles,role_id',
             'password' => 'required|string|min:6',
             'blocked' => 'required|string|in:Yes,No',
         ]);
 
-        $currentUser = auth()->user();
-        $username = $currentUser ? ($currentUser->firstname . ' ' . $currentUser->othername) : 'System';
+        $current_user = auth()->user();
+        $username = $current_user->firstname . ' ' . $current_user->othername;
 
         User::create([
             'user_id' => (string) Str::uuid(),
-            'username' => strstr($request->email, '@', true), // default username from email prefix
+            'email' => $request->email,
             'firstname' => $request->firstname,
             'othername' => $request->othername,
-            'email' => $request->email,
             'telephone' => $request->telephone,
-            'tenant_id' => $request->tenant_id,
+            'tenant_id' => $request->tenant_id ?? $current_user->tenant_id,
             'store_id' => $request->store_id,
             'role_id' => $request->role_id,
+            'usage' => '1',
             'password' => Hash::make($request->password),
             'blocked' => $request->blocked,
             'status' => 'Active',
             'archived' => 'No',
             'added_date' => now(),
-            'added_by' => $username,
+            'added_by' => strtoupper($username),
         ]);
 
         return redirect()->route('users.index')->with('success', 'User created successfully.');
@@ -73,26 +74,26 @@ class UserController extends Controller
             'othername' => 'required|string|max:150',
             'email' => 'required|email|max:100|unique:users,email,' . $id . ',user_id',
             'telephone' => 'nullable|string|max:50|unique:users,telephone,' . $id . ',user_id',
-            'tenant_id' => 'required|string|exists:tenants,tenant_id',
+            'tenant_id' => 'nullable|string|exists:tenants,tenant_id',
             'store_id' => 'required|string|exists:stores,store_id',
             'role_id' => 'required|string|exists:roles,role_id',
             'password' => 'nullable|string|min:6',
             'blocked' => 'required|string|in:Yes,No',
         ]);
 
-        $currentUser = auth()->user();
-        $username = $currentUser ? ($currentUser->firstname . ' ' . $currentUser->othername) : 'System';
+        $current_user = auth()->user();
+        $username = $current_user->firstname . ' ' . $current_user->othername;
 
         $data = [
-            'firstname' => $request->firstname,
-            'othername' => $request->othername,
+            'firstname' => strtoupper($request->firstname),
+            'othername' => strtoupper($request->othername),
             'email' => $request->email,
             'telephone' => $request->telephone,
             'tenant_id' => $request->tenant_id,
             'store_id' => $request->store_id,
             'role_id' => $request->role_id,
             'blocked' => $request->blocked,
-            'updated_by' => $username,
+            'updated_by' => strtoupper($username),
         ];
 
         if ($request->filled('password')) {
@@ -106,14 +107,15 @@ class UserController extends Controller
 
     public function destroy($id)
     {
+
         $user = User::findOrFail($id);
-        
-        $currentUser = auth()->user();
-        $username = $currentUser ? ($currentUser->firstname . ' ' . $currentUser->othername) : 'System';
+
+        $current_user = auth()->user();
+        $username = $current_user->firstname . ' ' . $current_user->othername;
 
         $user->update([
             'archived' => 'Yes',
-            'archived_by' => $username,
+            'archived_by' => strtoupper($username),
             'archived_date' => now(),
         ]);
 

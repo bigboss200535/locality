@@ -91,7 +91,7 @@
                                                     @endif
                                                 </td>
                                                 <td>
-                                                    <div class="btn-group">
+                                                    <div class="">
                                                         <button type="button" class="btn btn-sm btn-outline-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
                                                             Action
                                                         </button>

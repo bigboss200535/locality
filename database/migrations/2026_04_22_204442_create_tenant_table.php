@@ -11,55 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('product_category', function (Blueprint $table) {
-            $table->string('category_id', 50)->primary();
-            $table->string('category_name', 150)->nullable();
-            $table->string('tenant_id', 50)->nullable();
-            $table->string('store_id', 50);
-            $table->string('user_id', 50)->nullable();
-            $table->timestamp('added_date')->nullable();
-            $table->timestamp('updated_date')->nullable();
-            $table->string('status', 50)->default('Active')->nullable();
-            $table->string('added_by', 100)->nullable();
-            $table->string('updated_by', 100)->nullable();
-            $table->string('archived', 100)->default('No')->index();
-            $table->string('archived_by', 100)->nullable()->index();
-            $table->timestamp('archived_date')->nullable()->index();
-            // key
-            $table->foreign('tenant_id')->references('tenant_id')->on('tenants');
-            $table->foreign('store_id')->references('store_id')->on('stores');
-            $table->foreign('user_id')->references('user_id')->on('users');
-            // $table->timestamps();
-        });
+        
 
-        Schema::create('products', function (Blueprint $table) {
-            $table->string('product_id', 50)->primary();
-            $table->string('product_name', 150)->nullable();
-            $table->string('product_type', 150)->nullable();// Variant
-            $table->string('barcode', 150)->nullable();
-            $table->string('qr_code', 150)->nullable();
-            $table->string('supplier_id', 150)->nullable();
-            $table->string('expirable', 50)->default('No'); //yes/no
-            $table->string('stockable', 50)->default('No'); //yes/no
-            $table->string('category_id', 50)->nullable();
-            $table->string('store_id', 50)->nullable();
-            $table->string('tenant_id', 50)->nullable();
-            $table->string('user_id', 50)->nullable();
-            $table->timestamp('added_date')->nullable();
-            $table->timestamp('updated_date')->nullable();
-            $table->string('status', 50)->default('Active')->nullable();
-            $table->string('added_by', 100)->nullable();
-            $table->string('updated_by', 100)->nullable();
-            $table->string('archived', 100)->default('No')->index();
-            $table->string('archived_by', 100)->nullable()->index();
-            $table->timestamp('archived_date')->nullable()->index();
-            // key
-            $table->foreign('tenant_id')->references('tenant_id')->on('tenants');
-            $table->foreign('store_id')->references('store_id')->on('stores');
-            $table->foreign('user_id')->references('user_id')->on('users');
-            $table->foreign('category_id')->references('category_id')->on('product_category');
-        });
-
+        
         Schema::create('product_prices', function (Blueprint $table) {
             $table->string('product_id', 50);
             $table->float('unit_cost')->nullable();
@@ -317,8 +271,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('product_category');
-        Schema::dropIfExists('products');
         Schema::dropIfExists('product_stocked');
         Schema::dropIfExists('bills_payment');
         Schema::dropIfExists('product_sales');

@@ -129,12 +129,20 @@
                                 </a>
                             </li>
                             @endif
-                            <!-- <li class="side-nav-item">
-                                <a href="#" class="side-nav-link">
-                                    <span class="menu-text" data-lang="apps-task-list">Expired Products</span>
+                            @if(auth()->user()->role_id === '1001' || auth()->user()->role_id === '1002' || auth()->user()->role_id === '1003')
+                             <li class="side-nav-item">
+                                <a href="{{ route('purchase-orders.index') }}" class="side-nav-link">
+                                    <span class="menu-text" data-lang="apps-product-list"> Purchase Order</span>
                                 </a>
-                            </li> -->
-                           
+                            </li>
+                            @endif
+                             @if(auth()->user()->role_id === '1001' || auth()->user()->role_id === '1002' || auth()->user()->role_id === '1003')
+                             <li class="side-nav-item">
+                                <a href="{{ route('requisitions.index') }}" class="side-nav-link">
+                                    <span class="menu-text" data-lang="apps-task-list">Requisitions</span>
+                                </a>
+                            </li>
+                           @endif
                         </ul>
                     </div>
                 </li>
@@ -149,6 +157,22 @@
                             <li class="side-nav-item">
                                 <a href="{{ url('/sales') }}" class="side-nav-link">
                                     <span class="menu-text" data-lang="apps-task-list">Current Sales</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+                <li class="side-nav-item">
+                    <a data-bs-toggle="collapse" href="#supplier" aria-expanded="false" aria-controls="supplier" class="side-nav-link">
+                        <span class="menu-icon"><i class="fa fa-list-check"></i></span>
+                        <span class="menu-text" data-lang="supplier">Supplier</span>
+                        <span class="menu-arrow"></span>
+                    </a>
+                    <div class="collapse" id="supplier">
+                        <ul class="sub-menu">
+                            <li class="side-nav-item">
+                                <a href="{{ url('/suppliers') }}" class="side-nav-link">
+                                    <span class="menu-text" data-lang="apps-task-list">Suppliers</span>
                                 </a>
                             </li>
                         </ul>
@@ -213,40 +237,23 @@
                     <div class="collapse" id="error-pages">
                         <ul class="sub-menu">
                             <li class="side-nav-item">
-                                <a href="error-400.html" class="side-nav-link">
-                                    <span class="menu-text" data-lang="error-400">400 Bad Request</span>
+                                <a href="{{ url('stores')}}" class="side-nav-link">
+                                    <span class="menu-text" data-lang="error-400">Stores</span>
                                 </a>
                             </li>
+                                @if(auth()->user()->role_id === '1001')
                             <li class="side-nav-item">
-                                <a href="error-401.html" class="side-nav-link">
-                                    <span class="menu-text" data-lang="error-401">401 Unauthorized</span>
+                                <a href="{{ url('/tenants') }}" class="side-nav-link">
+                                    <span class="menu-text" data-lang="error-401">Tenants</span>
                                 </a>
                             </li>
-                            <li class="side-nav-item">
+                            @endif
+                            <!-- <li class="side-nav-item">
                                 <a href="error-403.html" class="side-nav-link">
                                     <span class="menu-text" data-lang="error-403">403 Forbidden</span>
                                 </a>
-                            </li>
-                            <!-- <li class="side-nav-item">
-                                <a href="error-404.html" class="side-nav-link">
-                                    <span class="menu-text" data-lang="error-404">404 Not Found</span>
-                                </a>
-                            </li>
-                            <li class="side-nav-item">
-                                <a href="error-408.html" class="side-nav-link">
-                                    <span class="menu-text" data-lang="error-408">408 Request Timeout</span>
-                                </a>
-                            </li>
-                            <li class="side-nav-item">
-                                <a href="error-500.html" class="side-nav-link">
-                                    <span class="menu-text" data-lang="error-500">500 Internal Server</span>
-                                </a>
-                            </li>
-                            <li class="side-nav-item">
-                                <a href="error-maintenance.html" class="side-nav-link">
-                                    <span class="menu-text" data-lang="error-maintenance">Maintenance</span>
-                                </a>
                             </li> -->
+                            
                         </ul>
                     </div>
                 </li>

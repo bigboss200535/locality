@@ -3,25 +3,32 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Notifications\Notifiable;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 
-class ProductPrice extends Model
+class Supplier extends Model
 {
-    protected $table = 'product_prices';
-    protected $primaryKey = 'product_id';
+   use HasFactory, Notifiable;
+    use HasUuids;
+    
+    protected $table = 'suppliers';
+    protected $primaryKey = 'supplier_id';
     public $timestamps = false;
     protected $keyType = 'string';
     public $incrementing= false;
 
-    protected $fillable = [
-        'product_id',
-        'unit_cost',
-        'unit_price',
+     protected $fillable = [
+        'supplier_id',
+        'supplier_name',
+        'telephone',
+        'email',
         'tenant_id',
         'store_id',
         'user_id',
         'added_date',
         'updated_date',
-        'status',
+        'status', 
         'added_by',
         'updated_by',
         'archived',
@@ -29,17 +36,15 @@ class ProductPrice extends Model
         'archived_date'
     ];
 
-    public function product()
-    {
-        return $this->belongsTo(Product::class, 'product_id', 'product_id');
-    }
-     public function store()
+    public function store()
     {
         return $this->hasOne(Stores::class, 'store_id', 'store_id');
     }
 
-     public function tenant()
+    public function tenant()
     {
         return $this->hasOne(Tenant::class, 'tenant_id', 'tenant_id');
     }
+
+    
 }

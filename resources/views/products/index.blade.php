@@ -1,13 +1,9 @@
 <x-app-layout>
 <!-- Begin page -->
     <!-- Topbar End -->
-    <!-- ============================================================== -->
-    <!-- Start Main Content -->
-    <!-- ============================================================== -->
     <div class="content-page">
         <div class="container-fluid">
             <div class="page-title-head d-flex align-items-center"></div>
-
             <!-- Notifications -->
             @if(session('success'))
                 <div class="alert alert-success alert-dismissible fade show mb-4" role="alert">
@@ -51,13 +47,12 @@
                                             <th data-table-sort>#ID</th>
                                             <th data-table-sort>Product</th>
                                             <th data-table-sort>Product Category</th>
-                                        @if(auth()->user()->role_id === '1001' || auth()->user()->role_id === '1002' || auth()->user()->role_id === '1003')
+                                            @if(auth()->user()->role_id === '1001' || auth()->user()->role_id === '1002' || auth()->user()->role_id === '1003')
                                             <th data-table-sort>Store Name</th>
-                                        @endif
-                                           
-                                        @if(auth()->user()->role_id === '1001')
+                                            @endif
+                                            @if(auth()->user()->role_id === '1001')
                                             <th data-table-sort>Tenant Name</th>
-                                        @endif
+                                            @endif
                                             <!-- <th data-table-sort>Stock Quantity</th> -->
                                             <th data-table-sort>Stockable</th>
                                             <th data-table-sort>Expirable</th>
@@ -116,16 +111,103 @@
                                                 </td>
                                                  @if(auth()->user()->role_id === '1001' || auth()->user()->role_id === '1002' || auth()->user()->role_id === '1003')
                                                 <td>
-                                                    <div class="btn-group">
+                                                    <div class="">
                                                         <button type="button" class="btn btn-sm btn-outline-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
                                                             Action
                                                         </button>
                                                         <ul class="dropdown-menu">
-                                                            <li><a class="dropdown-item" href="{{ route('products.edit', $product->product_id) }}">Edit</a></li>
-                                                            <li><a class="dropdown-item" href="{{ route('products.show', $product->product_id) }}">View</a></li>
-                                                            <li><a class="dropdown-item" href="{{ route('products.destroy', $product->product_id) }}" onclick="event.preventDefault(); document.getElementById('delete-form-{{ $product->product_id }}').submit();">Delete</a></li>
+                                                             <li>
+                                                                    <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#editProductModal{{ $product->product_id }}">
+                                                                        Edit
+                                                                    </a>
+                                                                </li>
+                                                            <!-- <li><a class="dropdown-item" href="{{ route('products.edit', $product->product_id) }}">Edit</a></li> -->
+                                                            <!-- <li><a class="dropdown-item" href="{{ route('products.show', $product->product_id) }}">View</a></li>
+                                                             @if(auth()->user()->role_id === '1001' || auth()->user()->role_id === '1002')
+                                                             <li> -->
+                                                               <a class="dropdown-item text-danger" href="#" onclick="event.preventDefault(); if(confirm('Are you sure you want to delete this product price?')) { document.getElementById('delete-product-form-{{ $product->product_id }}').submit(); }">
+                                                                        Delete
+                                                                    </a>
+                                                            </li>
+                                                            @endif
+                                                            <!-- <li><a class="dropdown-item" href="{{ route('products.destroy', $product->product_id) }}" onclick="event.preventDefault(); document.getElementById('delete-form-{{ $product->product_id }}').submit();">Delete</a></li> -->
                                                         </ul>
                                                     </div>
+
+                                                     <!-- Edit Product Modal -->
+                                                    <div class="modal fade" id="editProductModal{{ $product->product_id }}" tabindex="-1" aria-labelledby="editProductModal{{ $product->product_id }}" aria-hidden="true">
+                                                        <div class="modal-dialog">
+                                                            <div class="modal-content text-start text-wrap">
+                                                                <div class="modal-header">
+                                                                    <h5 class="modal-title" id="editProductModal{{ $product->product_id }}">Edit Product: {{ strtoupper($product->product_name) }}</h5>
+                                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                                </div>
+                                                                <form action="{{ route('products.update', $product->product_id) }}" method="POST">
+                                                                    @csrf
+                                                                    @method('PUT')
+                                                                    <div class="modal-body">
+                                                                        <div class="mb-3">
+                                                                            <label for="product_name-{{ $product->product_id }}" class="form-label">Product Name</label>
+                                                                            <input type="text" class="form-control text-start" id="product_name-{{ $product->product_id }}" name="product_name" value="{{ $product->product_name }}" required>
+                                                                        </div>
+                                                                        <div class="mb-3">
+                                                                            <label for="product_type-{{ $product->product_type }}" class="form-label">Product Type / Variant</label>
+                                                                            <input type="text" class="form-control text-start" id="product_type-{{ $product->product_type }}" name="product_type" value="{{ $product->product_type }}" required>
+                                                                        </div>
+                                                                         <div class="mb-3">
+                                                                            <label for="category_id-{{ $product->category_id }}" class="form-label">Product Category </label>
+                                                                             <select class="form-select" name="category_id" id="category_id-{{ $product->category_id }}" required>
+                                                                                <option value="" disabled {{ is_null($product->category_id) ? 'selected' : '' }}>-Select-</option>
+                                                                                @foreach($categories as $category)
+                                                                                    <!-- <option value="{{ $category->category_id }}">{{ $category->category_name }}</option> -->
+                                                                                    <option value="{{ $category->category_id }}" {{ $product->category_id == $category->category_id ? 'selected' : '' }}>
+                                                                                    {{ $category->category_name }}
+                                                                                    </option>
+                                                                                @endforeach
+                                                                            </select>
+                                                                        </div>
+                                                                         <div class="row">
+                                                                            <div class="col-md-6 mb-3">
+                                                                                <!-- <label for="expirable" class="form-label">Expirable</label> -->
+                                                                                  <label for="expirable-{{ $product->expirable }}" class="form-label">Expirable</label>
+                                                                                <select name="expirable" id="expirable-{{ $product->expirable }}" class="form-control" required>
+                                                                                    <option value="YES" {{ $product->expirable === 'YES' ? 'selected' : '' }}>YES</option>
+                                                                                    <option value="NO" {{ $product->expirable === 'NO' ? 'selected' : '' }}>NO</option>
+                                                                                </select>
+                                                                                <!-- <input type="text" step="0.01" class="form-control" id="expirable" name="expirable" required min="0" placeholder="0.00"> -->
+                                                                            </div>
+                                                                            <div class="col-md-6 mb-3">
+                                                                                <label for="stocked-{{ $product->stockable }}" class="form-label">Stocked Product</label>
+                                                                                <select name="stockable" id="stocked-{{ $product->stockable }}" class="form-control" required>
+                                                                                    <option value="YES" {{ $product->stockable === 'YES' ? 'selected' : '' }}>YES</option>
+                                                                                    <option value="NO" {{ $product->stockable === 'NO' ? 'selected' : '' }}>NO</option>
+                            
+                                                                                </select>
+                                                                                <!-- <input type="number" step="0.01" class="form-control" id="stockable" name="stockable" required min="0" placeholder="0.00"> -->
+                                                                            </div>
+                                                                        </div>
+                                                                         <div class="mb-3">
+                                                                        <label for="status-{{ $product->status }}" class="form-label">Status</label>
+                                                                            <select class="form-control" id="status-{{ $product->status }}" name="status">
+                                                                                <option value="Active" {{ $product->status === 'Active' ? 'selected' : '' }}>ACTIVE</option>
+                                                                                <option value="Inactive" {{ $product->status === 'Inactive' ? 'selected' : '' }}>INACTIVE</option>
+                                                                            </select>
+                                                                    </div>
+                                                                    </div>
+                                                                    <div class="modal-footer">
+                                                                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+                                                                          @if(auth()->user()->role_id === '1001' || auth()->user()->role_id === '1002' || auth()->user()->role_id === '1003')
+                                                                        <button type="submit" class="btn btn-primary">Save Changes</button>
+                                                                        @endif
+                                                                    </div>
+                                                                </form>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <form id="delete-product-form-{{ $product->product_id }}" action="{{ route('products.destroy', $product->product_id) }}" method="POST" style="display: none;">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                    </form>
                                                 </td>
                                                 @endif
                                             </tr>
@@ -147,11 +229,10 @@
                                 <div data-table-pagination></div>
                             </div>
                         </div>
+
                     </div>
                 </div>
                 <!-- end col-->
-
-                
             </div>
             <!-- end row -->
         </div>

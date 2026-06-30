@@ -56,7 +56,7 @@
                                             <th data-table-sort>Reason</th>
                                             <th data-table-sort>Spoiled Date</th>
                                             <th data-table-sort>Recorded By</th>
-                                            @if(auth()->user()->role_id === '1001' || auth()->user()->role_id === '1002' || auth()->user()->role_id === '1003')
+                                            @if(auth()->user()->role_id === '1001' )
                                             <th data-table-sort>Action</th>
                                             @endif
                                         </tr>
@@ -93,7 +93,7 @@
                                                     <br/>
                                                     <span class="text-muted fs-xxs">{{ $spoilage->added_date ? \Carbon\Carbon::parse($spoilage->added_date)->format('d M Y, h:i A') : 'N/A' }}</span>
                                                 </td>
-                                                @if(auth()->user()->role_id === '1001' || auth()->user()->role_id === '1002' || auth()->user()->role_id === '1003')
+                                                @if(auth()->user()->role_id === '1001')
                                                 <td>
                                                     <form action="{{ route('spoilages.destroy', $spoilage->product_management_id) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this spoilage record? Doing so will return the quantity back to stock.');" class="d-inline">
                                                         @csrf
