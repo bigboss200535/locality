@@ -15,6 +15,7 @@ use App\Http\Controllers\TenantController;
 use App\Http\Controllers\PurchaseOrderController;
 use App\Http\Controllers\SuppliersController;
 use App\Http\Controllers\ProductRequisitionController;
+use App\Http\Controllers\ReportController;
 
 // Routes with no authentications
 Route::get('/', function () {
@@ -116,6 +117,9 @@ Route::middleware(['auth', 'verified'])->group(function (){
     Route::post('/requisitions', [ProductRequisitionController::class, 'store'])->name('requisitions.store');
     Route::patch('/requisitions/{requisition}/approve', [ProductRequisitionController::class, 'approve'])->name('requisitions.approve');
     Route::delete('/requisitions/{requisition}', [ProductRequisitionController::class, 'destroy'])->name('requisitions.destroy');
+
+    // Reports route
+    Route::get('/reports', [ReportController::class, 'index'])->name('reports.index');
 });
 
 //Route::middleware('auth')->group(function () {

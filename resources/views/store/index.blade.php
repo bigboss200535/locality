@@ -29,7 +29,7 @@
                         <div class="card-header justify-content-between">
                             <h4 class="card-title">Stores <span class="text-muted fs-base fw-normal">({{ $stores->count() }} Stores)</span></h4>
                             <div>
-                                @if(auth()->user()->role_id === '1001' || auth()->user()->role_id === '1002')
+                                @if(auth()->user()->role_id === '1001' || auth()->user()->role_id === '1002' || auth()->user()->role_id === '1003')
                                 <button type="button" class="btn btn-sm btn-primary me-1" data-bs-toggle="modal" data-bs-target="#addUserModal">
                                     <i class="fa fa-plus me-1"></i> Add Store
                                 </button>

@@ -100,11 +100,13 @@
                                                                         Edit Stock
                                                                     </a>
                                                                 </li>
+                                                                 @if(auth()->user()->role_id === '1001' || auth()->user()->role_id === '1002' || auth()->user()->role_id === '1003')
                                                                 <li>
                                                                     <a class="dropdown-item text-danger" href="#" onclick="event.preventDefault(); if(confirm('Are you sure you want to delete this product stock?')) { document.getElementById('delete-stock-form-{{ $product->product_id }}').submit(); }">
                                                                         Delete Stock
                                                                     </a>
                                                                 </li>
+                                                                @endif
                                                             @else
                                                                 <li>
                                                                     <a class="dropdown-item text-success" href="#" data-bs-toggle="modal" data-bs-target="#addStockModal-{{ $product->product_id }}">

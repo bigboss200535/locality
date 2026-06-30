@@ -101,6 +101,7 @@
                                                                     </form>
                                                                 </li>
                                                             @endif
+                                                             @if(auth()->user()->role_id === '1001' || auth()->user()->role_id === '1002' || auth()->user()->role_id === '1003')
                                                             <li>
                                                                 <form action="{{ route('requisitions.destroy', $req->requisition_id) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this requisition?');" class="d-inline">
                                                                     @csrf
@@ -108,6 +109,7 @@
                                                                     <button type="submit" class="dropdown-item text-danger">Delete</button>
                                                                 </form>
                                                             </li>
+                                                            @endif
                                                         </ul>
                                                     </div>
                                                 </td>

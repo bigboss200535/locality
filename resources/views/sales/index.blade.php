@@ -1,114 +1,114 @@
 <x-app-layout>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <!-- Start Main Content -->
-    <div class="content-page" x-data="{
-        products: [
-            @foreach($products as $product)
-            {
-                product_id: {!! json_encode($product->product_id) !!},
-                product_name: {!! json_encode($product->product_name) !!},
-                product_type: {!! json_encode($product->product_type) !!},
-                category_name: {!! json_encode($product->category ? $product->category->category_name : 'N/A') !!},
-                unit_price: {{ $product->price ? $product->price->unit_price : 0 }},
-                unit_cost: {{ $product->price ? $product->price->unit_cost : 0 }},
-                stock_quantity: {{ $product->stock ? $product->stock->stock_quantity : 0 }}
-            },
-            @endforeach
-        ],
-        searchQuery: '',
-        cart: [],
-        paymentMethod: 'Cash',
-        addToCart(product) {
-            if (product.stock_quantity <= 0) {
-                alert('This product is out of stock!');
+   <div class="content-page" x-data="{
+    products: json($products->map(function($product) {
+        return [
+            'product_id' => $product->product_id,
+            'product_name' => $product->product_name,
+            'product_type' => $product->product_type,
+            'category_name' => $product->category ? $product->category->category_name : 'N/A',
+            'unit_price' => $product->price ? $product->price->unit_price : 0,
+            'unit_cost' => $product->price ? $product->price->unit_cost : 0,
+            'stock_quantity' => $product->stock ? $product->stock->stock_quantity : 0
+        ];
+    })),
+    searchQuery: '',
+    cart: [],
+    paymentMethod: 'Cash',
+    
+    get serializedCart() {
+        return JSON.stringify(this.cart);
+    },
+    
+    addToCart(product) {
+        if (product.stock_quantity <= 0) {
+            alert('This product is out of stock!');
+            return;
+        }
+        let existing = this.cart.find(item => String(item.product_id) === String(product.product_id));
+        if (existing) {
+            if (existing.quantity >= product.stock_quantity) {
+                alert('Cannot exceed available stock (' + product.stock_quantity + ')');
                 return;
             }
-            let existing = this.cart.find(item => String(item.product_id) === String(product.product_id));
-            if (existing) {
-                if (existing.quantity >= product.stock_quantity) {
-                    alert('Cannot exceed available stock (' + product.stock_quantity + ')');
-                    return;
-                }
-                existing.quantity++;
-                this.applyQuantityDiscount(existing);
-            } else {
-                this.cart.push({
-                    product_id: product.product_id,
-                    product_name: product.product_name,
-                    unit_price: product.unit_price,
-                    quantity: 1,
-                    discount: 0,
-                    max_stock: product.stock_quantity
-                });
-            }
-        },
-        removeFromCart(productId) {
-            this.cart = this.cart.filter(item => item.product_id !== productId);
-        },
-        updateQuantity(item, qty) {
-            let newQty = parseInt(qty);
-            if (isNaN(newQty) || newQty <= 0) newQty = 1;
-            if (newQty > item.max_stock) {
-                alert('Cannot exceed available stock (' + item.max_stock + ')');
-                newQty = item.max_stock;
-            }
-            item.quantity = newQty;
-            this.applyQuantityDiscount(item);
-        },
-        applyQuantityDiscount(item) {
-            // Bulk quantity discount rules:
-            // - Buy 5 or more items: get 5% discount
-            // - Buy 10 or more items: get 10% discount
-            let discountPct = 0;
-            if (item.quantity >= 10) {
-                discountPct = 0.10;
-            } else if (item.quantity >= 5) {
-                discountPct = 0.05;
-            }
-            item.discount = parseFloat((item.unit_price * item.quantity * discountPct).toFixed(2));
-        },
-        calculateLineTotal(item) {
-            return ((item.unit_price * item.quantity) - item.discount).toFixed(2);
-        },
-        subtotal() {
-                return this.cart.reduce(
-                    (sum,item)=>sum+(item.unit_price*item.quantity),
-                    0
-                );
-            }
-
-            totalDiscount() {
-                return this.cart.reduce(
-                    (sum,item)=>sum+item.discount,
-                    0
-                );
-            }
-
-            grandTotal() {
-                return (this.subtotal()-this.totalDiscount()).toFixed(2);
-            },
-        filteredProducts() {
-            // Filter products to only those with stock_quantity > 0
-            const query = this.searchQuery.trim().toLowerCase();
-
-            return this.products.filter(product => {
-
-                if (product.stock_quantity <= 0)
-                    return false;
-
-                if (!query)
-                    return true;
-
-                return [
-                    product.product_id,
-                    product.product_name,
-                    product.product_type,
-                    product.category_name
-                ]
-                .map(v => String(v ?? '').toLowerCase())
-                .some(v => v.includes(query));
-});
-    }">
+            existing.quantity++;
+            this.applyQuantityDiscount(existing);
+        } else {
+            this.cart.push({
+                product_id: product.product_id,
+                product_name: product.product_name,
+                unit_price: product.unit_price,
+                quantity: 1,
+                discount: 0,
+                max_stock: product.stock_quantity
+            });
+        }
+    },
+    
+    removeFromCart(productId) {
+        this.cart = this.cart.filter(item => item.product_id !== productId);
+    },
+    
+    updateQuantity(item, qty) {
+        let newQty = parseInt(qty);
+        if (isNaN(newQty) || newQty <= 0) newQty = 1;
+        if (newQty > item.max_stock) {
+            alert('Cannot exceed available stock (' + item.max_stock + ')');
+            newQty = item.max_stock;
+        }
+        item.quantity = newQty;
+        this.applyQuantityDiscount(item);
+    },
+    
+    applyQuantityDiscount(item) {
+        let discountPct = 0;
+        if (item.quantity >= 10) {
+            discountPct = 0.10;
+        } else if (item.quantity >= 5) {
+            discountPct = 0.05;
+        }
+        item.discount = parseFloat((item.unit_price * item.quantity * discountPct).toFixed(2));
+    },
+    
+    calculateLineTotal(item) {
+        return ((item.unit_price * item.quantity) - item.discount).toFixed(2);
+    },
+    
+    subtotal() {
+        return this.cart.reduce(
+            (sum,item) => sum + (item.unit_price * item.quantity),
+            0
+        );
+    },
+    
+    totalDiscount() {
+        return this.cart.reduce(
+            (sum,item) => sum + item.discount,
+            0
+        );
+    },
+    
+    grandTotal() {
+        return (this.subtotal() - this.totalDiscount()).toFixed(2);
+    },
+    
+    filteredProducts() {
+        const query = this.searchQuery.trim().toLowerCase();
+        return this.products.filter(product => {
+            if (product.stock_quantity <= 0) return false;
+            if (!query) return true;
+            return [
+                product.product_id,
+                product.product_name,
+                product.product_type,
+                product.category_name
+            ]
+            .map(v => String(v ?? '').toLowerCase())
+            .some(v => v.includes(query));
+        });
+    }
+}">
         <div class="container-fluid">
             <div class="page-title-head d-flex align-items-center"></div>
 
@@ -337,8 +337,7 @@
                                 <!-- Payment Method & Checkout -->
                                 <form action="{{ route('sales.store') }}" method="POST">
                                     @csrf
-                                    <!-- <input type="hidden" name="cart_data" :value="JSON.stringify(cart)"> -->
-                                    <input x-model="serializedCart" type="hidden" name="cart_data">
+                                    <input type="hidden" name="cart_data" :value="JSON.stringify(cart)">
                                     <div class="mb-3">
                                         <label for="payment_method" class="form-label fs-xs fw-semibold text-uppercase text-muted">Payment Method</label>
                                         <select class="form-select" id="payment_method" name="payment_method" x-model="paymentMethod" required>

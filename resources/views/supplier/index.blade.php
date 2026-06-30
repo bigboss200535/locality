@@ -55,7 +55,7 @@
                                             <th data-table-sort>Added By</th>
                                             <th data-table-sort>Date Added</th>
                                             <th data-table-sort>Status</th>
-                                            @if(auth()->user()->role_id === '1001' || auth()->user()->role_id === '1002')
+                                            @if(auth()->user()->role_id === '1001' || auth()->user()->role_id === '1002' || auth()->user()->role_id === '1003')
                                             <th data-table-sort>Action</th>
                                             @endif
                                         </tr>
@@ -84,7 +84,7 @@
                                                         <span class="badge bg-danger-subtle text-danger">INACTIVE</span>
                                                     @endif
                                                 </td>
-                                                @if(auth()->user()->role_id === '1001' || auth()->user()->role_id === '1002')
+                                                @if(auth()->user()->role_id === '1001' || auth()->user()->role_id === '1002' || auth()->user()->role_id === '1003')
                                                 <td>
                                                     <div class="">
                                                         <button type="button" class="btn btn-sm btn-outline-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">

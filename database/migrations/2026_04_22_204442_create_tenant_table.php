@@ -94,6 +94,7 @@ return new class extends Migration
             $table->string('tenant_id', 50)->nullable();
             $table->string('store_id', 50);
             $table->string('receipt_number', 50);
+            $table->string('payment_method', 50)->nullable();
             $table->timestamp('transaction_time')->nullable();
             $table->string('user_id', 50)->nullable();
             $table->string('expirable', 100)->nullable();

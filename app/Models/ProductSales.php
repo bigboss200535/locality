@@ -22,6 +22,7 @@ class ProductSales extends Model
         'sales_id',
         'product_id',
         'payment_id',
+        'receipt_number',
         'tenant_id',
         'store_id',
         'quantity',

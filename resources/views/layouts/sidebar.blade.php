@@ -162,6 +162,7 @@
                         </ul>
                     </div>
                 </li>
+                  @if(auth()->user()->role_id === '1001' || auth()->user()->role_id === '1002' || auth()->user()->role_id === '1003')
                 <li class="side-nav-item">
                     <a data-bs-toggle="collapse" href="#supplier" aria-expanded="false" aria-controls="supplier" class="side-nav-link">
                         <span class="menu-icon"><i class="fa fa-list-check"></i></span>
@@ -178,6 +179,9 @@
                         </ul>
                     </div>
                 </li>
+                @endif
+              @if(auth()->user()->role_id === '1001' || auth()->user()->role_id === '1002' || auth()->user()->role_id === '1003' || auth()->user()->role_id === '1004' || auth()->user()->role_id === '1005'
+              || auth()->user()->role_id === '1006' || auth()->user()->role_id === '1007' || auth()->user()->role_id === '1008')
                 <li class="side-nav-item">
                     <a data-bs-toggle="collapse" href="#product-management" aria-expanded="false" aria-controls="product-management" class="side-nav-link">
                         <span class="menu-icon"><i class="fa fa-list-check"></i></span>
@@ -200,8 +204,8 @@
                         </ul>
                     </div>
                 </li>
-                
-                
+                @endif
+                  @if(auth()->user()->role_id === '1001' || auth()->user()->role_id === '1002' || auth()->user()->role_id === '1003')
                 <li class="side-nav-title mt-2" data-lang="custom-pages">System Settings</li>
                 <li class="side-nav-item">
                     <a data-bs-toggle="collapse" href="#pages" aria-expanded="false" aria-controls="pages" class="side-nav-link">
@@ -220,6 +224,7 @@
                         </ul>
                     </div>
                 </li>
+                @endif
                 <!-- <li class="side-nav-item">
                     <a data-bs-toggle="collapse" href="#plugins" aria-expanded="false" aria-controls="plugins" class="side-nav-link">
                         <span class="menu-icon"><i class="ti ti-cpu"></i></span>
@@ -227,7 +232,7 @@
                         <span class="menu-arrow"></span>
                     </a>    
                 </li> -->
-               
+                 @if(auth()->user()->role_id === '1001' || auth()->user()->role_id === '1002' || auth()->user()->role_id === '1003')
                 <li class="side-nav-item">
                     <a data-bs-toggle="collapse" href="#error-pages" aria-expanded="false" aria-controls="error-pages" class="side-nav-link">
                         <span class="menu-icon"><i class="fa fa-list-check"></i></span>
@@ -257,6 +262,7 @@
                         </ul>
                     </div>
                 </li>
+                @endif
                 <li class="side-nav-title mt-2" data-lang="layouts" style="color:white">Reports</li>
                 <li class="side-nav-item">
                     <a data-bs-toggle="collapse" href="#layout-options" aria-expanded="false" aria-controls="layout-options" class="side-nav-link">
@@ -267,17 +273,17 @@
                     <div class="collapse" id="layout-options">
                         <ul class="sub-menu">
                             <li class="side-nav-item">
-                                <a href="#" class="side-nav-link" target="_blank">
+                                <a href="{{ route('reports.index', ['type' => 'active_products']) }}" class="side-nav-link">
                                     <span class="menu-text" data-lang="layouts-horizontal">Products</span>
                                 </a>
                             </li>
                             <li class="side-nav-item">
-                                <a href="#" class="side-nav-link" target="_blank">
+                                <a href="{{ route('reports.index', ['type' => 'product_prices']) }}" class="side-nav-link">
                                     <span class="menu-text" data-lang="layouts-boxed">Prices</span>
                                 </a>
                             </li>
                             <li class="side-nav-item">
-                                <a href="#" class="side-nav-link" target="#">
+                                <a href="{{ route('reports.index', ['type' => 'stocked_products']) }}" class="side-nav-link">
                                     <span class="menu-text" data-lang="layouts-scrollable">Stocks</span>
                                 </a>
                             </li>
@@ -311,10 +317,6 @@
                         </ul>
                     </div>
                 </li>
-                
-
-                <!-- <li class="side-nav-title mt-2" data-lang="menu-items">Menu Items</li> -->
-
             </ul>
         </div>
     </div>

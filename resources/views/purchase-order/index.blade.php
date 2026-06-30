@@ -95,13 +95,16 @@
                                                                     Edit 
                                                                 </button>
                                                             </li>
+                                                             @if(auth()->user()->role_id === '1001' || auth()->user()->role_id === '1002' || auth()->user()->role_id === '1003')
                                                             <li>
+                                                                
                                                                 <form action="{{ route('purchase-orders.destroy', $order->purchase_order_id) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this purchase order?');" class="d-inline">
                                                                     @csrf
                                                                     @method('DELETE')
                                                                     <button type="submit" class="dropdown-item text-danger">Delete</button>
                                                                 </form>
                                                             </li>
+                                                            @endif
                                                         </ul>
                                                     </div>
                                                     

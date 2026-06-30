@@ -55,7 +55,7 @@
                                             <th data-table-sort>Block Status</th>
                                             <th data-table-sort>Date Added</th>
                                             <th data-table-sort>Status</th>
-                                            @if(auth()->user()->role_id === '1001' || auth()->user()->role_id === '1002')
+                                            @if(auth()->user()->role_id === '1001' || auth()->user()->role_id === '1002' || auth()->user()->role_id === '1003' )
                                             <th data-table-sort>Action</th>
                                             @endif
                                         </tr>
@@ -78,7 +78,7 @@
                                                 <td>
                                                     <span class="badge bg-primary-subtle text-primary">{{ $userItem->role ? strtoupper($userItem->role->role_name) : 'N/A' }}</span>
                                                 </td>
-                                                 @if(auth()->user()->role_id === '1001' || auth()->user()->role_id === '1002' || auth()->user()->role_id === '1003')
+                                                 @if(auth()->user()->role_id === '1001' || auth()->user()->role_id === '1002' || auth()->user()->role_id === '1003' )
                                                  <td>{{ $userItem->store ? $userItem->store->store_name : 'N/A' }}</td>
                                                  @endif
                                                  @if(auth()->user()->role_id === '1001')
@@ -99,7 +99,7 @@
                                                         <span class="badge bg-danger-subtle text-danger">INACTIVE</span>
                                                     @endif
                                                 </td>
-                                                @if(auth()->user()->role_id === '1001' || auth()->user()->role_id === '1002')
+                                                @if(auth()->user()->role_id === '1001' || auth()->user()->role_id === '1002' || auth()->user()->role_id === '1003')
                                                 <td>
                                                     <div class="">
                                                         <button type="button" class="btn btn-sm btn-outline-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
@@ -107,6 +107,7 @@
                                                         </button>
                                                         <ul class="dropdown-menu">
                                                             <li><a class="dropdown-item" href="javascript:void(0);" data-bs-toggle="modal" data-bs-target="#editUserModal-{{ $userItem->user_id }}">Edit</a></li>
+                                                            @if(auth()->user()->role_id === '1001' || auth()->user()->role_id === '1002')
                                                             <li>
                                                                 <form action="{{ route('users.destroy', $userItem->user_id) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this user account? This is a soft-delete action.');" class="d-inline">
                                                                     @csrf
@@ -114,6 +115,7 @@
                                                                     <button type="submit" class="dropdown-item text-danger">Delete</button>
                                                                 </form>
                                                             </li>
+                                                            @endif
                                                         </ul>
                                                     </div>
                                                 </td>

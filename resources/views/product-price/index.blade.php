@@ -102,11 +102,13 @@
                                                                         Edit Price
                                                                     </a>
                                                                 </li>
+                                                                 @if(auth()->user()->role_id === '1001' || auth()->user()->role_id === '1002' )
                                                                 <li>
                                                                     <a class="dropdown-item text-danger" href="#" onclick="event.preventDefault(); if(confirm('Are you sure you want to delete this product price?')) { document.getElementById('delete-price-form-{{ $product->product_id }}').submit(); }">
                                                                         Delete Price
                                                                     </a>
                                                                 </li>
+                                                                @endif
                                                             @else
                                                                 <li>
                                                                     <a class="dropdown-item text-success" href="#" data-bs-toggle="modal" data-bs-target="#addProductPriceModal-{{ $product->product_id }}">
@@ -208,7 +210,9 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+                         @if(auth()->user()->role_id === '1001' || auth()->user()->role_id === '1002' || auth()->user()->role_id === '1003')
                         <button type="submit" class="btn btn-primary">Save Price</button>
+                        @endif
                     </div>
                 </form>
             </div>
@@ -247,7 +251,9 @@
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+                                 @if(auth()->user()->role_id === '1001' || auth()->user()->role_id === '1002' || auth()->user()->role_id === '1003')
                                 <button type="submit" class="btn btn-primary">Update Price</button>
+                                @endif
                             </div>
                         </form>
                     </div>
@@ -283,7 +289,9 @@
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+                                 @if(auth()->user()->role_id === '1001' || auth()->user()->role_id === '1002' || auth()->user()->role_id === '1003')
                                 <button type="submit" class="btn btn-primary">Save Price</button>
+                                @endif
                             </div>
                         </form>
                     </div>
