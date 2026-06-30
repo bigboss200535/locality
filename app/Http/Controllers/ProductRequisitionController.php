@@ -97,7 +97,7 @@ class ProductRequisitionController extends Controller
             'store_id' => $orderStoreId,
             'user_id' => $userId,
             'added_date' => now(),
-            'added_by' => strt $username,
+            'added_by' => strtoupper($username),
             'status' => 'Active',
             'archived' => 'No',
         ]);

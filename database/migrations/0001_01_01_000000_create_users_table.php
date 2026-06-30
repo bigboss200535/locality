@@ -11,11 +11,36 @@ return new class extends Migration
      */
     public function up(): void
     {
+       Schema::create('system_settings', function (Blueprint $table) {
+            $table->string('setting_id', 50)->primary();
+            $table->string('system_name', 150)->nullable();
+            $table->string('company', 150)->nullable();
+            $table->string('subscription_based', 50)->nullable();
+            $table->string('telephone', 50)->nullable();
+            $table->string('website', 50);
+            $table->string('user_id', 50)->nullable();
+            $table->timestamp('added_date')->nullable();
+            $table->timestamp('updated_date')->nullable();
+            $table->string('status', 50)->default('Active')->nullable();
+            $table->string('added_by', 100)->nullable();
+            $table->string('updated_by', 100)->nullable();
+            $table->string('archived', 100)->default('No')->index();
+            $table->string('archived_by', 100)->nullable()->index();
+            $table->timestamp('archived_date')->nullable()->index();
+            
+        });
+
          Schema::create('tenants', function (Blueprint $table) {
           $table->string('tenant_id', 50)->primary();
           $table->string('tenant_name', 300);
           $table->string('tenant_description', 300)->nullable();
           $table->string('telephone', 50)->nullable();
+          $table->string('subscription', 50)->default('No');
+          $table->string('subscription_expiry', 50)->default('No');
+          $table->date('subscription_expiry_date', 50)->nullable();
+          $table->string('allow_sms', 50)->default('No');
+          $table->string('allow_online', 50)->default('No');
+          $table->string('allow_email', 50)->default('No');
           $table->string('location', 250)->nullable();
           $table->string('slogan', 250)->nullable();
           $table->string('email', 50)->index()->nullable();
@@ -341,8 +366,9 @@ return new class extends Migration
      */
     public function down(): void
     {      
+        Schema::dropIfExists('system_settings');
         Schema::dropIfExists('tenants');
-         Schema::dropIfExists('stores');
+        Schema::dropIfExists('stores');
         Schema::dropIfExists('users');
         Schema::dropIfExists('product_category');
         Schema::dropIfExists('products');

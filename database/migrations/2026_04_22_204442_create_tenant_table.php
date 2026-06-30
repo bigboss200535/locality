@@ -12,7 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         
-
+       
+            
         
         Schema::create('product_prices', function (Blueprint $table) {
             $table->string('product_id', 50);
@@ -92,6 +93,7 @@ return new class extends Migration
             $table->integer('total_levies')->nullable();
             $table->string('tenant_id', 50)->nullable();
             $table->string('store_id', 50);
+            $table->string('receipt_number', 50);
             $table->timestamp('transaction_time')->nullable();
             $table->string('user_id', 50)->nullable();
             $table->string('expirable', 100)->nullable();
@@ -147,8 +149,8 @@ return new class extends Migration
             $table->float('total')->nullable();
             $table->timestamp('transaction_time')->nullable();
             $table->string('user_id', 50)->nullable();
-            $table->string('expirable', 100)->nullable();
-            $table->date('expiry_date')->nullable();
+            // $table->string('expirable', 100)->nullable();
+            // $table->date('expiry_date')->nullable();
             $table->timestamp('added_date')->nullable();
             $table->timestamp('updated_date')->nullable();
             $table->string('status', 50)->default('Active')->nullable();
@@ -160,7 +162,8 @@ return new class extends Migration
              // key
             $table->foreign('tenant_id')->references('tenant_id')->on('tenants');
             $table->foreign('store_id')->references('store_id')->on('stores');
-             $table->foreign('user_id')->references('user_id')->on('users');
+            $table->foreign('user_id')->references('user_id')->on('users');
+              $table->foreign('payment_id')->references('payment_id')->on('bills_payment');
         });
 
         Schema::create('refunds', function (Blueprint $table) {
