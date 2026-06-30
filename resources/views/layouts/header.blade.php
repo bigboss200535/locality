@@ -226,13 +226,13 @@
                         <div id="user-dropdown-detailed" class="topbar-item nav-user">
                             <div class="dropdown">
                                 <a class="topbar-link dropdown-toggle drop-arrow-none px-2" data-bs-toggle="dropdown" href="#!" aria-haspopup="false" aria-expanded="false">
-                                    <img src="{{ asset('images/users/user-1.jpg') }}" width="32" class="rounded-circle me-lg-2 d-flex" alt="user-image" />
+                                    <img src="{{ asset('images/male.jpg') }}" width="32" class="rounded-circle me-lg-2 d-flex" alt="user-image" />
                                     <div class="d-lg-flex align-items-center gap-1 d-none">
                                         <span>
-                                            <h5 class="my-0 lh-1 pro-username">{{ Auth::user()->othername }}</h5>
-                                            <span class="fs-xs lh-1">{{ Auth::user()->firstname }}</span>
+                                            <h5 class="my-0 lh-1 pro-username">{{ strtoupper(Auth::user()->othername) }}</h5>
+                                            <span class="fs-xs lh-1">{{ strtoupper(Auth::user()->firstname) }}</span>
                                         </span>
-                                        <i class="ti ti-chevron-down align-middle"></i>
+                                        <!-- <i class="fa fa-arrow-down align-middle"></i> -->
                                     </div>
                                 </a>
                                 <div class="dropdown-menu dropdown-menu-end">

@@ -85,7 +85,7 @@
                         <!-- <span class="menu-arrow"></span> -->
                     </a>
                 </li>
-                <li class="side-nav-title mt-2" data-lang="apps">Main Menu</li>
+                <li class="side-nav-title mt-2" data-lang="apps" style="color:white">Main Menu</li>
                 <li class="side-nav-item">
                      @if(auth()->user()->role_id === '1001' || auth()->user()->role_id === '1002' || auth()->user()->role_id === '1003')
                     <a data-bs-toggle="collapse" href="#product" aria-expanded="false" aria-controls="product" class="side-nav-link">
@@ -257,96 +257,57 @@
                         </ul>
                     </div>
                 </li>
-                <li class="side-nav-title mt-2" data-lang="layouts">Reports</li>
+                <li class="side-nav-title mt-2" data-lang="layouts" style="color:white">Reports</li>
                 <li class="side-nav-item">
                     <a data-bs-toggle="collapse" href="#layout-options" aria-expanded="false" aria-controls="layout-options" class="side-nav-link">
                         <span class="menu-icon"><i class="fa fa-list-check"></i></span>
-                        <span class="menu-text" data-lang="layout-options">Products</span>
+                        <span class="menu-text" data-lang="layout-options">Inventory</span>
                         <span class="menu-arrow"></span>
                     </a>
                     <div class="collapse" id="layout-options">
                         <ul class="sub-menu">
                             <li class="side-nav-item">
-                                <a href="layouts-horizontal.html" class="side-nav-link" target="_blank">
+                                <a href="#" class="side-nav-link" target="_blank">
                                     <span class="menu-text" data-lang="layouts-horizontal">Products</span>
                                 </a>
                             </li>
                             <li class="side-nav-item">
-                                <a href="layouts-boxed.html" class="side-nav-link" target="_blank">
+                                <a href="#" class="side-nav-link" target="_blank">
                                     <span class="menu-text" data-lang="layouts-boxed">Prices</span>
                                 </a>
                             </li>
                             <li class="side-nav-item">
-                                <a href="layouts-scrollable.html" class="side-nav-link" target="_blank">
+                                <a href="#" class="side-nav-link" target="#">
                                     <span class="menu-text" data-lang="layouts-scrollable">Stocks</span>
                                 </a>
                             </li>
-                            <!-- <li class="side-nav-item">
-                                <a href="layouts-compact.html" class="side-nav-link" target="_blank">
-                                    <span class="menu-text" data-lang="layouts-compact">Compact</span>
-                                </a>
-                            </li> -->
-                            <!-- <li class="side-nav-item">
-                                <a href="layouts-preloader.html" class="side-nav-link" target="_blank">
-                                    <span class="menu-text" data-lang="layouts-preloader">Preloader</span>
-                                </a>
-                            </li> -->
                         </ul>
                     </div>
                 </li>
                 <li class="side-nav-item">
                     <a data-bs-toggle="collapse" href="#sidebars" aria-expanded="false" aria-controls="sidebars" class="side-nav-link">
                         <span class="menu-icon"><i class="fa fa-list-check"></i></span>
-                        <span class="menu-text" data-lang="sidebars">Sidebars</span>
+                        <span class="menu-text" data-lang="sidebars">Revenue</span>
                         <span class="menu-arrow"></span>
                     </a>
                     <div class="collapse" id="sidebars">
                         <ul class="sub-menu">
                             <li class="side-nav-item">
-                                <a href="layouts-sidebar-light.html" class="side-nav-link" target="_blank">
+                                <a href="#" class="side-nav-link">
                                     <span class="menu-text" data-lang="layouts-sidebar-light">Light Menu</span>
                                 </a>
                             </li>
                             <li class="side-nav-item">
-                                <a href="layouts-sidebar-gradient.html" class="side-nav-link" target="_blank">
+                                <a href="layouts-sidebar-gradient.html" class="side-nav-link">
                                     <span class="menu-text" data-lang="layouts-sidebar-gradient">Gradient Menu</span>
                                 </a>
                             </li>
                             <li class="side-nav-item">
-                                <a href="layouts-sidebar-gray.html" class="side-nav-link" target="_blank">
+                                <a href="layouts-sidebar-gray.html" class="side-nav-link">
                                     <span class="menu-text" data-lang="layouts-sidebar-gray">Gray Menu</span>
                                 </a>
                             </li>
-                            <li class="side-nav-item">
-                                <a href="layouts-sidebar-image.html" class="side-nav-link" target="_blank">
-                                    <span class="menu-text" data-lang="layouts-sidebar-image">Image Menu</span>
-                                </a>
-                            </li>
-                            <li class="side-nav-item">
-                                <a href="layouts-sidebar-compact.html" class="side-nav-link" target="_blank">
-                                    <span class="menu-text" data-lang="layouts-sidebar-compact">Compact Menu</span>
-                                </a>
-                            </li>
-                            <li class="side-nav-item">
-                                <a href="layouts-sidebar-on-hover.html" class="side-nav-link" target="_blank">
-                                    <span class="menu-text" data-lang="layouts-sidebar-on-hover">On Hover Menu</span>
-                                </a>
-                            </li>
-                            <li class="side-nav-item">
-                                <a href="layouts-sidebar-offcanvas.html" class="side-nav-link" target="_blank">
-                                    <span class="menu-text" data-lang="layouts-sidebar-offcanvas">Offcanvas Menu</span>
-                                </a>
-                            </li>
-                            <li class="side-nav-item">
-                                <a href="layouts-sidebar-no-icons.html" class="side-nav-link" target="_blank">
-                                    <span class="menu-text" data-lang="layouts-sidebar-no-icons">No Icons with Lines</span>
-                                </a>
-                            </li>
-                            <li class="side-nav-item">
-                                <a href="layouts-sidebar-with-lines.html" class="side-nav-link" target="_blank">
-                                    <span class="menu-text" data-lang="layouts-sidebar-with-lines">Sidebar with Lines</span>
-                                </a>
-                            </li>
+                           
                         </ul>
                     </div>
                 </li>
