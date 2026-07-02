@@ -103,7 +103,6 @@ return new class extends Migration
             $table->string('role_id', 50)->nullable();
             $table->string('provider', 200)->nullable(); // e.g. Google, Facebook, etc.
             $table->string('provider_id', 200)->nullable(); // ID from the provider
-            
             $table->text('avatar')->nullable(); // URL or base64 string for the user's avatar
             $table->string('email', 100)->unique();
             $table->string('blocked', 50)->default('No');
@@ -136,7 +135,7 @@ return new class extends Migration
             $table->string('user_id', 50)->nullable();
             $table->timestamp('added_date')->nullable();
             $table->timestamp('updated_date')->nullable();
-            $table->string('status', 50)->default('Active')->nullable();
+            $table->string('status', 50)->default('Active')->nullable()->index();
             $table->string('added_by', 100)->nullable();
             $table->string('updated_by', 100)->nullable();
             $table->string('archived', 100)->default('No')->index();
@@ -146,7 +145,6 @@ return new class extends Migration
             $table->foreign('tenant_id')->references('tenant_id')->on('tenants');
             $table->foreign('store_id')->references('store_id')->on('stores');
             $table->foreign('user_id')->references('user_id')->on('users');
-            // $table->timestamps();
         });
 
         Schema::create('products', function (Blueprint $table) {

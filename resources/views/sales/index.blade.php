@@ -1,114 +1,205 @@
 <x-app-layout>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    
     <!-- Start Main Content -->
-   <div class="content-page" x-data="{
-    products: json($products->map(function($product) {
-        return [
-            'product_id' => $product->product_id,
-            'product_name' => $product->product_name,
-            'product_type' => $product->product_type,
-            'category_name' => $product->category ? $product->category->category_name : 'N/A',
-            'unit_price' => $product->price ? $product->price->unit_price : 0,
-            'unit_cost' => $product->price ? $product->price->unit_cost : 0,
-            'stock_quantity' => $product->stock ? $product->stock->stock_quantity : 0
-        ];
-    })),
-    searchQuery: '',
-    cart: [],
-    paymentMethod: 'Cash',
-    
-    get serializedCart() {
-        return JSON.stringify(this.cart);
-    },
-    
-    addToCart(product) {
-        if (product.stock_quantity <= 0) {
-            alert('This product is out of stock!');
-            return;
-        }
-        let existing = this.cart.find(item => String(item.product_id) === String(product.product_id));
-        if (existing) {
-            if (existing.quantity >= product.stock_quantity) {
-                alert('Cannot exceed available stock (' + product.stock_quantity + ')');
+    <div class="content-page" x-data="{
+        products: [],
+        allProducts: [],
+        searchQuery: '',
+        cart: [],
+        paymentMethod: 'Cash',
+        currentPage: 1,
+        lastPage: 1,
+        loading: false,
+        hasMore: true,
+        perPage: 20,
+        initialLoad: true,
+        cartDiscountType: 'percentage', // 'percentage' or 'fixed'
+        cartDiscountValue: 0,
+        cartDiscountAmount: 0,
+        
+        get serializedCart() {
+            return JSON.stringify(this.cart);
+        },
+        
+        async loadProducts(page = 1) {
+            if (this.loading || !this.hasMore) return;
+            
+            this.loading = true;
+            
+            try {
+                const response = await fetch(`{{ route('sales.products') }}?page=${page}&search=${encodeURIComponent(this.searchQuery)}`);
+                const data = await response.json();
+                
+                if (page === 1) {
+                    this.products = data.data;
+                    this.allProducts = data.data;
+                } else {
+                    this.products = [...this.products, ...data.data];
+                    this.allProducts = [...this.allProducts, ...data.data];
+                }
+                
+                this.currentPage = data.current_page;
+                this.lastPage = data.last_page;
+                this.hasMore = data.current_page < data.last_page;
+                this.initialLoad = false;
+            } catch (error) {
+                console.error('Error loading products:', error);
+                alert('Failed to load products. Please refresh the page.');
+            } finally {
+                this.loading = false;
+            }
+        },
+        
+        async searchProducts() {
+            this.currentPage = 1;
+            this.hasMore = true;
+            this.products = [];
+            this.allProducts = [];
+            await this.loadProducts(1);
+        },
+        
+        loadMore() {
+            if (this.hasMore && !this.loading) {
+                this.loadProducts(this.currentPage + 1);
+            }
+        },
+        
+        handleScroll(event) {
+            const container = event.target;
+            if (container.scrollTop + container.clientHeight >= container.scrollHeight - 100) {
+                this.loadMore();
+            }
+        },
+        
+        addToCart(product) {
+            if (product.stock_quantity <= 0) {
+                alert('This product is out of stock!');
                 return;
             }
-            existing.quantity++;
-            this.applyQuantityDiscount(existing);
-        } else {
-            this.cart.push({
-                product_id: product.product_id,
-                product_name: product.product_name,
-                unit_price: product.unit_price,
-                quantity: 1,
-                discount: 0,
-                max_stock: product.stock_quantity
-            });
+            let existing = this.cart.find(item => String(item.product_id) === String(product.product_id));
+            if (existing) {
+                if (existing.quantity >= product.stock_quantity) {
+                    alert('Cannot exceed available stock (' + product.stock_quantity + ')');
+                    return;
+                }
+                existing.quantity++;
+                this.applyQuantityDiscount(existing);
+            } else {
+                this.cart.push({
+                    product_id: product.product_id,
+                    product_name: product.product_name,
+                    unit_price: product.unit_price,
+                    quantity: 1,
+                    discount: 0,
+                    discount_type: 'percentage', // 'percentage' or 'fixed'
+                    discount_value: 0,
+                    max_stock: product.stock_quantity
+                });
+            }
+            this.calculateCartDiscount();
+        },
+        
+        removeFromCart(productId) {
+            this.cart = this.cart.filter(item => item.product_id !== productId);
+            this.calculateCartDiscount();
+        },
+        
+        updateQuantity(item, qty) {
+            let newQty = parseInt(qty);
+            if (isNaN(newQty) || newQty <= 0) newQty = 1;
+            if (newQty > item.max_stock) {
+                alert('Cannot exceed available stock (' + item.max_stock + ')');
+                newQty = item.max_stock;
+            }
+            item.quantity = newQty;
+            this.applyQuantityDiscount(item);
+            this.calculateCartDiscount();
+        },
+        
+        applyQuantityDiscount(item) {
+            let discountPct = 0;
+            if (item.quantity >= 10) {
+                discountPct = 0.10;
+            } else if (item.quantity >= 5) {
+                discountPct = 0.05;
+            }
+            // Only apply quantity discount if no manual discount is set
+            if (!item.discount_value || item.discount_value === 0) {
+                item.discount = parseFloat((item.unit_price * item.quantity * discountPct).toFixed(2));
+            } else {
+                this.applyManualDiscount(item);
+            }
+        },
+        
+        applyManualDiscount(item) {
+            const subtotal = item.unit_price * item.quantity;
+            if (item.discount_type === 'percentage') {
+                const discountPct = parseFloat(item.discount_value) || 0;
+                item.discount = parseFloat((subtotal * (discountPct / 100)).toFixed(2));
+            } else {
+                // Fixed amount discount
+                const discountAmount = parseFloat(item.discount_value) || 0;
+                item.discount = Math.min(discountAmount, subtotal);
+            }
+        },
+        
+        updateItemDiscount(item, type, value) {
+            item.discount_type = type;
+            item.discount_value = parseFloat(value) || 0;
+            this.applyManualDiscount(item);
+            this.calculateCartDiscount();
+        },
+        
+        calculateLineTotal(item) {
+            return ((item.unit_price * item.quantity) - item.discount).toFixed(2);
+        },
+        
+        subtotal() {
+            return this.cart.reduce(
+                (sum,item) => sum + (item.unit_price * item.quantity),
+                0
+            );
+        },
+        
+        totalQuantityDiscount() {
+            return this.cart.reduce(
+                (sum,item) => sum + item.discount,
+                0
+            );
+        },
+        
+        applyCartDiscount() {
+            const subtotal = this.subtotal();
+            const cartDiscount = parseFloat(this.cartDiscountValue) || 0;
+            
+            if (this.cartDiscountType === 'percentage') {
+                this.cartDiscountAmount = parseFloat((subtotal * (cartDiscount / 100)).toFixed(2));
+            } else {
+                this.cartDiscountAmount = Math.min(cartDiscount, subtotal);
+            }
+        },
+        
+        calculateCartDiscount() {
+            // Recalculate cart-level discount when cart changes
+            this.applyCartDiscount();
+        },
+        
+        grandTotal() {
+            const subtotal = this.subtotal();
+            const totalDiscount = this.totalQuantityDiscount() + this.cartDiscountAmount;
+            return (subtotal - totalDiscount).toFixed(2);
+        },
+        
+        filteredProducts() {
+            return this.products;
+        },
+        
+        init() {
+            this.loadProducts(1);
         }
-    },
-    
-    removeFromCart(productId) {
-        this.cart = this.cart.filter(item => item.product_id !== productId);
-    },
-    
-    updateQuantity(item, qty) {
-        let newQty = parseInt(qty);
-        if (isNaN(newQty) || newQty <= 0) newQty = 1;
-        if (newQty > item.max_stock) {
-            alert('Cannot exceed available stock (' + item.max_stock + ')');
-            newQty = item.max_stock;
-        }
-        item.quantity = newQty;
-        this.applyQuantityDiscount(item);
-    },
-    
-    applyQuantityDiscount(item) {
-        let discountPct = 0;
-        if (item.quantity >= 10) {
-            discountPct = 0.10;
-        } else if (item.quantity >= 5) {
-            discountPct = 0.05;
-        }
-        item.discount = parseFloat((item.unit_price * item.quantity * discountPct).toFixed(2));
-    },
-    
-    calculateLineTotal(item) {
-        return ((item.unit_price * item.quantity) - item.discount).toFixed(2);
-    },
-    
-    subtotal() {
-        return this.cart.reduce(
-            (sum,item) => sum + (item.unit_price * item.quantity),
-            0
-        );
-    },
-    
-    totalDiscount() {
-        return this.cart.reduce(
-            (sum,item) => sum + item.discount,
-            0
-        );
-    },
-    
-    grandTotal() {
-        return (this.subtotal() - this.totalDiscount()).toFixed(2);
-    },
-    
-    filteredProducts() {
-        const query = this.searchQuery.trim().toLowerCase();
-        return this.products.filter(product => {
-            if (product.stock_quantity <= 0) return false;
-            if (!query) return true;
-            return [
-                product.product_id,
-                product.product_name,
-                product.product_type,
-                product.category_name
-            ]
-            .map(v => String(v ?? '').toLowerCase())
-            .some(v => v.includes(query));
-        });
-    }
-}">
+    }"
+    x-init="init()">
         <div class="container-fluid">
             <div class="page-title-head d-flex align-items-center"></div>
 
@@ -185,10 +276,12 @@
                                         <span class="text-muted">Subtotal</span>
                                         <span>GHs {{ number_format(session('receipt.subtotal'), 2) }}</span>
                                     </div>
-                                    <div class="d-flex justify-content-between mb-1">
-                                        <span class="text-success">Discount</span>
-                                        <span class="text-success">-GHs {{ number_format(session('receipt.discount'), 2) }}</span>
-                                    </div>
+                                    @if(session('receipt.discount') > 0)
+                                        <div class="d-flex justify-content-between mb-1">
+                                            <span class="text-success">Discount</span>
+                                            <span class="text-success">-GHs {{ number_format(session('receipt.discount'), 2) }}</span>
+                                        </div>
+                                    @endif
                                     <div class="d-flex justify-content-between fw-bold fs-base border-top pt-2">
                                         <span>Grand Total</span>
                                         <span class="text-primary">GHs {{ number_format(session('receipt.grand_total'), 2) }}</span>
@@ -217,13 +310,20 @@
                             <div class="w-50">
                                 <div class="input-group">
                                     <span class="input-group-text bg-light border-light-subtle"><i class="fa fa-search"></i></span>
-                                    <input type="text" x-model="searchQuery" class="form-control" placeholder="Search by name, category or brand...">
+                                    <input type="text" 
+                                           x-model="searchQuery" 
+                                           @input.debounce.500ms="searchProducts()"
+                                           class="form-control" 
+                                           placeholder="Search by name, category or brand...">
+                                    <span class="input-group-text bg-light" x-show="loading">
+                                        <span class="spinner-border spinner-border-sm" role="status"></span>
+                                    </span>
                                 </div>
                             </div>
                         </div>
 
                         <div class="card-body p-0">
-                            <div class="table-responsive" style="max-height: 550px; overflow-y: auto;">
+                            <div class="table-responsive" style="max-height: 550px; overflow-y: auto;" x-ref="productTable" @scroll="handleScroll($event)">
                                 <table class="table table-custom table-centered table-hover w-100 mb-0">
                                     <thead class="bg-light align-middle bg-opacity-25 thead-sm sticky-top" style="z-index: 5;">
                                         <tr class="text-uppercase table-nowrap fs-xxs">
@@ -236,6 +336,21 @@
                                     </thead>
 
                                     <tbody class="text-nowrap">
+                                        <!-- Loading State -->
+                                        <template x-if="loading && filteredProducts().length === 0">
+                                            <tr>
+                                                <td colspan="5" class="text-center py-5">
+                                                    <div class="d-flex justify-content-center">
+                                                        <div class="spinner-border text-primary" role="status">
+                                                            <span class="visually-hidden">Loading...</span>
+                                                        </div>
+                                                    </div>
+                                                    <p class="text-muted mt-2">Loading products...</p>
+                                                </td>
+                                            </tr>
+                                        </template>
+
+                                        <!-- Products List -->
                                         <template x-for="product in filteredProducts()" :key="product.product_id">
                                             <tr>
                                                 <td>
@@ -254,10 +369,39 @@
                                                 </td>
                                             </tr>
                                         </template>
-                                        <template x-if="filteredProducts().length === 0">
+
+                                        <!-- No Products Found -->
+                                        <template x-if="!loading && filteredProducts().length === 0">
                                             <tr>
                                                 <td colspan="5" class="text-center py-5 text-muted">
+                                                    <i class="fa fa-box-open fs-1 d-block mb-3"></i>
                                                     No products found matching your search query.
+                                                </td>
+                                            </tr>
+                                        </template>
+
+                                        <!-- Load More Indicator -->
+                                        <template x-if="hasMore && filteredProducts().length > 0">
+                                            <tr>
+                                                <td colspan="5" class="text-center py-3">
+                                                    <div x-show="loading" class="d-flex justify-content-center">
+                                                        <div class="spinner-border spinner-border-sm text-primary" role="status">
+                                                            <span class="visually-hidden">Loading more...</span>
+                                                        </div>
+                                                        <span class="ms-2 text-muted">Loading more products...</span>
+                                                    </div>
+                                                    <button x-show="!loading" @click="loadMore()" class="btn btn-sm btn-outline-primary">
+                                                        <i class="fa fa-chevron-down me-1"></i> Load More Products
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        </template>
+
+                                        <!-- End of Products -->
+                                        <template x-if="!hasMore && filteredProducts().length > 0">
+                                            <tr>
+                                                <td colspan="5" class="text-center py-3 text-muted">
+                                                    <i class="fa fa-check-circle text-success me-1"></i> All products loaded
                                                 </td>
                                             </tr>
                                         </template>
@@ -298,19 +442,50 @@
                                                         <i class="fa fa-trash-can"></i>
                                                     </button>
                                                 </div>
-                                                <div class="d-flex justify-content-between align-items-center">
-                                                    <!-- Quantity input with step counters -->
-                                                    <div class="input-group input-group-sm w-50">
+                                                
+                                                <!-- Quantity and Discount Controls -->
+                                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                                    <div class="input-group input-group-sm w-40">
                                                         <button class="btn btn-outline-secondary" type="button" @click="updateQuantity(item, item.quantity - 1)">-</button>
                                                         <input type="text" class="form-control text-center" :value="item.quantity" @change="updateQuantity(item, $event.target.value)">
                                                         <button class="btn btn-outline-secondary" type="button" @click="updateQuantity(item, item.quantity + 1)">+</button>
                                                     </div>
                                                     <div class="text-end">
-                                                        <template x-if="item.discount > 0">
-                                                            <div class="text-success fs-xs mb-1">Discount: -GHs <span x-text="item.discount.toFixed(2)"></span></div>
-                                                        </template>
                                                         <div class="fw-semibold">GHs <span x-text="calculateLineTotal(item)"></span></div>
                                                     </div>
+                                                </div>
+                                                
+                                                <!-- Item Discount Input -->
+                                                <div class="d-flex align-items-center gap-2 mt-1">
+                                                    <span class="text-muted fs-xs" style="min-width: 60px;">Discount:</span>
+                                                    <div class="input-group input-group-sm" style="width: 130px;">
+                                                        <input type="number" 
+                                                               class="form-control text-center" 
+                                                               :value="item.discount_value" 
+                                                               @input="updateItemDiscount(item, item.discount_type, $event.target.value)"
+                                                               min="0"
+                                                               step="0.01"
+                                                               placeholder="0">
+                                                        <span class="input-group-text p-0">
+                                                            <select class="form-select form-select-sm border-0" 
+                                                                    style="min-width: 70px;"
+                                                                    x-model="item.discount_type"
+                                                                    @change="updateItemDiscount(item, item.discount_type, item.discount_value)">
+                                                                <option value="percentage">%</option>
+                                                                <option value="fixed">GHs</option>
+                                                            </select>
+                                                        </span>
+                                                    </div>
+                                                    <template x-if="item.discount > 0">
+                                                        <span class="text-success fs-xs fw-bold">-GHs <span x-text="item.discount.toFixed(2)"></span></span>
+                                                    </template>
+                                                </div>
+                                                
+                                                <!-- Quantity discount indicator -->
+                                                <div x-show="item.quantity >= 5 && (!item.discount_value || item.discount_value === 0)" 
+                                                     class="text-info fs-xxs mt-1">
+                                                    <i class="fa fa-tag me-1"></i> 
+                                                    <span x-text="item.quantity >= 10 ? '10% bulk discount applied' : '5% bulk discount applied'"></span>
                                                 </div>
                                             </div>
                                         </template>
@@ -322,12 +497,49 @@
                             <div class="bg-light p-3 border-top border-light-subtle">
                                 <div class="d-flex justify-content-between mb-2">
                                     <span class="text-muted">Subtotal</span>
-                                    <span class="fw-semibold">GHs <span x-text="subtotal()"></span></span>
+                                    <span class="fw-semibold">GHs <span x-text="subtotal().toFixed(2)"></span></span>
                                 </div>
-                                <div class="d-flex justify-content-between mb-2">
-                                    <span class="text-success d-flex align-items-center">Quantity Discounts <i class="fa fa-circle-info text-success ms-1" title="Discounts applied: 5+ items gets 5% off, 10+ items gets 10% off"></i></span>
-                                    <span class="text-success fw-semibold">-GHs <span x-text="totalDiscount()"></span></span>
+                                
+                                <!-- Cart-level Discount Input -->
+                                <div class="mb-2">
+                                    <div class="d-flex align-items-center gap-2">
+                                        <span class="text-muted fs-xs" style="min-width: 60px;">Cart Discount:</span>
+                                        <div class="input-group input-group-sm" style="width: 200px;">
+                                            <input type="number" 
+                                                   class="form-control text-center" 
+                                                   x-model="cartDiscountValue"
+                                                   @input="applyCartDiscount()"
+                                                   min="0"
+                                                   step="0.01"
+                                                   placeholder="0">
+                                            <span class="input-group-text p-0">
+                                                <select class="form-select form-select-sm border-0" 
+                                                        style="min-width: 70px;"
+                                                        x-model="cartDiscountType"
+                                                        @change="applyCartDiscount()">
+                                                    <option value="percentage">%</option>
+                                                    <option value="fixed">GHs</option>
+                                                </select>
+                                            </span>
+                                        </div>
+                                        <template x-if="cartDiscountAmount > 0">
+                                            <span class="text-success fs-xs fw-bold">-GHs <span x-text="cartDiscountAmount.toFixed(2)"></span></span>
+                                        </template>
+                                    </div>
                                 </div>
+                                
+                                <!-- Discount Breakdown -->
+                                <div x-show="totalQuantityDiscount() > 0 || cartDiscountAmount > 0" class="mb-2">
+                                    <div x-show="totalQuantityDiscount() > 0" class="d-flex justify-content-between mb-1">
+                                        <span class="text-muted fs-xs">Item Discounts</span>
+                                        <span class="text-success fs-xs">-GHs <span x-text="totalQuantityDiscount().toFixed(2)"></span></span>
+                                    </div>
+                                    <div x-show="cartDiscountAmount > 0" class="d-flex justify-content-between mb-1">
+                                        <span class="text-muted fs-xs">Cart Discount</span>
+                                        <span class="text-success fs-xs">-GHs <span x-text="cartDiscountAmount.toFixed(2)"></span></span>
+                                    </div>
+                                </div>
+                                
                                 <hr class="my-2 border-light-subtle">
                                 <div class="d-flex justify-content-between mb-3">
                                     <span class="fs-base fw-bold">Grand Total</span>
@@ -337,7 +549,7 @@
                                 <!-- Payment Method & Checkout -->
                                 <form action="{{ route('sales.store') }}" method="POST">
                                     @csrf
-                                    <input type="hidden" name="cart_data" :value="JSON.stringify(cart)">
+                                    <input type="hidden" name="cart_data" :value="serializedCart">
                                     <div class="mb-3">
                                         <label for="payment_method" class="form-label fs-xs fw-semibold text-uppercase text-muted">Payment Method</label>
                                         <select class="form-select" id="payment_method" name="payment_method" x-model="paymentMethod" required>

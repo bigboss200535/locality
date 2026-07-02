@@ -93,6 +93,12 @@ return new class extends Migration
             $table->integer('total_levies')->nullable();
             $table->string('tenant_id', 50)->nullable();
             $table->string('store_id', 50);
+            $table->decimal('subtotal', 10, 2)->default(0);
+            $table->decimal('item_discount', 10, 2)->default(0);
+            $table->decimal('cart_discount', 10, 2)->default(0);
+            $table->string('cart_discount_type')->nullable();
+            $table->decimal('cart_discount_value', 10, 2)->default(0);
+            $table->decimal('total_discount', 10, 2)->default(0);
             $table->string('receipt_number', 50);
             $table->string('payment_method', 50)->nullable();
             $table->timestamp('transaction_time')->nullable();
@@ -139,6 +145,9 @@ return new class extends Migration
             $table->string('sales_id', 50)->primary();
             $table->string('product_id', 50);
             $table->string('payment_id', 50);
+            $table->decimal('discount', 10, 2)->default(0);
+            $table->string('discount_type')->nullable();
+            $table->decimal('discount_value', 10, 2)->default(0);
             $table->string('receipt_number', 50)->index();
             $table->string('tenant_id', 50)->nullable();
             $table->string('store_id', 50);

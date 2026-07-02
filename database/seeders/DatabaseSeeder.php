@@ -6,6 +6,9 @@ use App\Models\User;
 use App\Models\Stores;
 use App\Models\Role;
 use App\Models\Tenant;
+use App\Models\Supplier;
+use App\Models\Product;
+use App\Models\ProductCategory;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Str;
@@ -80,6 +83,17 @@ class DatabaseSeeder extends Seeder
             'tenant_description' => 'SALES',
             'type_of_business' => 'PRODUCT SALES',
             'added_date' =>  now(),
+            'added_by' => 'MOHAMMED ALHASSAN',
+            'user_id' => 'e4c06f74-4b4e-4669-9137-1729876865a3'
+        ]);
+
+         Tenant::create([
+            'tenant_id' => '40402',
+            'tenant_name' => 'MOHAMMED ENTERPRISES',
+            'tenant_description' => 'SALES',
+            'type_of_business' => 'PRODUCT SALES',
+            'added_date' =>  now(),
+            'added_by' => 'MOHAMMED ALHASSAN',
             'user_id' => 'e4c06f74-4b4e-4669-9137-1729876865a3'
         ]);
 
@@ -93,7 +107,7 @@ class DatabaseSeeder extends Seeder
         ]);
 
         User::factory()->create([
-            'user_id' => 'e4c06f74-4b4e-4669-9137-1729876865a3',
+            'user_id' => Str::uuid(),
             'firstname' => 'Mohammed',
             'othername' => 'Alhassan',
             'role_id' => '1001',
@@ -103,10 +117,13 @@ class DatabaseSeeder extends Seeder
             'password' =>  Hash::make('password'),
             'telephone' => '233245340461',
             'telephone_verify' => 'Yes',
-            'user_no' => 'e4c06f74-4b4e-4669-9137-1729876865a3',
+            'user_no' => 'f4c06f74-4b4e-4669-9137-1729876865a3',
             'added_date' => now(),
         ]);
 
-        // User::factory(100)->create();
+        User::factory(100)->create();
+        Supplier::factory(5)->create();
+        ProductCategory::factory(10)->create();
+        Product::factory(3)->create();
     }
 }

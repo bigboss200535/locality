@@ -273,7 +273,7 @@
                     <div class="modal-body">
                         <div class="mb-3">
                             <label for="product_name" class="form-label">Product Name</label>
-                            <input type="text" class="form-control" id="product_name" name="product_name" required placeholder="e.g. iPhone 15 Pro">
+                            <input type="text" class="form-control" id="product_name" name="product_name" required placeholder="e.g. iPhone 15 Pro" autocomplete="off">
                         </div>
                         <div class="mb-3">
                             <label for="product_type" class="form-label">Product Type / Variant</label>
@@ -316,10 +316,10 @@
                                 <!-- <input type="number" step="0.01" class="form-control" id="stockable" name="stockable" required min="0" placeholder="0.00"> -->
                             </div>
                         </div>
-                        <!-- <div class="mb-3">
+                        <div class="mb-3">
                             <label for="stock_quantity" class="form-label">Initial Stock Quantity</label>
-                            <input type="number" class="form-control" id="stock_quantity" name="stock_quantity" required min="0" placeholder="0" value="0" disabled>
-                        </div> -->
+                            <input type="number" class="form-control" id="stock_quantity" name="stock_quantity" required min="0" placeholder="0" value="0">
+                        </div>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>

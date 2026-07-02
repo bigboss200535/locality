@@ -293,14 +293,14 @@
                 <li class="side-nav-item">
                     <a data-bs-toggle="collapse" href="#sidebars" aria-expanded="false" aria-controls="sidebars" class="side-nav-link">
                         <span class="menu-icon"><i class="fa fa-list-check"></i></span>
-                        <span class="menu-text" data-lang="sidebars">Revenue</span>
+                        <span class="menu-text" data-lang="sidebars">Revenue/Expenditure</span>
                         <span class="menu-arrow"></span>
                     </a>
                     <div class="collapse" id="sidebars">
                         <ul class="sub-menu">
                             <li class="side-nav-item">
                                 <a href="#" class="side-nav-link">
-                                    <span class="menu-text" data-lang="layouts-sidebar-light">Light Menu</span>
+                                    <span class="menu-text" data-lang="layouts-sidebar-light">Cash Sales</span>
                                 </a>
                             </li>
                             <li class="side-nav-item">

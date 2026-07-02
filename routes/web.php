@@ -68,9 +68,10 @@ Route::middleware(['auth', 'verified'])->group(function (){
     Route::put('/inventory/{product}', [ProductStockController::class, 'update'])->name('inventory.update');
     Route::delete('/inventory/{product}', [ProductStockController::class, 'destroy'])->name('inventory.destroy');
 
-    // Sales Routes
+   // Sales Routes
     Route::get('/sales', [SalesController::class, 'index'])->name('sales.index');
     Route::post('/sales', [SalesController::class, 'store'])->name('sales.store');
+    Route::get('/sales/products', [SalesController::class, 'getProducts'])->name('sales.products');
 
     // Spoilage Management Routes
     Route::get('/spoilages', [ProductManagementController::class, 'spoilages'])->name('spoilages.index');

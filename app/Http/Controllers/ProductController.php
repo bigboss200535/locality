@@ -18,12 +18,13 @@ class ProductController extends Controller
             ->where('archived', 'No')
              ->where('tenant_id', auth()->user()->tenant_id)
             ->orderBy('added_date', 'desc')
-            ->get();
+            ->cursor();
 
         $categories = ProductCategory::where('archived', 'No')
             ->where('status', 'Active')
             ->where('tenant_id', auth()->user()->tenant_id)
-            ->get();
+            // ->cursor();
+            ->paginate('10');
 
         // If categories are empty, create default category to ensure dropdown works
         // if ($categories->isEmpty()) {
@@ -107,20 +108,20 @@ class ProductController extends Controller
                         ]);
 
                         // 3. Create ProductStock
-                        // ProductStock::create([
-                        //     'stock_id' => (string) Str::uuid(),
-                        //     'product_id' => $productId,
-                        //     'stock_quantity' => $request->stock_quantity,
-                        //     'stock_date' => now(),
-                        //     'stocked_by' => $username,
-                        //     'tenant_id' => $tenantId,
-                        //     'store_id' => $storeId,
-                        //     'user_id' => $userId,
-                        //     'added_date' => now(),
-                        //     'status' => 'Active',
-                        //     'added_by' => strtoupper($username),
-                        //     'archived' => 'No',
-                        // ]);
+                        ProductStock::create([
+                            'stock_id' => (string) Str::uuid(),
+                            'product_id' => $productId,
+                            'stock_quantity' => $request->stock_quantity,
+                            'stock_date' => now(),
+                            'stocked_by' => $username,
+                            'tenant_id' => $tenantId,
+                            'store_id' => $storeId,
+                            'user_id' => $userId,
+                            'added_date' => now(),
+                            'status' => 'Active',
+                            'added_by' => strtoupper($username),
+                            'archived' => 'No',
+                        ]);
             
              DB::commit();
              return redirect()->route('products')->with('success', 'Product added successfully.');

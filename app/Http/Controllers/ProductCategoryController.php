@@ -25,7 +25,7 @@ class ProductCategoryController extends Controller
             // For admins and others, filter by store
             $categories_query->where('store_id', $storeId);
         }
-         $categories = $categories_query->get();
+         $categories = $categories_query->lazy();//->get();
 
         //  FETCH TENANTS AND STORES FOR FORMS
         if($user->role_id === '1001') {

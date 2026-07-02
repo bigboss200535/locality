@@ -25,6 +25,7 @@ class BillPayment extends Model
         'product_payment', 
         'total_levies',
         'receipt_number',
+        'discount',
         'transaction_time',
         'tenant_id', 
         'store_id', 

@@ -33,7 +33,7 @@ class UserFactory extends Factory
         $store = Stores::inRandomOrder()->where('archived', '=', 'No')->first();
 
         return [
-            'user_id' => 'e4c06f74-4b4e-4669-9137-1729876865a3',
+            'user_id' => Str::uuid(),
             'firstname' => fake()->name(),
             'othername' => fake()->name(),
             'telephone' => fake()->unique()->phoneNumber(),

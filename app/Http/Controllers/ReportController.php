@@ -69,4 +69,9 @@ class ReportController extends Controller
 
         return view('reports.index', compact('reports', 'type', 'title'));
     }
+
+    public function cash_sales(Request $request, $start_date)
+    {
+
+    }
 }

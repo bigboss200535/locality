@@ -94,7 +94,7 @@
                                         <span class="text-danger">*</span>
                                     </label>
                                     <div class="input-group">
-                                         <x-text-input id="email" placeholder="you&#64;example.com" class="form-control" type="email" name="email" :value="old('email')" autofocus />
+                                         <x-text-input id="email" placeholder="you&#64;example.com" class="form-control" type="email" name="email" :value="old('email')" autofocus autocomplete="off"/>
                                          
                                     </div>
                                 </div>

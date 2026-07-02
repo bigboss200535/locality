@@ -3,24 +3,6 @@
         <div class="container-fluid">
             <div class="page-title-head d-flex align-items-center"></div>
 
-            @if(session('success'))
-                <div class="alert alert-success alert-dismissible fade show mb-4" role="alert">
-                    <i class="fa fa-check-circle me-1"></i> {{ session('success') }}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-            @endif
-
-            @if($errors->any())
-                <div class="alert alert-danger alert-dismissible fade show mb-4" role="alert">
-                    <ul class="mb-0">
-                        @foreach($errors->all() as $error)
-                            <li>{{ $error }}</li>
-                        @endforeach
-                    </ul>
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-            @endif
-
             <!-- Report Controls -->
             <div class="row report-controls mb-4">
                 <div class="col-12">
@@ -83,6 +65,7 @@
                                                 <th data-table-sort>Stockable</th>
                                                 <th data-table-sort>Expirable</th>
                                                 <th data-table-sort>Date Added</th>
+                                                <th data-table-sort>Added By</th>
                                                 <th data-table-sort>Status</th>
                                             @endif
 
@@ -90,12 +73,14 @@
                                                 <th data-table-sort>Stock Quantity</th>
                                                 <th data-table-sort>Cost Price (GHs)</th>
                                                 <th data-table-sort>Stock Value (GHs)</th>
+                                                 <th data-table-sort>Added By</th>
                                                 <th data-table-sort>Status</th>
                                             @endif
 
                                             @if($type === 'product_prices')
                                                 <th data-table-sort>Cost Price (GHs)</th>
                                                 <th data-table-sort>Selling Price (GHs)</th>
+                                                <th data-table-sort>Added By</th>
                                                 <th data-table-sort>Status</th>
                                             @endif
                                         </tr>
@@ -132,6 +117,7 @@
                                                         @endif
                                                     </td>
                                                     <td>{{ $product->added_date ? \Carbon\Carbon::parse($product->added_date)->format('d M Y, h:i A') : 'N/A' }}</td>
+                                                     <td>{{ $product->added_by ?? 'N/A' }}</td>
                                                     <td>
                                                         @if($product->status == 'Active')
                                                             <span class="badge bg-success-subtle text-success">ACTIVE</span>
@@ -149,6 +135,7 @@
                                                     <td>{{ $qty }}</td>
                                                     <td>{{ number_format($cost, 2) }}</td>
                                                     <td>{{ number_format($cost * $qty, 2) }}</td>
+                                                      <td>{{ $product->added_by ?? 'N/A' }}</td>
                                                     <td>
                                                         @if($qty > 0)
                                                             <span class="badge bg-success-subtle text-success">IN STOCK</span>
@@ -173,6 +160,7 @@
                                                             <span class="badge bg-soft-warning text-warning">No Price</span>
                                                         @endif
                                                     </td>
+                                                    <td>{{ $product->added_by ?? 'N/A' }}</td>
                                                     <td>
                                                         @if($product->status == 'Active')
                                                             <span class="badge bg-success-subtle text-success">ACTIVE</span>
