@@ -24,6 +24,9 @@ class Product extends Model
         'product_type',
         'category_id', 
         'tenant_id', 
+        'allow_promotion', // yes/no
+        'promotion_start_date',
+        'promotion_end_date',
         'store_id', 
         'user_id', 
         'expirable',

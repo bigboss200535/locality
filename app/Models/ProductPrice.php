@@ -16,6 +16,7 @@ class ProductPrice extends Model
         'product_id',
         'unit_cost',
         'unit_price',
+        'promo_price',
         'tenant_id',
         'store_id',
         'user_id',

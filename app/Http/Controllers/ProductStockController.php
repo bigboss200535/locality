@@ -41,10 +41,10 @@ class ProductStockController extends Controller
         ]);
 
         $user = auth()->user();
-        $userId = $user ? $user->user_id : null;
-        $username = $user ? ($user->firstname . ' ' . $user->othername) : 'System';
+        $userId = $user->user_id;
+        $username = $user->firstname . ' ' . $user->othername;
         $tenantId = $user->tenant_id;
-        $storeId = $user->store_id ?? 'Default-Store';
+        $storeId = $user->store_id;
 
         ProductStock::updateOrCreate(
             ['product_id' => $request->product_id],
@@ -52,13 +52,13 @@ class ProductStockController extends Controller
                 'stock_id' => (string) Str::uuid(),
                 'stock_quantity' => $request->stock_quantity,
                 'stock_date' => now(),
-                'added_by' => $username,
+                'added_by' => strtoupper($username),
                 'tenant_id' => $tenantId,
                 'store_id' => $storeId,
                 'user_id' => $userId,
                 'added_date' => now(),
                 'status' => 'Active',
-                'added_by' => $username,
+                // 'added_by' =>  $username,
                 'archived' => 'No',
             ]
         );

@@ -153,6 +153,9 @@ return new class extends Migration
             $table->string('product_type', 150)->nullable();// Variant
             $table->string('barcode', 150)->nullable();
             $table->string('qr_code', 150)->nullable();
+            $table->string('allow_promotion', 150)->nullable();// yes/no
+            $table->date('promotion_start_date', 150)->nullable();
+            $table->date('promotion_end_date', 150)->nullable();
             $table->string('supplier_id', 150)->nullable();
             $table->string('expirable', 50)->default('No'); //yes/no
             $table->string('stockable', 50)->default('No'); //yes/no

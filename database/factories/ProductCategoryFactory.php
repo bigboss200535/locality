@@ -30,7 +30,7 @@ class ProductCategoryFactory extends Factory
 
         return [
             'category_id' => Str::uuid(),
-            'category_name' => fake()->name(),
+            'category_name' => strtoupper(fake()->word()),
             // 'product_type' => fake()->name(),
             'tenant_id' => $tenant->tenant_id,
             'user_id' => $user->user_id,

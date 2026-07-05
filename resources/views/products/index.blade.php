@@ -323,7 +323,9 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+                         @if(auth()->user()->role_id === '1001' || auth()->user()->role_id === '1002' )
                         <button type="submit" class="btn btn-primary">Save Product</button>
+                        @endif
                     </div>
                 </form>
             </div>

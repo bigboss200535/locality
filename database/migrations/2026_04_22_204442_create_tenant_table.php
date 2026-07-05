@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('product_id', 50);
             $table->float('unit_cost')->nullable();
             $table->float('unit_price')->nullable();
+            $table->float('promo_price')->nullable();
             $table->string('tenant_id', 50)->nullable();
             $table->string('store_id', 50);
             $table->string('user_id', 50)->nullable();
@@ -44,8 +45,9 @@ return new class extends Migration
             $table->string('batch_number', 100)->nullable();
             $table->date('expiry_date')->nullable();
             $table->timestamp('stock_date')->nullable();
+            $table->string('stocked_by', 50)->nullable();
             $table->string('tenant_id', 50)->nullable();
-            $table->string('store_id', 50);
+            $table->string('store_id', 50)->nullable();
             $table->string('user_id', 50)->nullable();
             $table->timestamp('added_date')->nullable();
             $table->timestamp('updated_date')->nullable();

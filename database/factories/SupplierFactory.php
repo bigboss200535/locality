@@ -27,7 +27,7 @@ class SupplierFactory extends Factory
 
         return [
             'supplier_id' => Str::uuid(),
-            'supplier_name' => fake()->word(),
+            'supplier_name' => strtoupper(fake()->word()),
             'telephone' => fake()->phoneNumber(),
             'email' => fake()->email(),
             'tenant_id' => $tenant->tenant_id,

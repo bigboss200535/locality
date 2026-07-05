@@ -32,8 +32,8 @@ class ProductFactory extends Factory
 
         return [
             'product_id' => Str::uuid(),
-            'product_name' => fake()->name(),
-            'product_type' => fake()->word(),
+            'product_name' => strtoupper(fake()->word()),
+            'product_type' => strtoupper(fake()->word()),
             'barcode' => fake()->ean13(),
             'qr_code' => fake()->ean13(),
             'supplier_id' =>  $supplier->supplier_id,

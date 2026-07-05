@@ -317,6 +317,34 @@
                         </ul>
                     </div>
                 </li>
+
+                <li class="side-nav-item">
+                    <a data-bs-toggle="collapse" href="#users_report" aria-expanded="false" aria-controls="users_report" class="side-nav-link">
+                        <span class="menu-icon"><i class="fa fa-list-check"></i></span>
+                        <span class="menu-text" data-lang="sidebars">Users</span>
+                        <span class="menu-arrow"></span>
+                    </a>
+                    <div class="collapse" id="users_report">
+                        <ul class="sub-menu">
+                            <li class="side-nav-item">
+                                <a href="#" class="side-nav-link">
+                                    <span class="menu-text" data-lang="layouts-sidebar-light">User Report</span>
+                                </a>
+                            </li>
+                            <li class="side-nav-item">
+                                <a href="#" class="side-nav-link">
+                                    <span class="menu-text" data-lang="layouts-sidebar-gradient">User Logs</span>
+                                </a>
+                            </li>
+                            <li class="side-nav-item">
+                                <a href="#" class="side-nav-link">
+                                    <span class="menu-text" data-lang="layouts-sidebar-gray">Gray Menu</span>
+                                </a>
+                            </li>
+                           
+                        </ul>
+                    </div>
+                </li>
             </ul>
         </div>
     </div>
