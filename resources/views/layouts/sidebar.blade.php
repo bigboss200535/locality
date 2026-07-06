@@ -287,6 +287,11 @@
                                     <span class="menu-text" data-lang="layouts-scrollable">Stocks</span>
                                 </a>
                             </li>
+                             <li class="side-nav-item">
+                                <a href="{{ url('reports/stock-adjustments') }}" class="side-nav-link">
+                                    <span class="menu-text" data-lang="layouts-scrollable">Stocks</span>
+                                </a>
+                            </li>
                         </ul>
                     </div>
                 </li>
@@ -303,7 +308,7 @@
                                     <span class="menu-text" data-lang="layouts-sidebar-light">Cash Sales</span>
                                 </a>
                             </li>
-                            <li class="side-nav-item">
+                            <!-- <li class="side-nav-item">
                                 <a href="layouts-sidebar-gradient.html" class="side-nav-link">
                                     <span class="menu-text" data-lang="layouts-sidebar-gradient">Gradient Menu</span>
                                    </a>
@@ -312,7 +317,7 @@
                                 <a href="layouts-sidebar-gray.html" class="side-nav-link">
                                     <span class="menu-text" data-lang="layouts-sidebar-gray">Gray Menu</span>
                                 </a>
-                            </li>
+                            </li> -->
                            
                         </ul>
                     </div>

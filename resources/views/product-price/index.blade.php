@@ -28,13 +28,28 @@
             <div class="row">
                 <div class="col-xxl-12 col-lg-12">
                     <div data-table data-table-rows-per-page="15" class="card card-h-100">
-                        <div class="card-header justify-content-between">
+                        <div class="card-header justify-content-between align-items-center flex-wrap gap-2">
                             <h4 class="card-title">Product Prices <span class="text-muted fs-base fw-normal">({{ $products->count() }} Products)</span></h4>
-                            <div>
+                            <div class="d-flex align-items-center gap-2">
+                                <div class="input-group input-group-sm" style="width: 220px;">
+                                    <span class="input-group-text bg-light"><i class="fa fa-search"></i></span>
+                                    <input type="text" data-table-search class="form-control" placeholder="Search products...">
+                                </div>
+                                @if(auth()->user()->role_id === '1001' || auth()->user()->role_id === '1002' || auth()->user()->role_id === '1003')
                                 <button type="button" class="btn btn-sm btn-primary me-1" data-bs-toggle="modal" data-bs-target="#addProductPriceModal">
                                     <i class="fa fa-plus me-1"></i> Add Product Price
                                 </button>
+                                @endif
+                                <!-- <a href="#" class="btn btn-sm btn-default"> <i class="fa fa-cloud-upload me-1"></i> Export </a> -->
+                                <!-- <a href="#" class="btn btn-sm btn-light"> <i class="fa fa-download me-1"></i> Import </a> -->
                             </div>
+                            
+                            <!-- <div>
+                                
+                                <button type="button" class="btn btn-sm btn-primary me-1" data-bs-toggle="modal" data-bs-target="#addProductPriceModal">
+                                    <i class="fa fa-plus me-1"></i> Add Product Price
+                                </button>
+                            </div> -->
                         </div>
 
                         <div class="card-body p-0">

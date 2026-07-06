@@ -147,7 +147,7 @@
                                                                     </div>
                                                                     <div class="modal-footer">
                                                                         
-                                                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                                                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
                                                                           @if(auth()->user()->role_id === '1001' || auth()->user()->role_id === '1002' || auth()->user()->role_id === '1003')
                                                                         <button type="submit" class="btn btn-primary">Save Changes</button>
                                                                         @endif
@@ -260,7 +260,7 @@
                         @endif
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
                          @if(auth()->user()->role_id === '1001' || auth()->user()->role_id === '1002' || auth()->user()->role_id === '1003')
                         <button type="submit" class="btn btn-primary">Save Category</button>
                         @endif

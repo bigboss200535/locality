@@ -123,6 +123,7 @@ Route::middleware(['auth', 'verified'])->group(function (){
     Route::get('/reports', [ReportController::class, 'index'])->name('reports.index');
     Route::get('/reports/sales/{start_date}/{end_date}', [ReportController::class, 'sales'])->name('reports.sales');
     Route::get('/reports/sales/{start_date}/{end_date}/pdf', [ReportController::class, 'salesPdf'])->name('reports.sales.pdf');
+    Route::get('/reports/stock-adjustments', [ReportController::class, 'stockAdjustments'])->name('reports.stock-adjustments');
 });
 
 //Route::middleware('auth')->group(function () {

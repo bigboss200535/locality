@@ -148,4 +148,21 @@ class ReportController extends Controller
 
         return $pdf->download($fileName);
     }
+
+    public function stockAdjustments()
+    {
+        $user = auth()->user();
+        $tenantId = $user ? $user->tenant_id : null;
+
+        $adjustments = StockMovement::with(['product', 'store'])
+            ->where('archived', 'No')
+            ->where('tenant_id', $tenantId)
+            ->where('stock_quantity', '<', 0)
+            ->orderBy('added_date', 'desc')
+            ->get();
+
+        $title = 'Stock Adjustments Report';
+
+        return view('reports.stock_adjustments', compact('adjustments', 'title'));
+    }
 }
