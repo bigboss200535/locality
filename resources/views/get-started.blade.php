@@ -106,19 +106,19 @@
                                     <div class="input-group">
                                         <x-text-input id="password" placeholder="••••••••" class="form-control" type="password" name="password"/>
                                         <!-- <br> -->
-                                        <!-- <x-input-error :messages="$errors->get('password')" class="mt-2" style="color:red"/> -->
+                                        <!-- <x-input-error :messages="$errors->get('password')" class="mt-2" stNyle="color:red"/> -->
                                     </div>
                                 </div>
-                                <div class="d-flex justify-content-between align-items-center mb-3">
-                                    <div class="form-check">
+                                <!-- <div class="d-flex justify-content-between align-items-center mb-3"> -->
+                                    <!-- <div class="form-check"> -->
                                         <!-- <input class="form-check-input form-check-input-light fs-14" type="checkbox" id="remember_me" /> -->
                                         <!-- <label class="form-check-label" for="remember_me">Keep me signed in</label> -->
-                                    </div>
+                                    <!-- </div> -->
 
                                     @if (Route::has('password.request'))
                                         <!-- <a href="{{ url('/forget-password')}}" class="text-decoration-underline link-offset-3 text-muted">{{ __('Forgot your password?') }}</a> -->
                                     @endif
-                                </div>
+                                <!-- </div> -->
                                 <div class="d-grid">
                                     <button type="submit" class="btn btn-primary fw-semibold py-2"> {{ __('Sign in') }}</button>
                                 </div>

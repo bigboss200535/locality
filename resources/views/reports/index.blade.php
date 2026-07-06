@@ -7,8 +7,11 @@
             <div class="row report-controls mb-4">
                 <div class="col-12">
                     <div class="card">
-                        <div class="card-header">
+                        <div class="card-header justify-content-between align-items-center">
                             <h4 class="card-title">Generate Report</h4>
+                            <a href="{{ route('reports.sales', ['start_date' => now()->format('Y-m-d'), 'end_date' => now()->format('Y-m-d')]) }}" class="btn btn-sm btn-outline-primary">
+                                <i class="fa fa-cash-register me-1"></i> Sales Payments
+                            </a>
                         </div>
                         <div class="card-body">
                             <form method="GET" action="{{ route('reports.index') }}" class="row g-3 align-items-end">

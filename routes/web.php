@@ -121,6 +121,8 @@ Route::middleware(['auth', 'verified'])->group(function (){
 
     // Reports route
     Route::get('/reports', [ReportController::class, 'index'])->name('reports.index');
+    Route::get('/reports/sales/{start_date}/{end_date}', [ReportController::class, 'sales'])->name('reports.sales');
+    Route::get('/reports/sales/{start_date}/{end_date}/pdf', [ReportController::class, 'salesPdf'])->name('reports.sales.pdf');
 });
 
 //Route::middleware('auth')->group(function () {

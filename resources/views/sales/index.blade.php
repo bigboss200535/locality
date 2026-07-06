@@ -119,11 +119,11 @@
         
         applyQuantityDiscount(item) {
             let discountPct = 0;
-            if (item.quantity >= 10) {
-                discountPct = 0.10;
-            } else if (item.quantity >= 5) {
-                discountPct = 0.05;
-            }
+            //<!-- if (item.quantity >= 10) {
+              //  discountPct = 0.10;
+            //} else if (item.quantity >= 5) {
+              //  discountPct = 0.05;
+            //} -->
             // Only apply quantity discount if no manual discount is set
             if (!item.discount_value || item.discount_value === 0) {
                 item.discount = parseFloat((item.unit_price * item.quantity * discountPct).toFixed(2));
@@ -436,7 +436,7 @@
                                                 <div class="d-flex justify-content-between align-items-start mb-2">
                                                     <div>
                                                         <h6 class="m-0 fs-base" x-text="item.product_name.toUpperCase()"></h6>
-                                                        <small class="text-muted">GHs <span x-text="item.unit_price.toFixed(2)"></span> per unit</small>
+                                                        <!-- <small class="text-muted">GHs <span x-text="item.unit_price.toFixed(2)"></span> per unit</small> -->
                                                     </div>
                                                     <button type="button" class="btn btn-sm btn-link text-danger p-0 border-0" @click="removeFromCart(item.product_id)">
                                                         <i class="fa fa-trash-can"></i>
@@ -456,7 +456,7 @@
                                                 </div>
                                                 
                                                 <!-- Item Discount Input -->
-                                                <div class="d-flex align-items-center gap-2 mt-1">
+                                                <!-- <div class="d-flex align-items-center gap-2 mt-1">
                                                     <span class="text-muted fs-xs" style="min-width: 60px;">Discount:</span>
                                                     <div class="input-group input-group-sm" style="width: 130px;">
                                                         <input type="number" 
@@ -479,14 +479,14 @@
                                                     <template x-if="item.discount > 0">
                                                         <span class="text-success fs-xs fw-bold">-GHs <span x-text="item.discount.toFixed(2)"></span></span>
                                                     </template>
-                                                </div>
+                                                </div> -->
                                                 
                                                 <!-- Quantity discount indicator -->
-                                                <div x-show="item.quantity >= 5 && (!item.discount_value || item.discount_value === 0)" 
+                                                <!-- <div x-show="item.quantity >= 5 && (!item.discount_value || item.discount_value === 0)" 
                                                      class="text-info fs-xxs mt-1">
                                                     <i class="fa fa-tag me-1"></i> 
                                                     <span x-text="item.quantity >= 10 ? '10% bulk discount applied' : '5% bulk discount applied'"></span>
-                                                </div>
+                                                </div> -->
                                             </div>
                                         </template>
                                     </div>

@@ -74,10 +74,10 @@ class ProductPriceController extends Controller
         ]);
 
         $user = auth()->user();
-        $userId = $user ? $user->user_id : null;
-        $username = $user ? ($user->firstname . ' ' . $user->othername) : 'System';
+        $userId = $user->user_id;
+        $username = $user->firstname . ' ' . $user->othername;
         $tenantId = $user->tenant_id;
-        $storeId = $user->store_id ?? 'Default-Store';
+        $storeId = $user->store_id;
 
         $price = ProductPrice::where('product_id', $productId)->first();
 
@@ -112,11 +112,11 @@ class ProductPriceController extends Controller
         $price = ProductPrice::where('product_id', $productId)->firstOrFail();
 
         $user = auth()->user();
-        $username = $user ? ($user->firstname . ' ' . $user->othername) : 'System';
+        $username = $user->firstname . ' ' . $user->othername;
 
         $price->update([
             'archived' => 'Yes',
-            'archived_by' => $username,
+            'archived_by' => strtoupper($username),
             'archived_date' => now(),
         ]);
 

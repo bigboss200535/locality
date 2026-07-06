@@ -6,6 +6,10 @@ use Illuminate\Http\Request;
 use App\Models\Product;
 use App\Models\ProductStock;
 use App\Models\ProductPrice;
+use App\Models\BillPayment;
+use App\Models\User;
+use Carbon\Carbon;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class ReportController extends Controller
 {
@@ -70,8 +74,78 @@ class ReportController extends Controller
         return view('reports.index', compact('reports', 'type', 'title'));
     }
 
-    public function cash_sales(Request $request, $start_date)
+    public function sales(Request $request, $start_date, $end_date)
     {
+        try {
+            $startDate = Carbon::parse($start_date)->startOfDay();
+            $endDate = Carbon::parse($end_date)->endOfDay();
+        } catch (\Exception $e) {
+            abort(404, 'Invalid date format.');
+        }
 
+        $user = auth()->user();
+        $tenantId = $user ? $user->tenant_id : null;
+        $userId = $request->get('user_id');
+
+        $paymentsQuery = BillPayment::with('store')
+            ->where('archived', 'No')
+            ->where('tenant_id', $tenantId)
+            ->whereBetween('transaction_time', [$startDate, $endDate]);
+
+        if ($userId) {
+            $paymentsQuery->where('user_id', $userId);
+        }
+
+        $payments = $paymentsQuery->orderBy('transaction_time', 'desc')->get();
+
+        $users = User::where('tenant_id', $tenantId)
+            ->where('archived', 'No')
+            ->orderBy('firstname', 'asc')
+            ->get();
+
+        $title = 'Sales Payment Report';
+
+        return view('reports.sales', compact('payments', 'start_date', 'end_date', 'userId', 'users', 'title'));
+    }
+
+    public function salesPdf(Request $request, $start_date, $end_date)
+    {
+        try {
+            $startDate = Carbon::parse($start_date)->startOfDay();
+            $endDate = Carbon::parse($end_date)->endOfDay();
+        } catch (\Exception $e) {
+            abort(404, 'Invalid date format.');
+        }
+
+        $user = auth()->user();
+        $tenantId = $user ? $user->tenant_id : null;
+        $userId = $request->get('user_id');
+
+        $paymentsQuery = BillPayment::with('store')
+            ->where('archived', 'No')
+            ->where('tenant_id', $tenantId)
+            ->whereBetween('transaction_time', [$startDate, $endDate]);
+
+        if ($userId) {
+            $paymentsQuery->where('user_id', $userId);
+        }
+
+        $payments = $paymentsQuery->orderBy('transaction_time', 'desc')->get();
+
+        $selectedUser = $userId ? User::find($userId) : null;
+        $title = 'Sales Payment Report';
+
+        $pdf = Pdf::loadView('reports.sales_pdf', compact(
+            'payments',
+            'start_date',
+            'end_date',
+            'userId',
+            'selectedUser',
+            'title'
+        ));
+
+        $fileName = 'sales-payment-report-' . $start_date . '-to-' . $end_date . '.pdf';
+
+        return $pdf->download($fileName);
     }
 }

@@ -54,7 +54,7 @@ class ProductRequisitionController extends Controller
         ]);
 
         $user = auth()->user();
-        $userId = $user ? $user->user_id : null;
+        $userId = $user->user_id;
         $username = $user->firstname . ' ' . $user->othername;
         $tenantId = $user->tenant_id;
         $orderStoreId = $user->store_id;

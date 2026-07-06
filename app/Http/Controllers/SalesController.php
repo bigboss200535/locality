@@ -95,10 +95,10 @@ class SalesController extends Controller
     }
 
     $user          = auth()->user();
-    $userId        = $user ? $user->user_id : null;
-    $username      = $user ? ($user->firstname . ' ' . $user->othername) : 'System';
+    $userId        = $user->user_id;
+    $username      = $user->firstname . ' ' . $user->othername;
     $tenantId      = $user->tenant_id;
-    $storeId       = $user->store_id ?? 'Default-Store';
+    $storeId       = $user->store_id;
     $paymentId     = (string) Str::uuid();
     $receiptNumber = $tenantId . date('YmdHis') . rand(10, 99);
 
@@ -145,7 +145,7 @@ class SalesController extends Controller
             'cart_discount_value' => $cartDiscountValue,
             'total_discount'    => $totalDiscount,
             'receipt_number'    => $receiptNumber,
-            'payment_method'    => $request->payment_method,
+            'payment_method'    => $request->payment_method ?? 'CASH',
             'tenant_id'         => $tenantId,
             'store_id'          => $storeId,
             'user_id'           => $userId,

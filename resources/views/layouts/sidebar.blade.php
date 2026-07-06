@@ -299,14 +299,14 @@
                     <div class="collapse" id="sidebars">
                         <ul class="sub-menu">
                             <li class="side-nav-item">
-                                <a href="#" class="side-nav-link">
+                                <a href="{{ route('reports.sales', ['start_date' => now()->format('Y-m-d'), 'end_date' => now()->format('Y-m-d')]) }}" class="side-nav-link">
                                     <span class="menu-text" data-lang="layouts-sidebar-light">Cash Sales</span>
                                 </a>
                             </li>
                             <li class="side-nav-item">
                                 <a href="layouts-sidebar-gradient.html" class="side-nav-link">
                                     <span class="menu-text" data-lang="layouts-sidebar-gradient">Gradient Menu</span>
-                                </a>
+                                   </a>
                             </li>
                             <li class="side-nav-item">
                                 <a href="layouts-sidebar-gray.html" class="side-nav-link">

@@ -199,6 +199,10 @@
                             <label for="stock_quantity" class="form-label">Stock Quantity</label>
                             <input type="number" class="form-control" id="stock_quantity" name="stock_quantity" required min="0" placeholder="e.g. 100">
                         </div>
+                        <div class="mb-3">
+                            <label for="batch_number" class="form-label">Batch Number (if Available)</label>
+                            <input type="text" class="form-control" id="batch_number" name="batch_number" min="0" placeholder="e.g. 123BG83">
+                        </div>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>

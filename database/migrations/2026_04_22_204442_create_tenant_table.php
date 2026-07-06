@@ -35,6 +35,7 @@ return new class extends Migration
             $table->foreign('tenant_id')->references('tenant_id')->on('tenants');
             $table->foreign('store_id')->references('store_id')->on('stores');
             $table->foreign('user_id')->references('user_id')->on('users');
+            $table->foreign('product_id')->references('product_id')->on('products');
         });
             
 
@@ -61,6 +62,7 @@ return new class extends Migration
             $table->foreign('tenant_id')->references('tenant_id')->on('tenants');
             $table->foreign('store_id')->references('store_id')->on('stores');
             $table->foreign('user_id')->references('user_id')->on('users');
+            $table->foreign('product_id')->references('product_id')->on('products');
         });
 
         //  Schema::create('stocked_logs', function (Blueprint $table) {
@@ -175,7 +177,8 @@ return new class extends Migration
             $table->foreign('tenant_id')->references('tenant_id')->on('tenants');
             $table->foreign('store_id')->references('store_id')->on('stores');
             $table->foreign('user_id')->references('user_id')->on('users');
-              $table->foreign('payment_id')->references('payment_id')->on('bills_payment');
+            $table->foreign('payment_id')->references('payment_id')->on('bills_payment');
+            $table->foreign('product_id')->references('product_id')->on('products');
         });
 
         Schema::create('refunds', function (Blueprint $table) {
@@ -202,6 +205,7 @@ return new class extends Migration
             $table->foreign('tenant_id')->references('tenant_id')->on('tenants');
             $table->foreign('store_id')->references('store_id')->on('stores');
             $table->foreign('user_id')->references('user_id')->on('users');
+            $table->foreign('product_id')->references('product_id')->on('products');
         });
 
         // Schema::create('product_management', function (Blueprint $table) {
@@ -278,6 +282,7 @@ return new class extends Migration
             $table->foreign('tenant_id')->references('tenant_id')->on('tenants');
             $table->foreign('store_id')->references('store_id')->on('stores');
             $table->foreign('user_id')->references('user_id')->on('users');
+            $table->foreign('product_id')->references('product_id')->on('products');
         });
     }
 

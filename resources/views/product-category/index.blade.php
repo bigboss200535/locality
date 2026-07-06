@@ -35,7 +35,7 @@
            
             <div class="row">
                 <div class="col-xxl-12 col-lg-12">
-                    <div data-table data-table-rows-per-page="5" class="card card-h-100">
+                    <div data-table data-table-rows-per-page="15" class="card card-h-100">
                         <div class="card-header justify-content-between">
                             <h4 class="card-title">Product Categories <span class="text-muted fs-base fw-normal">({{ $categories->count() }} Categories)</span></h4>
                             <div>
