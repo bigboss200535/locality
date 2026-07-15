@@ -9,6 +9,7 @@ use App\Models\Tenant;
 use App\Models\Supplier;
 use App\Models\Product;
 use App\Models\ProductCategory;
+use App\Models\SystemSettings;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Str;
@@ -118,6 +119,15 @@ class DatabaseSeeder extends Seeder
             'telephone' => '233245340461',
             'telephone_verify' => 'Yes',
             'user_no' => 'f4c06f74-4b4e-4669-9137-1729876865a3',
+            'added_date' => now(),
+        ]);
+
+         SystemSettings::create([
+            'setting_id' => Str::uuid(),
+            'system_name' => 'PACES POS',
+            'company' => 'WebEdge Technologies',
+            'subscription_based' => 'No',
+            'telephone' => '0245340461',
             'added_date' => now(),
         ]);
 

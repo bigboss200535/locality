@@ -53,7 +53,7 @@
                                             <th data-table-sort>Tenant Name</th>
                                             @endif
                                             <th data-table-sort>Block Status</th>
-                                            <th data-table-sort>Date Added</th>
+                                            <!-- <th data-table-sort>Date Added</th> -->
                                             <th data-table-sort>Status</th>
                                             @if(auth()->user()->role_id === '1001' || auth()->user()->role_id === '1002' || auth()->user()->role_id === '1003' )
                                             <th data-table-sort>Action</th>
@@ -91,7 +91,7 @@
                                                         <span class="badge bg-success-subtle text-success">ACTIVE (UNBLOCKED)</span>
                                                     @endif
                                                 </td>
-                                                <td>{{ $userItem->added_date ? \Carbon\Carbon::parse($userItem->added_date)->format('d M Y, h:i A') : 'N/A' }}</td>
+                                                <!-- <td>{{ $userItem->added_date ? \Carbon\Carbon::parse($userItem->added_date)->format('d M Y, h:i A') : 'N/A' }}</td> -->
                                                 <td>
                                                     @if($userItem->status == 'Active')
                                                         <span class="badge bg-success-subtle text-success">ACTIVE</span>

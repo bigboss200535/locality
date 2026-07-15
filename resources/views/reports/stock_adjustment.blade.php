@@ -8,21 +8,21 @@
                 <div class="col-12">
                     <div class="card">
                         <div class="card-header">
-                            <h4 class="card-title">Generate Sales Payment Report</h4>
+                            <h4 class="card-title">Generate Stock Adjustments Report</h4>
                         </div>
                         <div class="card-body">
-                            <form id="sales-report-form" class="row g-3 align-items-end">
+                            <form id="stock-adjustment-form" class="row g-3 align-items-end">
                                 <div class="col-md-3">
-                                    <label for="start_date" class="form-label">Start Date</label>
+                                    <label for="start_date" class="form-label">Start Date <span class="text-danger">*</span></label>
                                     <input type="date" id="start_date" name="start_date" class="form-control"
                                            value="{{ $start_date }}" required>
                                 </div>
                                 <div class="col-md-3">
-                                    <label for="end_date" class="form-label">End Date</label>
+                                    <label for="end_date" class="form-label">End Date <span class="text-danger">*</span></label>
                                     <input type="date" id="end_date" name="end_date" class="form-control"
                                            value="{{ $end_date }}" required>
                                 </div>
-                                <div class="col-md-3">
+                                <div class="col-md-2">
                                     <label for="user_id" class="form-label">User</label>
                                     <select id="user_id" name="user_id" class="form-select">
                                         <option value="">All Users</option>
@@ -33,13 +33,21 @@
                                         @endforeach
                                     </select>
                                 </div>
-                                <div class="col-md-3">
+                                <div class="col-md-2">
+                                    <label for="report_type" class="form-label">Report Type</label>
+                                    <select id="report_type" name="report_type" class="form-select">
+                                        <option value="">All Types</option>
+                                        @foreach($reportTypes as $type)
+                                            <option value="{{ $type }}" {{ $reportType == $type ? 'selected' : '' }}>
+                                                {{ $type }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <div class="col-md-2">
                                     <button type="submit" class="btn btn-primary me-1">
                                         <i class="fa fa-filter me-1"></i> Generate
                                     </button>
-                                    <a id="pdf-download-link" href="{{ route('reports.sales.pdf', ['start_date' => $start_date, 'end_date' => $end_date]) }}" class="btn btn-outline-danger me-1">
-                                        <i class="fa fa-file-pdf me-1"></i> PDF
-                                    </a>
                                     <button type="button" class="btn btn-outline-secondary btn-print" onclick="window.print()">
                                         <i class="fa fa-print"></i>
                                     </button>
@@ -50,37 +58,38 @@
                 </div>
             </div>
 
+            @if($start_date && $end_date)
             <!-- Summary Cards -->
             <div class="row report-controls mb-4">
                 <div class="col-md-3">
                     <div class="card card-h-100">
                         <div class="card-body">
-                            <h6 class="text-muted text-uppercase fs-xs">Total Transactions</h6>
-                            <h3 class="m-0">{{ $payments->count() }}</h3>
+                            <h6 class="text-muted text-uppercase fs-xs">Total Movements</h6>
+                            <h3 class="m-0">{{ $adjustments->count() }}</h3>
                         </div>
                     </div>
                 </div>
                 <div class="col-md-3">
                     <div class="card card-h-100">
                         <div class="card-body">
-                            <h6 class="text-muted text-uppercase fs-xs">Subtotal (GHs)</h6>
-                            <h3 class="m-0">{{ number_format($payments->sum('subtotal'), 2) }}</h3>
+                            <h6 class="text-muted text-uppercase fs-xs">Total Quantity</h6>
+                            <h3 class="m-0">{{ number_format($adjustments->sum('stock_quantity'), 0) }}</h3>
                         </div>
                     </div>
                 </div>
                 <div class="col-md-3">
                     <div class="card card-h-100">
                         <div class="card-body">
-                            <h6 class="text-muted text-uppercase fs-xs">Total Discount (GHs)</h6>
-                            <h3 class="m-0">{{ number_format($payments->sum('total_discount'), 2) }}</h3>
+                            <h6 class="text-muted text-uppercase fs-xs">Stock In</h6>
+                            <h3 class="m-0">{{ number_format($adjustments->where('stock_quantity', '>', 0)->sum('stock_quantity'), 0) }}</h3>
                         </div>
                     </div>
                 </div>
                 <div class="col-md-3">
                     <div class="card card-h-100">
                         <div class="card-body">
-                            <h6 class="text-muted text-uppercase fs-xs">Total Payment (GHs)</h6>
-                            <h3 class="m-0">{{ number_format($payments->sum('total_payment'), 2) }}</h3>
+                            <h6 class="text-muted text-uppercase fs-xs">Stock Out</h6>
+                            <h3 class="m-0">{{ number_format($adjustments->where('stock_quantity', '<', 0)->sum('stock_quantity'), 0) }}</h3>
                         </div>
                     </div>
                 </div>
@@ -91,7 +100,7 @@
                 <div class="col-12">
                     <div data-table data-table-rows-per-page="1000" class="card card-h-100">
                         <div class="card-header justify-content-between">
-                            <h4 class="card-title">{{ $title }} <span class="text-muted fs-base fw-normal">({{ $payments->count() }} records)</span></h4>
+                            <h4 class="card-title">{{ $title }} <span class="text-muted fs-base fw-normal">({{ $adjustments->count() }} records)</span></h4>
                             <button type="button" class="btn btn-sm btn-outline-secondary btn-print" onclick="window.print()">
                                 <i class="fa fa-print"></i>
                             </button>
@@ -110,44 +119,44 @@
                                     <thead class="bg-light align-middle bg-opacity-25 thead-sm">
                                         <tr class="text-uppercase table-nowrap fs-xxs">
                                             <th data-table-sort>#ID</th>
-                                            <th data-table-sort>Receipt No</th>
-                                            <th data-table-sort>Payment Method</th>
-                                            <th data-table-sort>Transaction Time</th>
+                                            <th data-table-sort>Product</th>
+                                            <th data-table-sort>Batch No</th>
+                                            <th data-table-sort>Type</th>
+                                            <th data-table-sort>Stock Date</th>
+                                            <th data-table-sort>Expiry Date</th>
                                             <th data-table-sort>Store</th>
-                                            <th data-table-sort class="text-end">Subtotal (GHs)</th>
-                                            <th data-table-sort class="text-end">Discount (GHs)</th>
-                                            <th data-table-sort class="text-end">Total (GHs)</th>
+                                            <th data-table-sort class="text-end">Quantity</th>
                                             <th data-table-sort>Status</th>
                                             <th data-table-sort>Added By</th>
                                         </tr>
                                     </thead>
 
                                     <tbody class="text-nowrap">
-                                        @forelse ($payments as $payment)
+                                        @forelse ($adjustments as $adjustment)
                                             <tr>
-                                                <td>#{{ substr($payment->payment_id, 0, 8) }}</td>
-                                                <td>{{ $payment->receipt_number }}</td>
-                                                <td>{{ $payment->payment_method ?? 'N/A' }}</td>
-                                                <td>{{ $payment->transaction_time ? \Carbon\Carbon::parse($payment->transaction_time)->format('d M Y, h:i A') : 'N/A' }}</td>
-                                                <td>{{ $payment->store ? $payment->store->store_name : 'N/A' }}</td>
-                                                <td class="text-end">{{ number_format($payment->subtotal, 2) }}</td>
-                                                <td class="text-end">{{ number_format($payment->total_discount, 2) }}</td>
-                                                <td class="text-end">{{ number_format($payment->total_payment, 2) }}</td>
+                                                <td>#{{ substr($adjustment->stock_movement_id, 0, 8) }}</td>
+                                                <td>{{ $adjustment->product ? $adjustment->product->product_name : 'N/A' }}</td>
+                                                <td>{{ $adjustment->batch_number ?? 'N/A' }}</td>
+                                                <td>{{ $adjustment->stocked_type ?? 'N/A' }}</td>
+                                                <td>{{ $adjustment->stock_date ? \Carbon\Carbon::parse($adjustment->stock_date)->format('d M Y') : 'N/A' }}</td>
+                                                <td>{{ $adjustment->expiry_date ? \Carbon\Carbon::parse($adjustment->expiry_date)->format('d M Y') : 'N/A' }}</td>
+                                                <td>{{ $adjustment->store ? $adjustment->store->store_name : 'N/A' }}</td>
+                                                <td class="text-end {{ $adjustment->stock_quantity < 0 ? 'text-danger' : 'text-success' }}">
+                                                    {{ number_format($adjustment->stock_quantity, 0) }}
+                                                </td>
                                                 <td>
-                                                    @if($payment->status == 'Paid')
-                                                        <span class="badge bg-success-subtle text-success">PAID</span>
-                                                    @elseif($payment->status == 'Active')
+                                                    @if($adjustment->status == 'Active')
                                                         <span class="badge bg-success-subtle text-success">ACTIVE</span>
                                                     @else
-                                                        <span class="badge bg-danger-subtle text-danger">{{ strtoupper($payment->status) }}</span>
+                                                        <span class="badge bg-danger-subtle text-danger">{{ strtoupper($adjustment->status) }}</span>
                                                     @endif
                                                 </td>
-                                                <td>{{ $payment->added_by ?? 'N/A' }}</td>
+                                                <td>{{ $adjustment->added_by ?? 'N/A' }}</td>
                                             </tr>
                                         @empty
                                             <tr>
                                                 <td colspan="10" class="text-center py-4 text-muted">
-                                                    No payment records found for the selected date range.
+                                                    No stock movement records found for the selected date range.
                                                 </td>
                                             </tr>
                                         @endforelse
@@ -158,13 +167,14 @@
 
                         <div class="card-footer border-0">
                             <div class="d-flex justify-content-between align-items-center">
-                                <div data-table-pagination-info="payments"></div>
+                                <div data-table-pagination-info="adjustments"></div>
                                 <div data-table-pagination></div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
+            @endif
         </div>
 
         <footer class="footer">
@@ -189,35 +199,29 @@
     </div>
 
     <script>
-        function updatePdfLink() {
-            const start = document.getElementById('start_date').value;
-            const end = document.getElementById('end_date').value;
-            const userId = document.getElementById('user_id').value;
-            const pdfLink = document.getElementById('pdf-download-link');
-            let url = `/reports/sales/${start}/${end}/pdf`;
-            if (userId) {
-                url += `?user_id=${userId}`;
-            }
-            pdfLink.href = url;
-        }
-
-        document.getElementById('sales-report-form').addEventListener('submit', function (e) {
+        document.getElementById('stock-adjustment-form').addEventListener('submit', function (e) {
             e.preventDefault();
             const start = document.getElementById('start_date').value;
             const end = document.getElementById('end_date').value;
             const userId = document.getElementById('user_id').value;
-            if (start && end) {
-                let url = `/reports/sales/${start}/${end}`;
-                if (userId) {
-                    url += `?user_id=${userId}`;
-                }
-                window.location.href = url;
-            }
-        });
+            const reportType = document.getElementById('report_type').value;
 
-        document.getElementById('start_date').addEventListener('change', updatePdfLink);
-        document.getElementById('end_date').addEventListener('change', updatePdfLink);
-        document.getElementById('user_id').addEventListener('change', updatePdfLink);
+            if (!start || !end) {
+                alert('Please select both start and end dates.');
+                return;
+            }
+
+            const params = new URLSearchParams();
+            if (userId) params.append('user_id', userId);
+            if (reportType) params.append('report_type', reportType);
+
+            let url = `/reports/stock-adjustments/${start}/${end}`;
+            const query = params.toString();
+            if (query) {
+                url += `?${query}`;
+            }
+            window.location.href = url;
+        });
     </script>
 
     <style>

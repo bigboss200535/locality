@@ -16,8 +16,10 @@ return new class extends Migration
             $table->string('system_name', 150)->nullable();
             $table->string('company', 150)->nullable();
             $table->string('subscription_based', 50)->nullable();
+            // $table->date('subscription_date')->nullable();
+            // $table->date('subscription_end_date')->nullable();
             $table->string('telephone', 50)->nullable();
-            $table->string('website', 50);
+            $table->string('website', 50)->nullable();
             $table->string('user_id', 50)->nullable();
             $table->timestamp('added_date')->nullable();
             $table->timestamp('updated_date')->nullable();
@@ -147,13 +149,35 @@ return new class extends Migration
             $table->foreign('user_id')->references('user_id')->on('users');
         });
 
+         Schema::create('suppliers', function (Blueprint $table) {
+          $table->string('supplier_id', 50)->primary();
+          $table->string('supplier_name', 300);
+          $table->string('telephone', 50)->nullable();
+          $table->string('email', 150)->nullable();
+          $table->string('tenant_id', 50);
+          $table->string('store_id', 50)->nullable();
+          $table->string('user_id', 50)->nullable();
+          $table->timestamp('added_date')->nullable();
+          $table->timestamp('updated_date')->nullable();
+          $table->string('status', 50)->default('Active')->nullable();
+          $table->string('added_by', 100)->nullable();
+          $table->string('updated_by', 100)->nullable();
+          $table->string('archived', 100)->default('No')->index();
+          $table->string('archived_by', 100)->nullable()->index();
+          $table->timestamp('archived_date')->nullable()->index();
+            // key
+          $table->foreign('tenant_id')->references('tenant_id')->on('tenants');
+          $table->foreign('store_id')->references('store_id')->on('stores');
+          $table->foreign('user_id')->references('user_id')->on('users');
+        });
+        
         Schema::create('products', function (Blueprint $table) {
             $table->string('product_id', 50)->primary();
             $table->string('product_name', 150)->nullable();
             $table->string('product_type', 150)->nullable();// Variant
             $table->string('barcode', 150)->nullable();
             $table->string('qr_code', 150)->nullable();
-            $table->string('allow_promotion', 150)->nullable();// yes/no
+            $table->string('allow_promotion', 150)->nullable()->default('Yes');// yes/no
             $table->date('promotion_start_date', 150)->nullable();
             $table->date('promotion_end_date', 150)->nullable();
             $table->string('supplier_id', 150)->nullable();
@@ -176,29 +200,7 @@ return new class extends Migration
             $table->foreign('store_id')->references('store_id')->on('stores');
             $table->foreign('user_id')->references('user_id')->on('users');
             $table->foreign('category_id')->references('category_id')->on('product_category');
-        });
-
-
-         Schema::create('suppliers', function (Blueprint $table) {
-          $table->string('supplier_id', 50)->primary();
-          $table->string('supplier_name', 300);
-          $table->string('telephone', 50)->nullable();
-          $table->string('email', 150)->nullable();
-          $table->string('tenant_id', 50);
-          $table->string('store_id', 50)->nullable();
-          $table->string('user_id', 50)->nullable();
-          $table->timestamp('added_date')->nullable();
-          $table->timestamp('updated_date')->nullable();
-          $table->string('status', 50)->default('Active')->nullable();
-          $table->string('added_by', 100)->nullable();
-          $table->string('updated_by', 100)->nullable();
-          $table->string('archived', 100)->default('No')->index();
-          $table->string('archived_by', 100)->nullable()->index();
-          $table->timestamp('archived_date')->nullable()->index();
-            // key
-          $table->foreign('tenant_id')->references('tenant_id')->on('tenants');
-          $table->foreign('store_id')->references('store_id')->on('stores');
-          $table->foreign('user_id')->references('user_id')->on('users');
+            $table->foreign('supplier_id')->references('supplier_id')->on('suppliers');
         });
 
         Schema::create('purchase_order', function (Blueprint $table) {

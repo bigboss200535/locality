@@ -106,6 +106,10 @@ Route::middleware(['auth', 'verified'])->group(function (){
     Route::post('/purchase-orders', [PurchaseOrderController::class, 'store'])->name('purchase-orders.store');
     Route::put('/purchase-orders/{purchaseOrder}', [PurchaseOrderController::class, 'update'])->name('purchase-orders.update');
     Route::delete('/purchase-orders/{purchaseOrder}', [PurchaseOrderController::class, 'destroy'])->name('purchase-orders.destroy');
+    Route::get('/purchase-orders/{purchaseOrder}/pdf', [PurchaseOrderController::class, 'pdf'])->name('purchase-orders.pdf');
+    //  Route::get('/purchase-orders-approval', [PurchaseOrderController::class, 'purchase_orders_pending_approvals'])->name('purchase-orders.approvals');
+    Route::get('/purchase-orders/{id}/details', [PurchaseOrderController::class, 'getDetails'])
+    ->name('purchase-orders.details');
 
      // suppliers routes
     Route::get('/suppliers', [SuppliersController::class, 'index'])->name('suppliers.index');
@@ -123,7 +127,7 @@ Route::middleware(['auth', 'verified'])->group(function (){
     Route::get('/reports', [ReportController::class, 'index'])->name('reports.index');
     Route::get('/reports/sales/{start_date}/{end_date}', [ReportController::class, 'sales'])->name('reports.sales');
     Route::get('/reports/sales/{start_date}/{end_date}/pdf', [ReportController::class, 'salesPdf'])->name('reports.sales.pdf');
-    Route::get('/reports/stock-adjustments', [ReportController::class, 'stockAdjustments'])->name('reports.stock-adjustments');
+    Route::get('/reports/stock-adjustments/{start_date?}/{end_date?}', [ReportController::class, 'stockAdjustments'])->name('reports.stock-adjustments');
 });
 
 //Route::middleware('auth')->group(function () {

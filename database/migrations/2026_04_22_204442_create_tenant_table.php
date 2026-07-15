@@ -12,9 +12,6 @@ return new class extends Migration
     public function up(): void
     {
         
-       
-            
-        
         Schema::create('product_prices', function (Blueprint $table) {
             $table->string('product_id', 50);
             $table->float('unit_cost')->nullable();

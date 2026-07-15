@@ -5,10 +5,14 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\PurchaseOrder;
 use App\Models\PurchaseOrderDetails;
+use App\Models\ProductStock;
+use App\Models\ProductPrice;
+use App\Models\StockMovement;
 use App\Models\Supplier;
 use App\Models\Product;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class PurchaseOrderController extends Controller
 {
@@ -48,8 +52,8 @@ class PurchaseOrderController extends Controller
         ]);
 
         $user = auth()->user();
-        $userId = $user ? $user->user_id : null;
-        $username = $user ? ($user->firstname . ' ' . $user->othername) : 'System';
+        $userId = $user->user_id ?? null;
+        $username = $user->firstname . ' ' . $user->othername;
         $tenantId = $user->tenant_id;
         $storeId = $user->store_id;
 
@@ -86,7 +90,11 @@ class PurchaseOrderController extends Controller
             ]);
 
             foreach ($request->products as $product) {
-                $lineTotal = floatval($product['quantity']) * floatval($product['unit_price']);
+                // $line_total = floatval($product['quantity']) * floatval($product['unit_price']);
+                $productId = $product['product_id'];
+                $quantity = floatval($product['quantity']);
+                $unit_Price = floatval($product['unit_price']);
+                $line_total = $quantity * $unit_Price;
 
                 PurchaseOrderDetails::create([
                     'purchase_order_details_id' => (string) Str::uuid(),
@@ -94,7 +102,7 @@ class PurchaseOrderController extends Controller
                     'product_id' => $product['product_id'],
                     'quantity' => $product['quantity'],
                     'unit_price' => $product['unit_price'],
-                    'total' => $lineTotal,
+                    'total' => $line_total,
                     'order_date' => $request->order_date,
                     'tenant_id' => $tenantId,
                     'store_id' => $storeId,
@@ -104,6 +112,71 @@ class PurchaseOrderController extends Controller
                     'status' => 'Active',
                     'archived' => 'No',
                 ]);
+
+            // Update Product Stock - Add new stock to existing
+            $product_stock = ProductStock::where('product_id', $productId)
+                ->where('store_id', $storeId)
+                ->where('tenant_id', $tenantId)
+                ->first();
+              
+            if ($product_stock) {
+                // Add to existing stock
+                $product_stock->update([
+                    'stock_quantity' => $product_stock->stock_quantity + $quantity,
+                    'updated_date' => now(),
+                    'updated_by' => $username,
+                ]);
+            } else {
+                // Create new stock record if doesn't exist
+                ProductStock::create([
+                    'product_stock_id' => (string) Str::uuid(),
+                    'product_id' => $productId,
+                    'store_id' => $storeId,
+                    'tenant_id' => $tenantId,
+                    'stock_quantity' => $quantity,
+                    'updated_date' => now(),
+                    'updated_by' => $username,
+                    'archived' => 'No',
+                ]);
+            }
+           
+            // Always update with latest unit price by searching for product by id
+            $product_price = ProductPrice::where('product_id', $productId)
+                ->where('store_id', $storeId)
+                ->where('tenant_id', $tenantId)
+                ->first();
+
+            if ($product_price) {
+                // Update existing price
+                $product_price->update([
+                    'unit_cost' => $unit_Price,
+                    'updated_date' => now(),
+                    'updated_by' => $username,
+                ]);
+            } else {
+                // Create new price record
+                ProductPrice::create([
+                    'product_price_id' => (string) Str::uuid(),
+                    'product_id' => $productId,
+                    'store_id' => $storeId,
+                    'tenant_id' => $tenantId,
+                    'unit_cost' => $unit_Price,
+                    'updated_date' => now(),
+                    'updated_by' => $username,
+                    'archived' => 'No',
+                ]);
+
+            }
+            // add stock log
+            StockMovement::create([
+                'product_id' => $productId,
+                'store_id' => $storeId,
+                'stock_quantity' => $quantity,
+                'stocked_type' => 'PURCHASE ORDER',
+                 'tenant_id' => $tenantId,
+                // 'unit_cost' => $unitPrice,
+                'added_by' => $username,
+            ]);
             }
 
             DB::commit();
@@ -224,5 +297,105 @@ class PurchaseOrderController extends Controller
             DB::rollBack();
             return redirect()->route('purchase-orders.index')->with('error', 'Failed to delete purchase Order.');
         }
+ 
     }
+
+
+    public function pdf($id)
+    {
+        $purchaseOrder = PurchaseOrder::with(['supplier', 'details.product'])
+            ->where('archived', 'No')
+            ->findOrFail($id);
+
+        $pdf = Pdf::loadView('purchase-order.pdf', compact('purchaseOrder'));
+
+        return $pdf->stream('purchase-order-' . $purchaseOrder->order_no . '.pdf');
+    }
+
+ // display all purchase orders with suppliers and product
+    public function purchase_orders_pending_approvals()
+    {
+        $purchaseOrders = PurchaseOrder::with(['supplier', 'details.product'])
+            ->where('archived', 'No')
+             ->where('order_status', 'Pending')
+            ->orderBy('added_date', 'desc')
+            ->get();
+
+        $suppliers = Supplier::where('archived', 'No')
+            ->where('status', 'Active')
+            ->get();
+
+        $products = Product::with(['price'])
+            ->where('archived', 'No')
+             ->where('status', 'Active')
+            ->orderBy('product_name', 'asc')
+            ->get();
+
+        return view('purchase-order.purchase-order-approval', compact('purchaseOrders', 'suppliers', 'products'));
+    }
+
+//     public function getDetails($id)
+// {
+//     try {
+//         $order = PurchaseOrder::with(['supplier', 'details.product'])
+//             ->findOrFail($id);
+        
+//         return response()->json([
+//             'success' => true,
+//             'order' => [
+//                 'order_no' => $order->order_no,
+//                 'supplier_name' => $order->supplier->supplier_name ?? 'N/A',
+//                 'invoice_no' => $order->invoice_no,
+//                 'status' => $order->status,
+//                 'order_date_formatted' => $order->order_date ? 
+//                     \Carbon\Carbon::parse($order->order_date)->format('d M Y') : 'N/A',
+//                 'added_by' => $order->added_by ?? 'N/A',
+//                 'discount' => number_format($order->discount ?? 0, 2),
+//                 'vat' => number_format($order->vat ?? 0, 2),
+//                 'total_value' => number_format($order->total_value, 2),
+//                 'sub_total' => number_format($order->details->sum('total'), 2),
+//                 'details' => $order->details->map(function($detail) {
+//                     return [
+//                         'product_name' => $detail->product->product_name ?? 'N/A',
+//                         'quantity' => number_format($detail->quantity, 2),
+//                         'unit_price' => number_format($detail->unit_price, 2),
+//                         'total' => number_format($detail->total, 2),
+//                     ];
+//                 })
+//             ]
+//         ]);
+//     } catch (\Exception $e) {
+//         return response()->json([
+//             'success' => false,
+//             'message' => 'Order not found or error loading details'
+//         ], 404);
+//     }
+// }
+
+public function getDetails($id)
+{
+    $order = PurchaseOrder::with(['supplier', 'details.product'])->findOrFail($id);
+    
+    return response()->json([
+        'order_no' => $order->order_no,
+        'supplier' => $order->supplier?->supplier_name,
+        'invoice_no' => $order->invoice_no,
+        'order_date' => $order->order_date ? \Carbon\Carbon::parse($order->order_date)->format('d M Y') : 'N/A',
+        'status' => $order->status,
+        'added_by' => $order->added_by ?? 'N/A',
+        'added_date' => $order->added_date ? \Carbon\Carbon::parse($order->added_date)->format('d M Y, h:i A') : 'N/A',
+        'items' => $order->details->map(function($detail) {
+            return [
+                'product_name' => $detail->product?->product_name,
+                'quantity' => $detail->quantity,
+                'unit_price' => $detail->unit_price,
+                'total' => $detail->total
+            ];
+        }),
+        'subtotal' => $order->details->sum('total'),
+        'discount' => $order->discount,
+        'vat' => $order->vat,
+        'total' => $order->total_value
+    ]);
+}
 }

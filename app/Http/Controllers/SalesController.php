@@ -32,8 +32,8 @@ class SalesController extends Controller
         return view('sales.index', compact('products'));
     }
    
-            public function getProducts(Request $request)
-        {
+    public function getProducts(Request $request)
+    {
             $query = Product::with([
                 'category',
                 'store',

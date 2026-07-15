@@ -50,6 +50,11 @@ class StockMovement extends Model
         return $this->belongsTo(Stores::class, 'store_id', 'store_id');
     }
 
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id', 'user_id');
+    }
+
     public function tenant()
     {
         return $this->belongsTo(Tenant::class, 'tenant_id', 'tenant_id');

@@ -1,16 +1,5 @@
 <x-app-layout>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
-    <style>
-        .modal-backdrop {
-    display: none !important;
-}
-.modal {
-    display: none !important;
-}
-.modal.show {
-    display: block !important;
-}
-    </style>
     <!-- Start Main Content -->
     <div class="content-page" x-data="purchaseOrderApp()">
         <div class="container-fluid">
@@ -44,7 +33,7 @@
 
             <div class="row">
                 <div class="col-xxl-12 col-lg-12">
-                    <div data-table data-table-rows-per-page="5" class="card card-h-100">
+                    <div data-table data-table-rows-per-page="15" class="card card-h-100">
                         <div class="card-header justify-content-between">
                             <h4 class="card-title">Purchase Orders <span class="text-muted fs-base fw-normal">({{ $purchaseOrders->count() }} Orders)</span></h4>
                             <div>
@@ -66,29 +55,23 @@
                                             <th>Invoice No</th>
                                             <th>Order Date</th>
                                             <th>Items</th>
-                                            <th>Discount Value</th>
-                                            <th>VAT Value</th>
                                             <th>Total Value</th>
                                             <th>Status</th>
-                                             @if(auth()->user()->role_id === '1001')
+                                            <th>Added By</th>
                                             <th>Action</th>
-                                            @endif
                                         </tr>
                                     </thead>
                                     <tbody class="text-nowrap">
                                         @forelse ($purchaseOrders as $order)
-                                        
                                             <tr>
                                                 <td>
                                                     <h5 class="m-0 fs-base">{{ $order->order_no }}</h5>
-                                                    <span class="text-muted fs-xs">Added by: {{ $order->added_by ?? '-' }}</span>
+                                                    <span class="text-muted fs-xs">Added by: {{ $order->added_by ?? 'N/A' }}</span>
                                                 </td>
-                                                <td>{{ $order->supplier ? $order->supplier->supplier_name : '-' }}</td>
-                                                <td>{{ $order->invoice_no ?? '-' }}</td>
+                                                <td>{{ $order->supplier ? $order->supplier->supplier_name : 'N/A' }}</td>
+                                                <td>{{ $order->invoice_no ?? 'N/A' }}</td>
                                                 <td>{{ $order->order_date ? \Carbon\Carbon::parse($order->order_date)->format('d M Y') : 'N/A' }}</td>
                                                 <td>{{ $order->details->count() }}</td>
-                                                <td>{{ $order->vat ?? '-' }}</td>
-                                                <td>{{ $order->discount ?? '-' }}</td>
                                                 <td>GHs {{ number_format($order->total_value, 2) }}</td>
                                                 <td>
                                                     @if($order->status == 'Active')
@@ -97,7 +80,7 @@
                                                         <span class="badge bg-danger-subtle text-danger">INACTIVE</span>
                                                     @endif
                                                 </td>
-                                                 @if(auth()->user()->role_id === '1001')
+                                                <td>{{ $order->added_date ? \Carbon\Carbon::parse($order->added_date)->format('d M Y') : 'N/A' }}</td>
                                                 <td>
                                                     <div class="btn">
                                                         <button type="button" class="btn btn-sm btn-outline-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
@@ -127,9 +110,9 @@
                                                         </ul>
                                                     </div>
                                                 </td>
-                                                @endif
                                             </tr>
-                                            
+
+                                            @include('purchase-order.partials._view-modal', ['order' => $order])
                                             @empty
                                             <tr>
                                                 <td colspan="8" class="text-center py-4 text-muted">
@@ -138,8 +121,7 @@
                                             </tr>
                                         @endforelse
                                     </tbody>
-                                </table>
-                                     
+                                </table>        
                             </div>
                         </div>
                          <div class="card-footer border-0">
@@ -274,9 +256,6 @@
             </div>
         </div>
 <!-- ADD NEW PURCHASE ORDER -->
-
-<!-- view purchase order -->
- 
         <!-- Footer Start -->
         <footer class="footer">
             <div class="container-fluid">

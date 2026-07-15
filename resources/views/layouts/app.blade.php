@@ -51,4 +51,5 @@
     <script src="{{ asset('js/maps/world.js') }}"></script>
     <script src="{{ asset('js/pages/custom-table.js') }}"></script>
     <script src="{{ asset('js/pages/dashboard-ecommerce.js') }}"></script>
+    @stack('scripts')
 </html>

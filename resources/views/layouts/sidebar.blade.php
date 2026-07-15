@@ -125,7 +125,7 @@
                             @if(auth()->user()->role_id === '1001' || auth()->user()->role_id === '1002' || auth()->user()->role_id === '1003')
                              <li class="side-nav-item">
                                 <a href="{{ url('/inventory') }}" class="side-nav-link">
-                                    <span class="menu-text" data-lang="apps-product-list"> Stock Adjustment</span>
+                                    <span class="menu-text" data-lang="apps-product-list"> Stocks</span>
                                 </a>
                             </li>
                             @endif
@@ -133,6 +133,13 @@
                              <li class="side-nav-item">
                                 <a href="{{ route('purchase-orders.index') }}" class="side-nav-link">
                                     <span class="menu-text" data-lang="apps-product-list"> Purchase Order</span>
+                                </a>
+                            </li>
+                            @endif
+                            @if(auth()->user()->role_id === '1001' || auth()->user()->role_id === '1002' || auth()->user()->role_id === '1003')
+                             <li class="side-nav-item">
+                                <a href="{{ url('purchase-orders-approval') }}" class="side-nav-link">
+                                    <span class="menu-text" data-lang="apps-product-list"> Purchase Order Approvals</span>
                                 </a>
                             </li>
                             @endif
@@ -288,8 +295,8 @@
                                 </a>
                             </li>
                              <li class="side-nav-item">
-                                <a href="{{ url('reports/stock-adjustments') }}" class="side-nav-link">
-                                    <span class="menu-text" data-lang="layouts-scrollable">Stocks</span>
+                                <a href="{{ route('reports.stock-adjustments') }}" class="side-nav-link">
+                                    <span class="menu-text" data-lang="layouts-scrollable">Stock Adjustments</span>
                                 </a>
                             </li>
                         </ul>
