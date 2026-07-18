@@ -27,7 +27,7 @@
                 <div class="col-xxl-12 col-lg-12">
                     <div data-table data-table-rows-per-page="15" class="card card-h-100">
                         <div class="card-header justify-content-between align-items-center flex-wrap gap-2">
-                            <h4 class="card-title">Products <span class="text-muted fs-base fw-normal">({{ $products->count() }} Products)</span></h4>
+                            <h4 class="card-title">Products <span class="text-muted fs-base fw-normal">({{ $products->total() }} Products)</span></h4>
                             <div class="d-flex align-items-center gap-2">
                                 <div class="input-group input-group-sm" style="width: 220px;">
                                     <span class="input-group-text bg-light"><i class="fa fa-search"></i></span>
@@ -191,8 +191,8 @@
                                                                             </div>
                                                                         </div>
                                                                          <div class="mb-3">
-                                                                        <label for="status-{{ $product->status }}" class="form-label">Status</label>
-                                                                            <select class="form-control" id="status-{{ $product->status }}" name="status">
+                                                                        <label for="status-{{ $product->product_id }}" class="form-label">Status</label>
+                                                                            <select class="form-control" id="status-{{ $product->product_id }}" name="status">
                                                                                 <option value="Active" {{ $product->status === 'Active' ? 'selected' : '' }}>ACTIVE</option>
                                                                                 <option value="Inactive" {{ $product->status === 'Inactive' ? 'selected' : '' }}>INACTIVE</option>
                                                                             </select>

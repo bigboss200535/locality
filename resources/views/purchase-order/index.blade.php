@@ -1,16 +1,5 @@
 <x-app-layout>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
-    <style>
-        .modal-backdrop {
-    display: none !important;
-}
-.modal {
-    display: none !important;
-}
-.modal.show {
-    display: block !important;
-}
-    </style>
     <!-- Start Main Content -->
     <div class="content-page" x-data="purchaseOrderApp()">
         <div class="container-fluid">
@@ -66,29 +55,22 @@
                                             <th>Invoice No</th>
                                             <th>Order Date</th>
                                             <th>Items</th>
-                                            <th>Discount Value</th>
-                                            <th>VAT Value</th>
                                             <th>Total Value</th>
                                             <th>Status</th>
-                                             @if(auth()->user()->role_id === '1001')
                                             <th>Action</th>
-                                            @endif
                                         </tr>
                                     </thead>
                                     <tbody class="text-nowrap">
                                         @forelse ($purchaseOrders as $order)
-                                        
                                             <tr>
                                                 <td>
                                                     <h5 class="m-0 fs-base">{{ $order->order_no }}</h5>
-                                                    <span class="text-muted fs-xs">Added by: {{ $order->added_by ?? '-' }}</span>
+                                                    <span class="text-muted fs-xs">Added by: {{ $order->added_by ?? 'N/A' }}</span>
                                                 </td>
-                                                <td>{{ $order->supplier ? $order->supplier->supplier_name : '-' }}</td>
-                                                <td>{{ $order->invoice_no ?? '-' }}</td>
+                                                <td>{{ $order->supplier ? $order->supplier->supplier_name : 'N/A' }}</td>
+                                                <td>{{ $order->invoice_no ?? 'N/A' }}</td>
                                                 <td>{{ $order->order_date ? \Carbon\Carbon::parse($order->order_date)->format('d M Y') : 'N/A' }}</td>
                                                 <td>{{ $order->details->count() }}</td>
-                                                <td>{{ $order->vat ?? '-' }}</td>
-                                                <td>{{ $order->discount ?? '-' }}</td>
                                                 <td>GHs {{ number_format($order->total_value, 2) }}</td>
                                                 <td>
                                                     @if($order->status == 'Active')
@@ -97,39 +79,40 @@
                                                         <span class="badge bg-danger-subtle text-danger">INACTIVE</span>
                                                     @endif
                                                 </td>
-                                                 @if(auth()->user()->role_id === '1001')
                                                 <td>
                                                     <div class="btn">
                                                         <button type="button" class="btn btn-sm btn-outline-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
                                                             Action
                                                         </button>
                                                         <ul class="dropdown-menu">
-                                                             <li>
+                                                             <!-- <li>
                                                                 <button type="button" class="dropdown-item" data-bs-toggle="modal" data-bs-target="#viewPurchaseOrderModal-{{ $order->purchase_order_id }}">
                                                                     View Details
                                                                 </button>
-                                                            </li>
-                                                            <!-- <li>
+                                                            </li> -->
+                                                            <li>
                                                                 <button type="button" class="dropdown-item" data-bs-toggle="modal" data-bs-target="#editPurchaseOrderModal-{{ $order->purchase_order_id }}">
                                                                     Edit 
                                                                 </button>
-                                                            </li> -->
+                                                            </li>
                                                              @if(auth()->user()->role_id === '1001' || auth()->user()->role_id === '1002' || auth()->user()->role_id === '1003')
-                                                            <!-- <li>
+                                                            <li>
                                                                 
                                                                 <form action="{{ route('purchase-orders.destroy', $order->purchase_order_id) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this purchase order?');" class="d-inline">
                                                                     @csrf
                                                                     @method('DELETE')
                                                                     <button type="submit" class="dropdown-item text-danger">Delete</button>
                                                                 </form>
-                                                            </li> -->
+                                                            </li>
                                                             @endif
                                                         </ul>
                                                     </div>
+                                                    
+  
+
+
                                                 </td>
-                                                @endif
                                             </tr>
-                                            
                                             @empty
                                             <tr>
                                                 <td colspan="8" class="text-center py-4 text-muted">
@@ -138,8 +121,7 @@
                                             </tr>
                                         @endforelse
                                     </tbody>
-                                </table>
-                                     
+                                </table>        
                             </div>
                         </div>
                          <div class="card-footer border-0">
@@ -147,6 +129,7 @@
                                 <div data-table-pagination-info="categories"></div>
                                 <div data-table-pagination></div>
                             </div>
+                             <br> <br>
                         </div>
                     </div>
                 </div>
@@ -274,9 +257,6 @@
             </div>
         </div>
 <!-- ADD NEW PURCHASE ORDER -->
-
-<!-- view purchase order -->
- 
         <!-- Footer Start -->
         <footer class="footer">
             <div class="container-fluid">
@@ -307,12 +287,12 @@
                 discount: 0,
                 vat: 0,
                 addItem() {
-                    // console.log('[DEBUG:PurchaseOrderApp] Add item clicked. Current items:', JSON.parse(JSON.stringify(this.items)));
+                    console.log('[DEBUG:PurchaseOrderApp] Add item clicked. Current items:', JSON.parse(JSON.stringify(this.items)));
                     this.items.push({ product_id: '', quantity: 1, unit_price: 0 });
-                    // console.log('[DEBUG:PurchaseOrderApp] Item added. New items:', JSON.parse(JSON.stringify(this.items)));
+                    console.log('[DEBUG:PurchaseOrderApp] Item added. New items:', JSON.parse(JSON.stringify(this.items)));
                 },
                 removeItem(index) {
-                    // console.log('[DEBUG:PurchaseOrderApp] Remove item clicked. Index:', index);
+                    console.log('[DEBUG:PurchaseOrderApp] Remove item clicked. Index:', index);
                     this.items.splice(index, 1);
                 },
                 subtotal() {
@@ -322,7 +302,7 @@
                     return Math.max(0, this.subtotal() - parseFloat(this.discount || 0) + parseFloat(this.vat || 0));
                 },
                 submitForm(event) {
-                    // console.log('[DEBUG:PurchaseOrderApp] Submit form. Items:', JSON.parse(JSON.stringify(this.items)));
+                    console.log('[DEBUG:PurchaseOrderApp] Submit form. Items:', JSON.parse(JSON.stringify(this.items)));
                     if (this.items.length === 0) {
                         alert('Please add at least one product item.');
                         return;
@@ -333,7 +313,7 @@
                             return;
                         }
                     }
-                    // console.log('[DEBUG:PurchaseOrderApp] Form validation passed. Submitting...');
+                    console.log('[DEBUG:PurchaseOrderApp] Form validation passed. Submitting...');
                     event.target.submit();
                 }
             };
@@ -345,19 +325,19 @@
                 discount: 0,
                 vat: 0,
                 init(orderData) {
-                    // console.log('[DEBUG:EditOrderForm] init called with:', JSON.parse(JSON.stringify(orderData)));
+                    console.log('[DEBUG:EditOrderForm] init called with:', JSON.parse(JSON.stringify(orderData)));
                     this.discount = orderData.discount || 0;
                     this.vat = orderData.vat || 0;
                     this.items = orderData.items && orderData.items.length ? orderData.items.map(d => ({ ...d })) : [{ product_id: '', quantity: 1, unit_price: 0 }];
-                    // console.log('[DEBUG:EditOrderForm] initialized items:', JSON.parse(JSON.stringify(this.items)));
+                    console.log('[DEBUG:EditOrderForm] initialized items:', JSON.parse(JSON.stringify(this.items)));
                 },
                 addItem() {
-                    // console.log('[DEBUG:EditOrderForm] Add item clicked. Current items:', JSON.parse(JSON.stringify(this.items)));
+                    console.log('[DEBUG:EditOrderForm] Add item clicked. Current items:', JSON.parse(JSON.stringify(this.items)));
                     this.items.push({ product_id: '', quantity: 1, unit_price: 0 });
-                    // console.log('[DEBUG:EditOrderForm] Item added. New items:', JSON.parse(JSON.stringify(this.items)));
+                    console.log('[DEBUG:EditOrderForm] Item added. New items:', JSON.parse(JSON.stringify(this.items)));
                 },
                 removeItem(index) {
-                    // console.log('[DEBUG:EditOrderForm] Remove item clicked. Index:', index);
+                    console.log('[DEBUG:EditOrderForm] Remove item clicked. Index:', index);
                     this.items.splice(index, 1);
                 },
                 subtotal() {
@@ -367,7 +347,7 @@
                     return Math.max(0, this.subtotal() - parseFloat(this.discount || 0) + parseFloat(this.vat || 0));
                 },
                 submitForm(event) {
-                    // console.log('[DEBUG:EditOrderForm] Submit form. Items:', JSON.parse(JSON.stringify(this.items)));
+                    console.log('[DEBUG:EditOrderForm] Submit form. Items:', JSON.parse(JSON.stringify(this.items)));
                     if (this.items.length === 0) {
                         alert('Please add at least one product item.');
                         return;
@@ -378,7 +358,7 @@
                             return;
                         }
                     }
-                    // console.log('[DEBUG:EditOrderForm] Form validation passed. Submitting...');
+                    console.log('[DEBUG:EditOrderForm] Form validation passed. Submitting...');
                     event.target.submit();
                 }
             };

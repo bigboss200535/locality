@@ -25,7 +25,6 @@ class ProductManagementController extends Controller
             $products = Product::with(['category', 'price', 'stock', 'store', 'tenant'])
                 ->where('archived', 'No')
                 // ->where('store_id', $user->store_id)
-                ->where('stock.stock_quantity','>', '0')
                 // ->where('tenant_id', $user->tenant_id)
                 ->orderBy('product_name', 'asc')
                 ->get();
@@ -35,14 +34,12 @@ class ProductManagementController extends Controller
                 ->where('archived', 'No')
                 ->where('store_id', $user->store_id)
                 // ->where('tenant_id', $user->tenant_id)
-                 ->where('stock.stock_quantity','>', '0')
                 ->orderBy('product_name', 'asc')
                 ->get();
         } else {
             $products = Product::with(['category', 'price', 'stock'])
                 ->where('archived', 'No')
                 ->where('store_id', $user->store_id)
-                 ->where('stock.stock_quantity','>', '0')
                 ->where('tenant_id', $user->tenant_id)
                 ->orderBy('product_name', 'asc')
                 ->get();

@@ -18,7 +18,11 @@
         <!-- <link rel="stylesheet" href="https://jsdelivr.net"> -->
        <!-- <script src="https://cdn.jsdelivr.net/npm/@flaticon/flaticon-uicons@3.3.1/license.min.js"></script> -->
        <!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@flaticon/flaticon-uicons@3.3.1/css/all/all.min.css"> -->
-       <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+        <!-- <link href="{{ asset('css/all.min.css') }}" rel="stylesheet" type="text/css" /> -->
+       <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"> -->
+         <link href="{{ asset('flaticon/css/all.min.css') }}" rel="stylesheet" type="text/css" />
+        <link href="{{ asset('fontawesome/css/all.min.css') }}" rel="stylesheet" type="text/css" />
+       
        
 
         <!-- @vite(['resources/css/app.css', 'resources/js/app.js']) -->
@@ -51,5 +55,4 @@
     <script src="{{ asset('js/maps/world.js') }}"></script>
     <script src="{{ asset('js/pages/custom-table.js') }}"></script>
     <script src="{{ asset('js/pages/dashboard-ecommerce.js') }}"></script>
-    @stack('scripts')
 </html>

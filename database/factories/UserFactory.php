@@ -34,8 +34,8 @@ class UserFactory extends Factory
 
         return [
             'user_id' => Str::uuid(),
-            'firstname' => fake()->name(),
-            'othername' => fake()->name(),
+            'firstname' => fake()->firstName(),
+            'othername' => fake()->firstName(),
             'telephone' => fake()->unique()->phoneNumber(),
             'telephone_verify' => fake()->randomElement(['Yes', 'No']),
             'email' => fake()->unique()->safeEmail(),

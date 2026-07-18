@@ -17,7 +17,7 @@ class AuthenticatedSessionController extends Controller
     public function create(): View
     {
         // return view('auth.login');
-        return view('get-started');
+         return view('get-started');
     }
 
     /**
@@ -26,30 +26,8 @@ class AuthenticatedSessionController extends Controller
     public function store(LoginRequest $request): RedirectResponse
     {
         $request->authenticate();
+
         $request->session()->regenerate();
-
-        // Additional check (though it's already checked in LoginRequest)
-            // $user = Auth::user();
-            // 
-            // if ($user->isBlocked()) {
-            //     Auth::logout();
-            //     $request->session()->invalidate();
-            //     $request->session()->regenerateToken();
-                
-            //     return redirect('/get-started')->withErrors([
-            //         'email' => 'Your account is Blocked.',
-            //     ]);
-            // }
-
-            // if (!$user->canLogin()) {
-            //     Auth::logout();
-            //     $request->session()->invalidate();
-            //     $request->session()->regenerateToken();
-                
-            //     return redirect('/get-started')->withErrors([
-            //         'email' => 'Your account is not active.',
-            //     ]);
-            // }
 
         return redirect()->intended(route('dashboard', absolute: false));
     }
@@ -60,8 +38,11 @@ class AuthenticatedSessionController extends Controller
     public function destroy(Request $request): RedirectResponse
     {
         Auth::guard('web')->logout();
+
         $request->session()->invalidate();
+
         $request->session()->regenerateToken();
+
         return redirect('/get-started');
     }
 }

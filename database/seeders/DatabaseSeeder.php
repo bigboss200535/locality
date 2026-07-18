@@ -9,7 +9,6 @@ use App\Models\Tenant;
 use App\Models\Supplier;
 use App\Models\Product;
 use App\Models\ProductCategory;
-use App\Models\SystemSettings;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Str;
@@ -88,15 +87,15 @@ class DatabaseSeeder extends Seeder
             'user_id' => 'e4c06f74-4b4e-4669-9137-1729876865a3'
         ]);
 
-         Tenant::create([
-            'tenant_id' => '40402',
-            'tenant_name' => 'MOHAMMED ENTERPRISES',
-            'tenant_description' => 'SALES',
-            'type_of_business' => 'PRODUCT SALES',
-            'added_date' =>  now(),
-            'added_by' => 'MOHAMMED ALHASSAN',
-            'user_id' => 'e4c06f74-4b4e-4669-9137-1729876865a3'
-        ]);
+        //  Tenant::create([
+        //     'tenant_id' => '40402',
+        //     'tenant_name' => 'MOHAMMED ENTERPRISES',
+        //     'tenant_description' => 'SALES',
+        //     'type_of_business' => 'PRODUCT SALES',
+        //     'added_date' =>  now(),
+        //     'added_by' => 'MOHAMMED ALHASSAN',
+        //     'user_id' => 'e4c06f74-4b4e-4669-9137-1729876865a3'
+        // ]);
 
         Stores::create([
             'store_id' => '200201',
@@ -122,12 +121,18 @@ class DatabaseSeeder extends Seeder
             'added_date' => now(),
         ]);
 
-         SystemSettings::create([
-            'setting_id' => Str::uuid(),
-            'system_name' => 'PACES POS',
-            'company' => 'WebEdge Technologies',
-            'subscription_based' => 'No',
-            'telephone' => '0245340461',
+         User::factory()->create([
+            'user_id' => Str::uuid(),
+            'firstname' => 'Joshua',
+            'othername' => 'Awunasu',
+            'role_id' => '1002',
+            'usage' => '1',
+            'email' => 'joshua@gmail.com',
+            'email_verified_at' => now(),
+            'password' =>  Hash::make('password'),
+            'telephone' => '',
+            'telephone_verify' => 'Yes',
+            'user_no' => '',
             'added_date' => now(),
         ]);
 

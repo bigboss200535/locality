@@ -7,7 +7,6 @@ use App\Models\Product;
 use App\Models\ProductStock;
 use App\Models\ProductPrice;
 use App\Models\BillPayment;
-use App\Models\StockMovement;
 use App\Models\User;
 use Carbon\Carbon;
 use Barryvdh\DomPDF\Facade\Pdf;
@@ -150,71 +149,20 @@ class ReportController extends Controller
         return $pdf->download($fileName);
     }
 
-    public function stockAdjustments(Request $request, $start_date = null, $end_date = null)
+    public function stockAdjustments()
     {
         $user = auth()->user();
         $tenantId = $user ? $user->tenant_id : null;
-        $userId = $request->get('user_id');
-        $reportType = $request->get('report_type');
 
-        $users = User::where('tenant_id', $tenantId)
-            ->where('archived', 'No')
-            ->orderBy('firstname', 'asc')
-            ->get();
-
-        $reportTypes = StockMovement::where('tenant_id', $tenantId)
-            ->where('archived', 'No')
-            ->whereNotNull('stocked_type')
-            ->distinct()
-            ->pluck('stocked_type')
-            ->sort()
-            ->values();
-
-        if (!$start_date || !$end_date) {
-            $title = 'Stock Adjustments Report';
-            return view('reports.stock_adjustment', compact(
-                'title',
-                'start_date',
-                'end_date',
-                'userId',
-                'reportType',
-                'users',
-                'reportTypes'
-            ));
-        }
-
-        try {
-            $startDate = Carbon::parse($start_date)->startOfDay();
-            $endDate = Carbon::parse($end_date)->endOfDay();
-        } catch (\Exception $e) {
-            abort(404, 'Invalid date format.');
-        }
-
-        $adjustmentsQuery = StockMovement::with(['product', 'store', 'user'])
+        $adjustments = StockMovement::with(['product', 'store'])
             ->where('archived', 'No')
             ->where('tenant_id', $tenantId)
-            ->whereBetween('added_date', [$startDate, $endDate]);
+            ->where('stock_quantity', '<', 0)
+            ->orderBy('added_date', 'desc')
+            ->get();
 
-        if ($userId) {
-            $adjustmentsQuery->where('user_id', $userId);
-        }
-
-        if ($reportType) {
-            $adjustmentsQuery->where('stocked_type', $reportType);
-        }
-
-        $adjustments = $adjustmentsQuery->orderBy('added_date', 'desc')->get();
         $title = 'Stock Adjustments Report';
 
-        return view('reports.stock_adjustment', compact(
-            'adjustments',
-            'start_date',
-            'end_date',
-            'userId',
-            'reportType',
-            'users',
-            'reportTypes',
-            'title'
-        ));
+        return view('reports.stock_adjustments', compact('adjustments', 'title'));
     }
 }

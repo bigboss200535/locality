@@ -234,7 +234,7 @@
                             <div class="modal-body text-start" id="printable-receipt" style="white-space: normal;">
                                 <div class="text-center mb-4">
                                     <h4 class="mb-1">PACES POS</h4>
-                                    <p class="text-muted fs-sm mb-0">PAYMENT RECEIPT</p>
+                                    <p class="text-muted fs-sm mb-0">Official Sale Receipt</p>
                                 </div>
                                 <div class="row mb-3 fs-xs text-muted">
                                     <div class="col-6">
@@ -424,8 +424,8 @@
                                 <template x-if="cart.length === 0">
                                     <div class="text-center py-5 text-muted">
                                         <i class="fa fa-bag-shopping fs-1 text-light mb-3"></i>
-                                        <p class="mb-0">Your Cart is Empty.</p>
-                                        <p class="fs-xs">Add Products from the directory on the left.</p>
+                                        <p class="mb-0">Your cart is empty.</p>
+                                        <p class="fs-xs">Add products from the directory on the left.</p>
                                     </div>
                                 </template>
 

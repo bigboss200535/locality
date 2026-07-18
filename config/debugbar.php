@@ -35,7 +35,7 @@ return [
     */
 
     'collectors' => [
-        'phpinfo'         => env('DEBUGBAR_COLLECTORS_PHPINFO', true),         // Php version
+        'phpinfo'         => env('DEBUGBAR_COLLECTORS_PHPINFO', false),         // Php version
         'messages'        => env('DEBUGBAR_COLLECTORS_MESSAGES', true),         // Messages
         'time'            => env('DEBUGBAR_COLLECTORS_TIME', true),             // Time Datalogger
         'memory'          => env('DEBUGBAR_COLLECTORS_MEMORY', true),           // Memory usage
@@ -43,8 +43,8 @@ return [
         'log'             => env('DEBUGBAR_COLLECTORS_LOG', true),              // Logs from Monolog (merged in messages if enabled)
         'db'              => env('DEBUGBAR_COLLECTORS_DB', true),               // Show database (PDO) queries and bindings
         'views'           => env('DEBUGBAR_COLLECTORS_VIEWS', true),            // Views with their data
-        'route'           => env('DEBUGBAR_COLLECTORS_ROUTE', true),           // Current route information
-        'auth'            => env('DEBUGBAR_COLLECTORS_AUTH', true),            // Display Laravel authentication status
+        'route'           => env('DEBUGBAR_COLLECTORS_ROUTE', false),           // Current route information
+        'auth'            => env('DEBUGBAR_COLLECTORS_AUTH', false),            // Display Laravel authentication status
         'gate'            => env('DEBUGBAR_COLLECTORS_GATE', true),             // Display Laravel Gate checks
         'session'         => env('DEBUGBAR_COLLECTORS_SESSION', false),         // Display session data
         'symfony_request' => env('DEBUGBAR_COLLECTORS_SYMFONY_REQUEST', true),  // Default Request Data
@@ -59,6 +59,7 @@ return [
         'inertia'         => env('DEBUGBAR_COLLECTORS_INERTIA', true),          // Display Inertia (when available)
         'jobs'            => env('DEBUGBAR_COLLECTORS_JOBS', true),             // Display dispatched jobs
         'pennant'         => env('DEBUGBAR_COLLECTORS_PENNANT', true),          // Display Pennant feature flags
+        'ai'              => env('DEBUGBAR_COLLECTORS_AI', true),               // Display laravel/ai agent runs
         'http_client'     => env('DEBUGBAR_COLLECTORS_HTTP_CLIENT', true),      // Display HTTP Client requests
     ],
 
@@ -104,9 +105,7 @@ return [
             'backtrace_editor_links' => env('DEBUGBAR_OPTIONS_DB_BACKTRACE_EDITOR_LINKS', false), // Add editor links to backtrace entries (non-vendor files only)
             'timeline'          => env('DEBUGBAR_OPTIONS_DB_TIMELINE', false),  // Add the queries to the timeline
             'duration_background'  => env('DEBUGBAR_OPTIONS_DB_DURATION_BACKGROUND', true),   // Show shaded background on each query relative to how long it took to execute.
-            'explain' => [                 // Show EXPLAIN output on queries
-                'enabled' => env('DEBUGBAR_OPTIONS_DB_EXPLAIN_ENABLED', true),
-            ],
+            'explain'           => env('DEBUGBAR_OPTIONS_DB_EXPLAIN_ENABLED', true), // Show EXPLAIN output on queries
             'show_query_result' => env('DEBUGBAR_OPTIONS_DB_SHOW_QUERY_RESULT', false), // Show option to re-run SELECT queries and show the result
             'only_slow_queries' => env('DEBUGBAR_OPTIONS_DB_ONLY_SLOW_QUERIES', true), // Only track queries that last longer than `slow_threshold`
             'slow_threshold'    => env('DEBUGBAR_OPTIONS_DB_SLOW_THRESHOLD', false), // Max query execution time (ms). Exceeding queries will be highlighted
@@ -158,6 +157,9 @@ return [
             'masked' => [],
             'timeline' => env('DEBUGBAR_OPTIONS_HTTP_CLIENT_TIMELINE', true),  // Add requests to the timeline
         ],
+        'ai' => [
+            'values' => env('DEBUGBAR_OPTIONS_AI_VALUES', true), // Collect prompt/response/tool bodies
+        ],
     ],
 
     /**
@@ -201,12 +203,20 @@ return [
     | Changing `ajax_handler_auto_show` to false will prevent the Debugbar from reloading.
     |
     | You can defer loading the dataset, so it will be loaded with ajax after the request is done. (Experimental)
+    |
+    | Streamed responses (SSE, StreamedResponse, Livewire streaming) lose the phpdebugbar-id response header.
+    | Enable `capture_streamed` to tag same-origin fetch/XHR requests with a phpdebugbar-request-id header and
+    | look the dataset up through the open handler afterwards (requires storage + the open handler enabled).
+    | `streamed_content_types` limits the fallback to these Content-Types; set it to an empty array or null to
+    | match any response missing the id header. Broaden it (e.g. text/html, application/json) for chunked responses.
     */
 
     'capture_ajax' => env('DEBUGBAR_CAPTURE_AJAX', true),
     'add_ajax_timing' => env('DEBUGBAR_ADD_AJAX_TIMING', false),
     'ajax_handler_auto_show' => env('DEBUGBAR_AJAX_HANDLER_AUTO_SHOW', true),
     'ajax_handler_enable_tab' => env('DEBUGBAR_AJAX_HANDLER_ENABLE_TAB', true),
+    'capture_streamed' => env('DEBUGBAR_CAPTURE_STREAMED', false),
+    'streamed_content_types' => ['text/event-stream'],
     'defer_datasets' => env('DEBUGBAR_DEFER_DATASETS', false),
 
     /*

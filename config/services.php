@@ -35,9 +35,4 @@ return [
         ],
     ],
 
-    'llm' => [
-        'base_url' => env('LLM_API_BASE', 'http://localhost:8000'),
-        // 'model_endpoint' => env('LLM_MODEL_ENDPOINT'),
-        'api_key' => env('LLM_API_KEY'),
-    ],
 ];

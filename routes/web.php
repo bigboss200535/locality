@@ -1,7 +1,6 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\DashboardController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProductCategoryController;
@@ -16,6 +15,7 @@ use App\Http\Controllers\PurchaseOrderController;
 use App\Http\Controllers\SuppliersController;
 use App\Http\Controllers\ProductRequisitionController;
 use App\Http\Controllers\ReportController;
+use App\Http\Controllers\DashboardController;
 
 // Routes with no authentications
 Route::get('/', function () {
@@ -106,10 +106,6 @@ Route::middleware(['auth', 'verified'])->group(function (){
     Route::post('/purchase-orders', [PurchaseOrderController::class, 'store'])->name('purchase-orders.store');
     Route::put('/purchase-orders/{purchaseOrder}', [PurchaseOrderController::class, 'update'])->name('purchase-orders.update');
     Route::delete('/purchase-orders/{purchaseOrder}', [PurchaseOrderController::class, 'destroy'])->name('purchase-orders.destroy');
-    Route::get('/purchase-orders/{purchaseOrder}/pdf', [PurchaseOrderController::class, 'pdf'])->name('purchase-orders.pdf');
-    //  Route::get('/purchase-orders-approval', [PurchaseOrderController::class, 'purchase_orders_pending_approvals'])->name('purchase-orders.approvals');
-    Route::get('/purchase-orders/{id}/details', [PurchaseOrderController::class, 'getDetails'])
-    ->name('purchase-orders.details');
 
      // suppliers routes
     Route::get('/suppliers', [SuppliersController::class, 'index'])->name('suppliers.index');
@@ -127,13 +123,16 @@ Route::middleware(['auth', 'verified'])->group(function (){
     Route::get('/reports', [ReportController::class, 'index'])->name('reports.index');
     Route::get('/reports/sales/{start_date}/{end_date}', [ReportController::class, 'sales'])->name('reports.sales');
     Route::get('/reports/sales/{start_date}/{end_date}/pdf', [ReportController::class, 'salesPdf'])->name('reports.sales.pdf');
-    Route::get('/reports/stock-adjustments/{start_date?}/{end_date?}', [ReportController::class, 'stockAdjustments'])->name('reports.stock-adjustments');
+    Route::get('/reports/stock-adjustments', [ReportController::class, 'stockAdjustments'])->name('reports.stock-adjustments');
 });
+// Route::get('/dashboard', function () {
+//     return view('dashboard');
+// })->middleware(['auth', 'verified'])->name('dashboard');
 
-//Route::middleware('auth')->group(function () {
-    // Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    // Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    // Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-//});
+// Route::middleware('auth')->group(function () {
+//     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+//     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+//     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+// });
 
 require __DIR__.'/auth.php';

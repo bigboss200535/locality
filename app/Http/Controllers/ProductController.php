@@ -16,15 +16,15 @@ class ProductController extends Controller
     {
         $products = Product::with(['category', 'price', 'stock', 'store', 'tenant'])
             ->where('archived', 'No')
-             ->where('tenant_id', auth()->user()->tenant_id)
+            ->where('tenant_id', auth()->user()->tenant_id)
             ->orderBy('added_date', 'desc')
-            ->cursor();
+            ->paginate(25);
 
         $categories = ProductCategory::where('archived', 'No')
             ->where('status', 'Active')
             ->where('tenant_id', auth()->user()->tenant_id)
             // ->cursor();
-            ->paginate('10');
+            ->get();
 
         // If categories are empty, create default category to ensure dropdown works
         // if ($categories->isEmpty()) {

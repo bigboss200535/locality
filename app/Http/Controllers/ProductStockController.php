@@ -27,7 +27,6 @@ class ProductStockController extends Controller
             'store'
         ])
         ->where('archived', 'No')
-        ->where('tenant_id', auth()->user()->tenant_id)
         ->orderBy('added_date', 'desc')
         ->get();
 

@@ -27,10 +27,10 @@
                         <div class="card p-4">
                             <div class="auth-brand text-center mb-2">
                                 <a href="index.html" class="logo-dark">
-                                    <!-- <img src="{{ asset('images/logo-black.png') }}" alt="dark logo" /> -->
+                                    <img src="{{ asset('images/logo-black.png') }}" alt="dark logo" />
                                 </a>
                                 <a href="index.html" class="logo-light">
-                                    <!-- <img src="{{ asset('images/logo.png') }}" alt="logo" /> -->
+                                    <img src="{{ asset('images/logo.png') }}" alt="logo" />
                                 </a>
                                 <h4 class="fw-bold text-dark mt-3">
                                     {{ __('Great to see you here ') }}
