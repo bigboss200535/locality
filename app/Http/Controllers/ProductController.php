@@ -9,45 +9,104 @@ use App\Models\ProductPrice;
 use App\Models\ProductStock;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Cache;
 
 class ProductController extends Controller
 {
-    public function index()
+    // public function index()
+    // {
+    //     $products = Product::with(['category', 'price', 'stock', 'store', 'tenant'])
+    //         ->where('archived', 'No')
+    //         ->where('tenant_id', auth()->user()->tenant_id)
+    //         ->orderBy('added_date', 'desc')
+    //         ->paginate(25);
+
+    //     $categories = ProductCategory::where('archived', 'No')
+    //         ->where('status', 'Active')
+    //         ->where('tenant_id', auth()->user()->tenant_id)
+    //         // ->cursor();
+    //         ->get();
+
+    //     // If categories are empty, create default category to ensure dropdown works
+    //     if ($categories->isEmpty()) {
+    //         $user = auth()->user();
+    //         $tenantId = $user->tenant_id;
+    //         $storeId = $user->store_id;
+
+    //         ProductCategory::create([
+    //             'category_id' => (string) Str::uuid(),
+    //             'category_name' => 'GENERAL PRODUCTS',
+    //             'tenant_id' => $tenantId,
+    //             'user_id' => $user->user_id,
+    //             'store_id' => $storeId,
+    //             'added_by' => $user->firstname . ' ' . $user->othername,
+    //             'added_date' => now(),
+    //             'archived' => 'No',
+    //             'status' => 'Active',
+    //         ]);
+
+    //         $categories = ProductCategory::where('archived', 'No')->get();
+    //     }
+
+    //     return view('products.index', compact('products', 'categories'));
+    // }
+
+
+    public function index(Request $request)
     {
-        $products = Product::with(['category', 'price', 'stock', 'store', 'tenant'])
-            ->where('archived', 'No')
-            ->where('tenant_id', auth()->user()->tenant_id)
-            ->orderBy('added_date', 'desc')
-            ->paginate(25);
+            $query = Product::query()
+                ->with([
+                    'category:category_id,category_id,category_name',
+                    'store:store_id,store_id,store_name',
+                    'tenant:tenant_id,tenant_id,tenant_name'
+                ])
+                ->where('tenant_id', auth()->user()->tenant_id)
+                ->where('archived', 'No');
 
-        $categories = ProductCategory::where('archived', 'No')
-            ->where('status', 'Active')
-            ->where('tenant_id', auth()->user()->tenant_id)
-            // ->cursor();
-            ->get();
+            if ($request->filled('search')) {
+                $search = $request->search;
 
-        // If categories are empty, create default category to ensure dropdown works
-        // if ($categories->isEmpty()) {
-        //     $user = auth()->user();
-        //     $tenantId = $user->tenant_id;
-        //     // $storeId = $user->store_id;
+                $query->where(function ($q) use ($search) {
 
-        //     ProductCategory::create([
-        //         'category_id' => (string) Str::uuid(),
-        //         'category_name' => 'GENERAL',
-        //         'tenant_id' => $tenantId,
-        //         'user_id' => $user->user_id,
-        //         'store_id' => $user->store_id,
-        //         'added_by' => $user->firstname . ' ' . $user->othername,
-        //         'added_date' => now(),
-        //         'archived' => 'No',
-        //         'status' => 'Active',
-        //     ]);
+                    $q->where('product_name','LIKE',"%{$search}%")
+                    ->orWhere('product_type','LIKE',"%{$search}%")
+                    // ->orWhere('product_id','LIKE',"%{$search}%")
+                    ->orWhereHas('category',function($q) use($search){
+                            $q->where('category_name','LIKE',"%{$search}%");
+                    })
 
-        //     $categories = ProductCategory::where('archived', 'No')->get();
-        // }
+                    ->orWhereHas('store',function($q) use($search){
+                            $q->where('store_name','LIKE',"%{$search}%");
+                    });
 
-        return view('products.index', compact('products', 'categories'));
+                });
+
+            }
+
+            $products = $query
+                    ->orderByDesc('added_date', 'asc')
+                    ->paginate(25)
+                    ->withQueryString();
+
+            $categories = ProductCategory::where([
+                'archived'=>'No',
+                'status'=>'Active',
+                'tenant_id'=>auth()->user()->tenant_id
+            ])->get();
+
+            // $categories = Cache::remember(
+            //     'categories_'.auth()->user()->tenant_id,
+            //     now()->addHours(2),
+            //     function () {
+            //         return ProductCategory::where([
+            //             'archived' => 'No',
+            //             'status' => 'Active',
+            //             'tenant_id' => auth()->user()->tenant_id
+            //         ])->get();
+            //     }
+            // );
+
+            return view('products.index',compact('products','categories'));
     }
 
     public function store(Request $request)
@@ -75,7 +134,6 @@ class ProductController extends Controller
 
         try {
               DB::beginTransaction();
-              
                             // 1. Create Product
                         Product::create([
                             'product_id' => $productId,

@@ -12,28 +12,56 @@ use Illuminate\Support\Str;
 
 class SalesController extends Controller
 {
+    // public function index()
+    // {
+    //     $products = Product::with([
+    //         'category',
+    //         'price' => function ($query) {
+    //             $query->where('archived', 'No');
+    //         },
+    //         'stock' => function ($query) {
+    //             $query->where('archived', 'No');
+    //         },
+    //         'store'
+    //     ])
+    //         ->where('archived', 'No')
+    //         ->orderBy('product_name', 'asc')
+    //         ->whereHas('price', function ($query) {
+    //             $query->where('archived', 'No')
+    //              ->where('tenant_id', auth()->user()->tenant_id);
+    //             })
+    //         ->limit(4)
+    //         ->get();
+
+    //     return view('sales.index', compact('products'));
+    // }
+
     public function index()
-    {
-        $products = Product::with([
+{
+    $tenantId = auth()->user()->tenant_id;
+
+    $products = Product::with([
             'category',
-            'price' => function ($query) {
-                $query->where('archived', 'No');
-            },
-            'stock' => function ($query) {
-                $query->where('archived', 'No');
-            },
+            'price',
+            'stock',
             'store'
         ])
-            ->where('archived', 'No')
-            ->orderBy('product_name', 'asc')
-            ->limit(4)
-            ->get();
+        ->where('tenant_id', $tenantId)
+        ->where('archived', 'No')
+        ->whereHas('price', function ($query) use ($tenantId) {
+            $query->where('tenant_id', $tenantId)
+                  ->where('archived', 'No')
+                  ->where('status', 'Active');
+        })
+        ->orderBy('product_name')
+        ->limit(4)
+        ->get();
 
-        return view('sales.index', compact('products'));
-    }
+    return view('sales.index', compact('products'));
+}
    
-            public function getProducts(Request $request)
-        {
+    public function getProducts(Request $request)
+    {
             $query = Product::with([
                 'category',
                 'store',
@@ -44,7 +72,8 @@ class SalesController extends Controller
                     $query->where('archived', 'No');
                 }
             ])
-            ->where('archived', 'No');
+            ->where('archived', 'No')
+            ->where('tenant_id', auth()->user()->tenant_id);
 
             // Apply search filter
             if ($request->filled('search')) {
@@ -76,10 +105,10 @@ class SalesController extends Controller
             });
 
             return response()->json($products);
-        }
+    }
 
-   public function store(Request $request)
-{
+    public function store(Request $request)
+    {
     $request->validate([
         'cart_data'      => 'required|string',
         'payment_method' => 'required|string|max:50',

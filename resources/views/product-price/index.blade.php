@@ -33,7 +33,10 @@
                             <div class="d-flex align-items-center gap-2">
                                 <div class="input-group input-group-sm" style="width: 220px;">
                                     <span class="input-group-text bg-light"><i class="fa fa-search"></i></span>
-                                    <input type="text" data-table-search class="form-control" placeholder="Search products...">
+                                   <form id="searchForm">
+                                        <input type="text" name="search" class="form-control" placeholder="Search products..." value="{{ request('search') }}">
+                                    <!-- <input type="text" data-table-search class="form-control" placeholder="Search products..."> -->
+                                    </form>
                                 </div>
                                 @if(auth()->user()->role_id === '1001' || auth()->user()->role_id === '1002' || auth()->user()->role_id === '1003')
                                 <button type="button" class="btn btn-sm btn-primary me-1" data-bs-toggle="modal" data-bs-target="#addProductPriceModal">
@@ -203,7 +206,7 @@
                     <div class="modal-body">
                         <div class="mb-3">
                             <label for="product_id" class="form-label">Select Product</label>
-                            <select class="form-select" id="product_id" name="product_id" required>
+                            <select class="form-select basic-select-one" id="product_id" name="product_id" required>
                                 <option value="" disabled selected>Select a Product...</option>
                                 @foreach($products as $product)
                                     @if(!$product->price)
@@ -314,7 +317,18 @@
             </div>
         @endif
     @endforeach
+    <script> 
+        let timer;
 
+            $('input[name=search]').on('keyup', function(){
+                clearTimeout(timer);
+                timer=setTimeout(function(){
+                    $('#search_form').submit();
+
+                },500);
+
+            });
+    </script>
     <!-- ============================================================== -->
     <!-- End of Main Content -->
     <!-- ============================================================== -->

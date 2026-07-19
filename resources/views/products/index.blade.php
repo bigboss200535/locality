@@ -31,7 +31,10 @@
                             <div class="d-flex align-items-center gap-2">
                                 <div class="input-group input-group-sm" style="width: 220px;">
                                     <span class="input-group-text bg-light"><i class="fa fa-search"></i></span>
-                                    <input type="text" data-table-search class="form-control" placeholder="Search products...">
+                                    <form id="searchForm">
+                                        <input type="text" name="search" class="form-control" placeholder="Search products..." value="{{ request('search') }}">
+                                    <!-- <input type="text" data-table-search class="form-control" placeholder="Search products..."> -->
+                                    </form>
                                 </div>
                                 @if(auth()->user()->role_id === '1001' || auth()->user()->role_id === '1002' || auth()->user()->role_id === '1003')
                                 <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#addProductModal">
@@ -121,6 +124,18 @@
                                                         </button>
                                                         <ul class="dropdown-menu">
                                                              <li>
+                                                               <!-- <a
+                                                                    class="dropdown-item edit-product"
+                                                                    data-id="{{ $product->product_id }}"
+                                                                    data-name="{{ $product->product_name }}"
+                                                                    data-type="{{ $product->product_type }}"
+                                                                    data-category="{{ $product->category_id }}"
+                                                                    data-stockable="{{ $product->stockable }}"
+                                                                    data-expirable="{{ $product->expirable }}"
+                                                                    data-status="{{ $product->status }}" href="#"
+                                                                >
+                                                                Edit
+                                                                </a> -->
                                                                     <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#editProductModal{{ $product->product_id }}">
                                                                         Edit
                                                                     </a>
@@ -285,7 +300,7 @@
                         </div>
                         <div class="mb-3">
                             <label for="category_id" class="form-label">Category</label>
-                            <select class="form-select" id="category_id" name="category_id" required>
+                            <select class="form-select basic-select-one" id="category_id" name="category_id" required>
                                 <option value="" disabled selected>-Select-</option>
                                 @foreach($categories as $category)
                                     <option value="{{ $category->category_id }}">{{ $category->category_name }}</option>
@@ -335,7 +350,33 @@
             </div>
         </div>
     </div>
+    <script>
+        $('.edit-product').click(function () {
 
+            let id=$(this).data('id');
+                $('#editForm').attr('action','/products/'+id);
+                $('#product_name').val($(this).data('name'));
+                $('#product_type').val($(this).data('type'));
+                $('#category_id').val($(this).data('category'));
+                $('#stockable').val($(this).data('stockable'));
+                $('#expirable').val($(this).data('expirable'));
+                $('#status').val($(this).data('status'));
+                $('#editProductModal').modal('show');
+
+        });
+    </script>
+    <script> 
+    let timer;
+
+        $('input[name=search]').on('keyup', function(){
+            clearTimeout(timer);
+            timer=setTimeout(function(){
+                $('#search_form').submit();
+
+            },500);
+
+        });
+    </script>
     <!-- ============================================================== -->
     <!-- End of Main Content -->
     <!-- ============================================================== -->

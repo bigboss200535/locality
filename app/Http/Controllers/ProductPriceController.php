@@ -11,28 +11,70 @@ use Illuminate\Support\Str;
 
 class ProductPriceController extends Controller
 {
-    public function index()
+    // public function index()
+    // {
+    //     $user = auth()->user();
+    //     $tenantId = $user->tenant_id;
+    //     $storeId = $user->store_id;
+
+    //     $products = Product::with([
+    //         'category', 
+    //         'price' => function($query) {
+    //             $query->where('archived', 'No');
+    //         }, 
+    //         'stock', 
+    //         'store'
+    //     ])
+    //     ->where('archived', 'No')
+    //     ->orderBy('added_date', 'desc')
+    //     ->paginate(25);
+
+    //     $categories = ProductCategory::where('archived', 'No')->get();
+
+    //     return view('product-price.index', compact('products', 'categories'));
+    // }
+
+    public function index(Request $request)
     {
-        $user = auth()->user();
-        $tenantId = $user->tenant_id;
-        $storeId = $user->store_id;
+            $query = Product::query()
+                ->with([
+                    'category:category_id,category_id,category_name',
+                    'store:store_id,store_id,store_name',
+                    'tenant:tenant_id,tenant_id,tenant_name',
+                    'price:product_id,product_id,unit_price,unit_cost',
+                ])
+                ->where('tenant_id', auth()->user()->tenant_id)
+                ->where('archived', 'No');
 
-        $products = Product::with([
-            'category', 
-            'price' => function($query) {
-                $query->where('archived', 'No');
-            }, 
-            'stock', 
-            'store'
-        ])
-        ->where('archived', 'No')
-        ->orderBy('added_date', 'desc')
-        ->get();
+            if ($request->filled('search')) {
+                $search = $request->search;
 
-        $categories = ProductCategory::where('archived', 'No')->get();
+                $query->where(function ($q) use ($search) {
 
-        return view('product-price.index', compact('products', 'categories'));
+                    $q->where('product_name','LIKE',"%{$search}%")
+                    ->orWhere('product_type','LIKE',"%{$search}%")
+                    // ->orWhere('product_id','LIKE',"%{$search}%")
+                    ->orWhereHas('category',function($q) use($search){
+                            $q->where('category_name','LIKE',"%{$search}%");
+                    })
+
+                    ->orWhereHas('store',function($q) use($search){
+                            $q->where('store_name','LIKE',"%{$search}%");
+                    });
+
+                });
+
+            }
+
+            $products = $query
+                    ->orderByDesc('added_date', 'asc')
+                    ->paginate(25)
+                    ->withQueryString();
+
+            return view('product-price.index', compact('products'));
+            // return view('product-price.index', compact('products'));
     }
+    
 
     public function store(Request $request)
     {

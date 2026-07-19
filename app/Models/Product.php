@@ -41,6 +41,10 @@ class Product extends Model
         'archived_date'
     ];
 
+    protected $casts = [
+        'added_date'=>'datetime'
+    ];
+
     public function category()
     {
         return $this->belongsTo(ProductCategory::class, 'category_id', 'category_id');

@@ -32,7 +32,7 @@ class ProductFactory extends Factory
 
         return [
             'product_id' => Str::uuid(),
-            'product_name' => strtoupper(fake()->word()),
+            'product_name' => ucfirst($faker->words(3, true)), 
             'product_type' => strtoupper(fake()->word()),
             'barcode' => fake()->ean13(),
             'qr_code' => fake()->ean13(),

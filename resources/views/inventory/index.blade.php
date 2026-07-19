@@ -34,12 +34,16 @@
                              <div class="d-flex align-items-center gap-2">
                                 <div class="input-group input-group-sm" style="width: 220px;">
                                     <span class="input-group-text bg-light"><i class="fa fa-search"></i></span>
-                                    <input type="text" data-table-search class="form-control" placeholder="Search products...">
+                                    <form id="searchForm">
+                                        <input type="text" name="search" class="form-control" placeholder="Search products..." value="{{ request('search') }}">
+                                    <!-- <input type="text" data-table-search class="form-control" placeholder="Search products..."> -->
+                                    </form>
                                 </div>
                                 @if(auth()->user()->role_id === '1001' || auth()->user()->role_id === '1002' || auth()->user()->role_id === '1003')
                                  <button type="button" class="btn btn-sm btn-primary me-1" data-bs-toggle="modal" data-bs-target="#addStockModal">
                                     <i class="fa fa-plus me-1"></i> Add Stock
                                 </button>
+
                                 @endif
                                 <!-- <a href="#" class="btn btn-sm btn-default"> <i class="fa fa-cloud-upload me-1"></i> Export </a> -->
                                 <!-- <a href="#" class="btn btn-sm btn-light"> <i class="fa fa-download me-1"></i> Import </a> -->
@@ -58,7 +62,7 @@
                                         <tr class="text-uppercase table-nowrap fs-xxs">
                                             <th data-table-sort>#ID</th>
                                             <th data-table-sort>Product</th>
-                                            <th data-table-sort>Product Category</th>
+                                            <!-- <th data-table-sort>Product Category</th> -->
                                             <th data-table-sort>Store Name</th>
                                             <th data-table-sort>Stock Quantity</th>
                                             <th data-table-sort>Cost Price (GHs)</th>
@@ -76,12 +80,14 @@
                                                 <td>
                                                     <h5 class="m-0 fs-base">{{ strtoupper($product->product_name) }}</h5>
                                                     @if($product->product_type)
-                                                     <span class="text-muted fs-xs">{{ strtoupper($product->product_type) }}</span>
+                                                     <!-- <span class="text-muted fs-xs">  -->
+                                                        <span class="badge bg-primary-subtle text-primary">{{ $product->category ? $product->category->category_name : 'N/A' }}</span>
+                                                    <!-- </span> -->
                                                     @endif
                                                 </td>
-                                                <td>
-                                                     <span class="badge bg-primary-subtle text-primary">{{ $product->category ? $product->category->category_name : 'N/A' }}</span>
-                                                 </td>
+                                                <!-- <td>
+                                                    
+                                                 </td> -->
                                                 <!-- <td>{{ $product->category ? $product->category->category_name : 'N/A' }}</td> -->
                                                 <td>{{ $product->store ? $product->store->store_name : 'N/A'}}</td>
                                                 <td>
@@ -290,7 +296,18 @@
             </div>
         @endif
     @endforeach
+<script> 
+        let timer;
 
+            $('input[name=search]').on('keyup', function(){
+                clearTimeout(timer);
+                timer=setTimeout(function(){
+                    $('#search_form').submit();
+
+                },500);
+
+            });
+    </script>
     <!-- ============================================================== -->
     <!-- End of Main Content -->
     <!-- ============================================================== -->
