@@ -78,12 +78,17 @@
         <div id="sidenav-menu">
             <ul class="side-nav">
                 <!-- <li class="side-nav-title mt-2" data-lang="main">Menu</li> -->
-                <li class="side-nav-item">
+               <!-- <li class="side-nav-item">
                     <a data-bs-toggle="collapse" href="{{ url('/dashboard') }}" aria-expanded="false" aria-controls="dashboards" class="side-nav-link">
                         <span class="menu-icon"><i class="fa fa-dashboard"></i></span>
                         <span class="menu-text" data-lang="dashboards">Dashboard</span>
-                        <!-- <span class="menu-arrow"></span> -->
+                         <span class="menu-arrow"></span> 
                     </a>
+                </li>-->
+                 <li class="side-nav-item">
+                        <a href="{{ url('/dashboard') }}" class="side-nav-link">
+                            <span class="menu-text" data-lang="apps-product-list"> Dashboard</span>
+                        </a>
                 </li>
                 <li class="side-nav-title mt-2" data-lang="apps" style="color:white">Main Menu</li>
                 <li class="side-nav-item">

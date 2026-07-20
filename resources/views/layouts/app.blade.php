@@ -61,7 +61,7 @@
     <script src="{{ asset('js/maps/world.js') }}"></script>
     <script src="{{ asset('js/pages/custom-table.js') }}"></script>
     <script src="{{ asset('js/pages/dashboard-ecommerce.js') }}"></script>
-     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0/dist/js/select2.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0/dist/js/select2.min.js"></script>
     <script>
         $(document).ready(function() {
             $('.basic-select-one').select2();

@@ -1,6 +1,6 @@
 <x-app-layout>
-    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
-    
+    <!-- <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script> -->
+     <script src="{{ asset('js/alpinejs/cdn.min.js') }}"></script>
     <!-- Start Main Content -->
     <div class="content-page" x-data="{
         products: [],
@@ -14,7 +14,7 @@
         hasMore: true,
         perPage: 20,
         initialLoad: true,
-        cartDiscountType: 'percentage', // 'percentage' or 'fixed'
+        cartDiscountType: 'fixed', // 'percentage' or 'fixed'
         cartDiscountValue: 0,
         cartDiscountAmount: 0,
         
@@ -162,19 +162,19 @@
             );
         },
         
-        totalQuantityDiscount() {
-            return this.cart.reduce(
-                (sum,item) => sum + item.discount,
-                0
-            );
-        },
+        //totalQuantityDiscount() {
+          //  return this.cart.reduce(
+            //    (sum,item) => sum + item.discount,
+              //  0
+            //);
+       // },
         
         applyCartDiscount() {
             const subtotal = this.subtotal();
             const cartDiscount = parseFloat(this.cartDiscountValue) || 0;
             
             if (this.cartDiscountType === 'percentage') {
-                this.cartDiscountAmount = parseFloat((subtotal * (cartDiscount / 100)).toFixed(2));
+                //this.cartDiscountAmount = parseFloat((subtotal * (cartDiscount / 100)).toFixed(2));
             } else {
                 this.cartDiscountAmount = Math.min(cartDiscount, subtotal);
             }
@@ -187,7 +187,7 @@
         
         grandTotal() {
             const subtotal = this.subtotal();
-            const totalDiscount = this.totalQuantityDiscount() + this.cartDiscountAmount;
+            const totalDiscount =  this.cartDiscountAmount;
             return (subtotal - totalDiscount).toFixed(2);
         },
         
@@ -234,9 +234,9 @@
                             <div class="modal-body text-start" id="printable-receipt" style="white-space: normal;">
                                 <div class="text-center mb-4">
                                     <h4 class="mb-1">PACES POS</h4>
-                                    <p class="text-muted fs-sm mb-0">Official Sale Receipt</p>
+                                    <p class="text-muted fs-sm mb-0">--Official Sale Receipt--</p>
                                 </div>
-                                <div class="row mb-3 fs-xs text-muted">
+                                <div class="row mb-3 fs-xs ">
                                     <div class="col-6">
                                         <strong>Invoice:</strong> {{ session('receipt.invoice_no') }}<br>
                                         <strong>Date:</strong> {{ session('receipt.date') }}
@@ -276,25 +276,34 @@
                                         <span class="text-muted">Subtotal</span>
                                         <span>GHs {{ number_format(session('receipt.subtotal'), 2) }}</span>
                                     </div>
-                                    @if(session('receipt.discount') > 0)
-                                        <div class="d-flex justify-content-between mb-1">
-                                            <span class="text-success">Discount</span>
-                                            <span class="text-success">-GHs {{ number_format(session('receipt.discount'), 2) }}</span>
-                                        </div>
+                                    
+                                    @if(session('receipt.item_discount') > 0)
+                                    <div class="d-flex justify-content-between mb-1">
+                                            <span class="text-success">Item Discount</span>
+                                            <span class="text-success">-GHs {{ number_format(session('receipt.item_discount'), 2) }}</span>
+                                    </div>
                                     @endif
+
+                                    @if(session('receipt.cart_discount') > 0)
+                                    <div class="d-flex justify-content-between mb-1">
+                                            <span class="text-success">Cart Discount</span>
+                                            <span class="text-success">-GHs {{ number_format(session('receipt.cart_discount'), 2) }}</span>
+                                    </div>
+                                    @endif
+                                    
                                     <div class="d-flex justify-content-between fw-bold fs-base border-top pt-2">
                                         <span>Grand Total</span>
                                         <span class="text-primary">GHs {{ number_format(session('receipt.grand_total'), 2) }}</span>
                                     </div>
                                 </div>
                                 <div class="text-center mt-4">
-                                    <p class="text-muted fs-xs mb-0">Thank you for your business!</p>
-                                    <p class="text-muted fs-xxs">Powered by WebEdge Technologies</p>
+                                    <p class="fs-xs mb-0">Thank you for your business!</p>
+                                    <p class="fs-xxs">Powered by WebEdge Technologies</p>
                                 </div>
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" onclick="document.getElementById('receiptModal').style.display='none'">Close</button>
-                                <button type="button" class="btn btn-primary" onclick="window.print()"><i class="fa fa-print me-1"></i> Print Receipt</button>
+                                <button type="button" class="btn btn-danger" onclick="window.print()"><i class="fa fa-print me-1"></i> Print Receipt</button>
                             </div>
                         </div>
                     </div>
@@ -517,7 +526,7 @@
                                                         style="min-width: 70px;"
                                                         x-model="cartDiscountType"
                                                         @change="applyCartDiscount()">
-                                                    <option value="percentage">%</option>
+                                                    <!-- <option value="percentage">%</option> -->
                                                     <option value="fixed">GHs</option>
                                                 </select>
                                             </span>
@@ -530,10 +539,10 @@
                                 
                                 <!-- Discount Breakdown -->
                                 <div x-show="totalQuantityDiscount() > 0 || cartDiscountAmount > 0" class="mb-2">
-                                    <div x-show="totalQuantityDiscount() > 0" class="d-flex justify-content-between mb-1">
-                                        <span class="text-muted fs-xs">Item Discounts</span>
-                                        <span class="text-success fs-xs">-GHs <span x-text="totalQuantityDiscount().toFixed(2)"></span></span>
-                                    </div>
+                                    <!-- <div x-show="totalQuantityDiscount() > 0" class="d-flex justify-content-between mb-1"> -->
+                                        <!-- <span class="text-muted fs-xs">Item Discounts</span> -->
+                                        <!-- <span class="text-success fs-xs">-GHs <span x-text="totalQuantityDiscount().toFixed(2)"></span></span> -->
+                                    <!-- </div> -->
                                     <div x-show="cartDiscountAmount > 0" class="d-flex justify-content-between mb-1">
                                         <span class="text-muted fs-xs">Cart Discount</span>
                                         <span class="text-success fs-xs">-GHs <span x-text="cartDiscountAmount.toFixed(2)"></span></span>
@@ -550,6 +559,9 @@
                                 <form action="{{ route('sales.store') }}" method="POST">
                                     @csrf
                                     <input type="hidden" name="cart_data" :value="serializedCart">
+                                    <input type="hidden" name="cart_discount_amount" :value="cartDiscountAmount">
+                                    <input type="hidden" name="cart_discount_type" :value="cartDiscountType">
+                                    <input type="hidden" name="cart_discount_value" :value="cartDiscountValue">
                                     <div class="mb-3">
                                         <label for="payment_method" class="form-label fs-xs fw-semibold text-uppercase text-muted">Payment Method</label>
                                         <select class="form-select" id="payment_method" name="payment_method" x-model="paymentMethod" required>
