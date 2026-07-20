@@ -77,8 +77,8 @@ class ReportController extends Controller
     public function sales(Request $request, $start_date, $end_date)
     {
         try {
-            $startDate = Carbon::parse($start_date)->startOfDay();
-            $endDate = Carbon::parse($end_date)->endOfDay();
+            $start_date = Carbon::parse($start_date)->startOfDay();
+            $end_date = Carbon::parse($end_date)->endOfDay();
         } catch (\Exception $e) {
             abort(404, 'Invalid date format.');
         }
@@ -90,13 +90,13 @@ class ReportController extends Controller
         $paymentsQuery = BillPayment::with('store')
             ->where('archived', 'No')
             ->where('tenant_id', $tenantId)
-            ->whereBetween('transaction_time', [$startDate, $endDate]);
+            ->whereBetween('added_date', [$start_date, $end_date]);
 
         if ($userId) {
             $paymentsQuery->where('user_id', $userId);
         }
 
-        $payments = $paymentsQuery->orderBy('transaction_time', 'desc')->get();
+        $payments = $paymentsQuery->orderBy('added_date', 'desc')->get();
 
         $users = User::where('tenant_id', $tenantId)
             ->where('archived', 'No')

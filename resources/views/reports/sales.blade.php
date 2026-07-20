@@ -8,7 +8,7 @@
                 <div class="col-12">
                     <div class="card">
                         <div class="card-header">
-                            <h4 class="card-title">Generate Sales Payment Report</h4>
+                            <h4 class="card-title">Generate Sales Payment Report(s)</h4>
                         </div>
                         <div class="card-body">
                             <form id="sales-report-form" class="row g-3 align-items-end">
@@ -111,7 +111,7 @@
                                         <tr class="text-uppercase table-nowrap fs-xxs">
                                             <th data-table-sort>#ID</th>
                                             <th data-table-sort>Receipt No</th>
-                                            <th data-table-sort>Payment Method</th>
+                                            <!-- <th data-table-sort>Payment Method</th> -->
                                             <th data-table-sort>Transaction Time</th>
                                             <th data-table-sort>Store</th>
                                             <th data-table-sort class="text-end">Subtotal (GHs)</th>
@@ -119,6 +119,7 @@
                                             <th data-table-sort class="text-end">Total (GHs)</th>
                                             <th data-table-sort>Status</th>
                                             <th data-table-sort>Added By</th>
+                                            <th class="text-center">Action</th>
                                         </tr>
                                     </thead>
 
@@ -127,7 +128,7 @@
                                             <tr>
                                                 <td>#{{ substr($payment->payment_id, 0, 8) }}</td>
                                                 <td>{{ $payment->receipt_number }}</td>
-                                                <td>{{ $payment->payment_method ?? 'N/A' }}</td>
+                                                <!-- <td>{{ $payment->payment_method ?? 'N/A' }}</td> -->
                                                 <td>{{ $payment->transaction_time ? \Carbon\Carbon::parse($payment->transaction_time)->format('d M Y, h:i A') : 'N/A' }}</td>
                                                 <td>{{ $payment->store ? $payment->store->store_name : 'N/A' }}</td>
                                                 <td class="text-end">{{ number_format($payment->subtotal, 2) }}</td>
@@ -143,10 +144,16 @@
                                                     @endif
                                                 </td>
                                                 <td>{{ $payment->added_by ?? 'N/A' }}</td>
+                                                <td class="text-center">
+                                                    <a href="{{ route('sales.reprint', $payment->receipt_number) }}" class="btn btn-sm btn-outline-primary" target="_blank" title="Reprint Receipt">
+                                                        <i class="fa fa-pdf"></i>
+                                                        Reprint
+                                                    </a>
+                                                </td>
                                             </tr>
                                         @empty
                                             <tr>
-                                                <td colspan="10" class="text-center py-4 text-muted">
+                                                <td colspan="11" class="text-center py-4 text-muted">
                                                     No payment records found for the selected date range.
                                                 </td>
                                             </tr>

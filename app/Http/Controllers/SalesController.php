@@ -9,6 +9,7 @@ use App\Models\BillPayment;
 use App\Models\ProductSales;
 use App\Models\ProductStock;
 use Illuminate\Support\Str;
+use Carbon\Carbon;
 
 class SalesController extends Controller
 {
@@ -60,6 +61,43 @@ class SalesController extends Controller
     return view('sales.index', compact('products'));
 }
    
+    public function reprint($paymentId)
+    {
+        $user = auth()->user();
+        $tenantId = $user ? $user->tenant_id : null;
+
+        $payment = BillPayment::with('store')
+            ->where('receipt_number', $paymentId)
+            ->where('tenant_id', $tenantId)
+            ->where('archived', 'No')
+            ->firstOrFail();
+
+        $items = ProductSales::with('product')
+            ->where('receipt_number', $paymentId)
+            ->where('tenant_id', $tenantId)
+            ->where('archived', 'No')
+            ->get();
+
+        $receiptData = [
+            'invoice_no'         => 'INV-' . strtoupper(substr($payment->payment_id, 0, 8)),
+            'payment_id'         => $payment->payment_id,
+            'receipt_number'     => $payment->receipt_number,
+            'items'              => $items,
+            'payment_method'     => $payment->payment_method,
+            'subtotal'           => $payment->subtotal,
+            'item_discount'      => $payment->item_discount,
+            'cart_discount'      => $payment->cart_discount,
+            'cart_discount_type' => $payment->cart_discount_type,
+            'cart_discount_value'=> $payment->cart_discount_value,
+            'total_discount'     => $payment->total_discount,
+            'grand_total'        => $payment->total_payment,
+            'date'               => $payment->transaction_time ? Carbon::parse($payment->transaction_time)->format('d M Y, h:i A') : now()->format('d M Y, h:i A'),
+            'added_by'           => $payment->added_by,
+        ];
+
+        return view('sales.reprint', compact('receiptData'));
+    }
+
     public function getProducts(Request $request)
     {
             $query = Product::with([
