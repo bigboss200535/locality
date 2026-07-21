@@ -37,10 +37,11 @@ class SalesController extends Controller
     //     return view('sales.index', compact('products'));
     // }
 
-    public function index()
+public function index()
 {
-    $tenantId = auth()->user()->tenant_id;
-
+    $user = auth()->user();
+    $tenantId = $user ? $user->tenant_id : null;
+    $storeId = $user ? $user->store_id : null;
     $products = Product::with([
             'category',
             'price',
@@ -52,6 +53,7 @@ class SalesController extends Controller
         ->whereHas('price', function ($query) use ($tenantId) {
             $query->where('tenant_id', $tenantId)
                   ->where('archived', 'No')
+                   ->where('store_id', $storeId)
                   ->where('status', 'Active');
         })
         ->orderBy('product_name')

@@ -33,6 +33,27 @@ class PurchaseOrderController extends Controller
         return view('purchase-order.index', compact('purchaseOrders', 'suppliers', 'products'));
     }
 
+    public function show($id)
+    {
+        $user = auth()->user();
+        $tenantId = $user ? $user->tenant_id : null;
+
+        $purchaseOrder = PurchaseOrder::with(['supplier', 'details.product'])
+            ->where('purchase_order_id', $id)
+            ->where('tenant_id', $tenantId)
+            ->where('archived', 'No')
+            ->firstOrFail();
+
+        $summary = [
+            'subtotal' => $purchaseOrder->details->sum('total'),
+            'discount' => floatval($purchaseOrder->discount ?? 0),
+            'vat' => floatval($purchaseOrder->vat ?? 0),
+            'total' => floatval($purchaseOrder->total_value ?? 0),
+        ];
+
+        return view('purchase-order.show', compact('purchaseOrder', 'summary'));
+    }
+
     public function store(Request $request)
     {
         $request->validate([

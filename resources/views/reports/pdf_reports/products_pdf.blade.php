@@ -64,7 +64,7 @@
         }
         .summary {
             margin-top: 15px;
-            border-top: 1px solid #ffffff;
+            border-top: 1px solid #999;
             padding-top: 10px;
             width: 100%;
         }

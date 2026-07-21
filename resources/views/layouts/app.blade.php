@@ -23,9 +23,11 @@
          <link href="{{ asset('flaticon/css/all.min.css') }}" rel="stylesheet" type="text/css" />
         <link href="{{ asset('fontawesome/css/all.min.css') }}" rel="stylesheet" type="text/css" />
         <!-- jQuery (Required for Select2) -->
-        <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/4.0.0/jquery.min.js"></script> -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
            <!-- Select2 CSS -->
-        <!-- <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0/dist/css/select2.min.css" rel="stylesheet" /> -->
+            <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.1.0/js/select2.min.js"></script> -->
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.1.0/js/select2.js"></script>
+        <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0/dist/css/select2.min.css" rel="stylesheet" />
         <!-- Select2 JavaScript -->
        
        
@@ -61,10 +63,10 @@
     <script src="{{ asset('js/maps/world.js') }}"></script>
     <script src="{{ asset('js/pages/custom-table.js') }}"></script>
     <script src="{{ asset('js/pages/dashboard-ecommerce.js') }}"></script>
-    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0/dist/js/select2.min.js"></script>
+    <!-- <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0/dist/js/select2.min.js"></script> -->
     <script>
         $(document).ready(function() {
-            $('.basic-select-one').select2();
+            $('.basic-select-two').select2();
         });
     </script>
      <!-- <script> 

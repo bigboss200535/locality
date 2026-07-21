@@ -46,9 +46,10 @@ class ProductRequisitionController extends Controller
     {
         $request->validate([
             'issue_store_id' => 'required|string|exists:stores,store_id',
-            'product_id' => 'required|string|exists:products,product_id',
-            'quantity' => 'required|numeric|min:0.01',
-            'unit_price' => 'nullable|numeric|min:0',
+            'products' => 'required|array|min:1',
+            'products.*.product_id' => 'required|string|exists:products,product_id',
+            'products.*.quantity' => 'required|numeric|min:0.01',
+            'products.*.unit_price' => 'nullable|numeric|min:0',
             'requisition_date' => 'required|date',
             'comments' => 'nullable|string',
         ]);
@@ -68,41 +69,59 @@ class ProductRequisitionController extends Controller
             return redirect()->route('requisitions.index')->with('error', 'Selected issue store is not in your tenant.');
         }
 
-        $issueStock = ProductStock::where('product_id', $request->product_id)
-            ->where('store_id', $request->issue_store_id)
-            ->where('archived', 'No')
-            ->first();
+        // Validate stock for all products before creating any requisition
+        foreach ($request->products as $product) {
+            $issueStock = ProductStock::where('product_id', $product['product_id'])
+                ->where('store_id', $request->issue_store_id)
+                ->where('archived', 'No')
+                ->first();
 
-        if (!$issueStock || floatval($issueStock->stock_quantity) < floatval($request->quantity)) {
-            return redirect()->route('requisitions.index')->with('error', 'Selected issue store does not have enough stock for this product.');
+            if (!$issueStock || floatval($issueStock->stock_quantity) < floatval($product['quantity'])) {
+                return redirect()->route('requisitions.index')->with('error', 'Selected issue store does not have enough stock for one or more products.');
+            }
         }
 
-        $quantity = floatval($request->quantity);
-        $unitPrice = floatval($request->unit_price ?? 0);
-        $totalValue = $quantity * $unitPrice;
+        DB::beginTransaction();
 
-        ProductRequisition::create([
-            'requisition_id' => (string) Str::uuid(),
-            'requisition_no' => 'REQ-' . date('Ymd') . '-' . strtoupper(substr((string) Str::uuid(), 0, 6)),
-            'order_store_id' => $orderStoreId,
-            'issue_store_id' => $request->issue_store_id,
-            'requisition_date' => $request->requisition_date,
-            'unit_price' => $unitPrice,
-            'quantity' => $quantity,
-            'total_value' => $totalValue,
-            'product_id' => $request->product_id,
-            'tenant_id' => $tenantId,
-            'requsition_status' => 'requested',
-            'comments' => $request->comments,
-            'store_id' => $orderStoreId,
-            'user_id' => $userId,
-            'added_date' => now(),
-            'added_by' => strtoupper($username),
-            'status' => 'Active',
-            'archived' => 'No',
-        ]);
+        try {
+            $createdCount = 0;
 
-        return redirect()->route('requisitions.index')->with('success', 'Requisition submitted successfully.');
+            foreach ($request->products as $product) {
+                $quantity = floatval($product['quantity']);
+                $unitPrice = floatval($product['unit_price'] ?? 0);
+                $totalValue = $quantity * $unitPrice;
+
+                ProductRequisition::create([
+                    'requisition_id' => (string) Str::uuid(),
+                    'requisition_no' => 'REQ-' . date('Ymd') . '-' . strtoupper(substr((string) Str::uuid(), 0, 6)),
+                    'order_store_id' => $orderStoreId,
+                    'issue_store_id' => $request->issue_store_id,
+                    'requisition_date' => $request->requisition_date,
+                    'unit_price' => $unitPrice,
+                    'quantity' => $quantity,
+                    'total_value' => $totalValue,
+                    'product_id' => $product['product_id'],
+                    'tenant_id' => $tenantId,
+                    'requsition_status' => 'requested',
+                    'comments' => $request->comments,
+                    'store_id' => $orderStoreId,
+                    'user_id' => $userId,
+                    'added_date' => now(),
+                    'added_by' => strtoupper($username),
+                    'status' => 'Active',
+                    'archived' => 'No',
+                ]);
+
+                $createdCount++;
+            }
+
+            DB::commit();
+
+            return redirect()->route('requisitions.index')->with('success', $createdCount . ' requisition(s) submitted successfully.');
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            return redirect()->route('requisitions.index')->with('error', 'Failed to submit requisition(s): ' . $th->getMessage());
+        }
     }
 
     public function approve(Request $request, $id)

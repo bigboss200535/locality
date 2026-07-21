@@ -1,3 +1,8 @@
+@php 
+    $today = now()->format('Y-m-d');
+    $start_date = request()->get('start_date', $today);
+    $end_date = request()->get('end_date', $today);
+@endphp
 <x-app-layout>
     <div class="content-page">
         <div class="container-fluid">
@@ -37,12 +42,12 @@
                                     <button type="submit" class="btn btn-primary me-1">
                                         <i class="fa fa-filter me-1"></i> Generate
                                     </button>
-                                    <a id="pdf-download-link" href="{{ route('reports.sales.pdf', ['start_date' => $start_date, 'end_date' => $end_date]) }}" class="btn btn-outline-danger me-1">
-                                        <i class="fa fa-file-pdf me-1"></i> PDF
+                                    <a id="pdf-download-link" href="{{ route('reports.sales.pdf', ['start_date' => $start_date, 'end_date' => $end_date]) }}" class="btn btn-info me-1" target="_blank">
+                                        <i class="fa fa-file-pdf me-1"></i> View Report
                                     </a>
-                                    <button type="button" class="btn btn-outline-secondary btn-print" onclick="window.print()">
+                                    <!-- <button type="button" class="btn btn-outline-secondary btn-print" onclick="window.print()">
                                         <i class="fa fa-print"></i>
-                                    </button>
+                                    </button> -->
                                 </div>
                             </form>
                         </div>
@@ -51,7 +56,7 @@
             </div>
 
             <!-- Summary Cards -->
-            <div class="row report-controls mb-4">
+            <!-- <div class="row report-controls mb-4">
                 <div class="col-md-3">
                     <div class="card card-h-100">
                         <div class="card-body">
@@ -84,7 +89,7 @@
                         </div>
                     </div>
                 </div>
-            </div>
+            </div> -->
 
             <!-- Report Output -->
             <div class="row">
@@ -92,9 +97,9 @@
                     <div data-table data-table-rows-per-page="1000" class="card card-h-100">
                         <div class="card-header justify-content-between">
                             <h4 class="card-title">{{ $title }} <span class="text-muted fs-base fw-normal">({{ $payments->count() }} records)</span></h4>
-                            <button type="button" class="btn btn-sm btn-outline-secondary btn-print" onclick="window.print()">
+                            <!-- <button type="button" class="btn btn-sm btn-outline-secondary btn-print" onclick="window.print()">
                                 <i class="fa fa-print"></i>
-                            </button>
+                            </button> -->
                         </div>
 
                         <div class="card-body p-0">
@@ -109,7 +114,7 @@
                                 <table class="table table-custom table-centered table-hover w-100 mb-0">
                                     <thead class="bg-light align-middle bg-opacity-25 thead-sm">
                                         <tr class="text-uppercase table-nowrap fs-xxs">
-                                            <th data-table-sort>#ID</th>
+                                            <!-- <th data-table-sort>#ID</th> -->
                                             <th data-table-sort>Receipt No</th>
                                             <!-- <th data-table-sort>Payment Method</th> -->
                                             <th data-table-sort>Transaction Time</th>
@@ -126,7 +131,7 @@
                                     <tbody class="text-nowrap">
                                         @forelse ($payments as $payment)
                                             <tr>
-                                                <td>#{{ substr($payment->payment_id, 0, 8) }}</td>
+                                                <!-- <td>#{{ substr($payment->payment_id, 0, 8) }}</td> -->
                                                 <td>{{ $payment->receipt_number }}</td>
                                                 <!-- <td>{{ $payment->payment_method ?? 'N/A' }}</td> -->
                                                 <td>{{ $payment->transaction_time ? \Carbon\Carbon::parse($payment->transaction_time)->format('d M Y, h:i A') : 'N/A' }}</td>

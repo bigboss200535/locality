@@ -205,7 +205,7 @@
                     <div class="modal-body">
                         <div class="mb-3">
                             <label for="product_id" class="form-label">Select Product</label>
-                            <select class="form-select" id="product_id" name="product_id" required>
+                            <select class="form-select basic-select-two" id="product_id" name="product_id" required>
                                 <option value="" disabled selected>Select a Product...</option>
                                 @foreach($products as $product)
                                     @if(!$product->stock)

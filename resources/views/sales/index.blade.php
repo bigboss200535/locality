@@ -238,7 +238,7 @@
                                 </div>
                                 <div class="row mb-3 fs-xs ">
                                     <div class="col-6">
-                                        <strong>Invoice:</strong> {{ session('receipt.invoice_no') }}<br>
+                                        <strong>Invoice:</strong> {{ session('receipt.receipt_number') }}<br>
                                         <strong>Date:</strong> {{ session('receipt.date') }}
                                     </div>
                                     <div class="col-6 text-end">

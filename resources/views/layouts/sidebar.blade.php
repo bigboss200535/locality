@@ -297,6 +297,11 @@
                                     <span class="menu-text" data-lang="layouts-scrollable">Stocks</span>
                                 </a>
                             </li>
+                            <li class="side-nav-item">
+                                <a href="{{ route('reports.products') }}" class="side-nav-link">
+                                    <span class="menu-text" data-lang="layouts-horizontal">Products Report</span>
+                                </a>
+                            </li>
                         </ul>
                     </div>
                 </li>

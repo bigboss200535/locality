@@ -105,6 +105,7 @@ Route::middleware(['auth', 'verified'])->group(function (){
     // Purchase Order routes
     Route::get('/purchase-orders', [PurchaseOrderController::class, 'index'])->name('purchase-orders.index');
     Route::post('/purchase-orders', [PurchaseOrderController::class, 'store'])->name('purchase-orders.store');
+    Route::get('/purchase-orders/{purchaseOrder}/show', [PurchaseOrderController::class, 'show'])->name('purchase-orders.show');
     Route::put('/purchase-orders/{purchaseOrder}', [PurchaseOrderController::class, 'update'])->name('purchase-orders.update');
     Route::delete('/purchase-orders/{purchaseOrder}', [PurchaseOrderController::class, 'destroy'])->name('purchase-orders.destroy');
 
@@ -121,8 +122,10 @@ Route::middleware(['auth', 'verified'])->group(function (){
     Route::delete('/requisitions/{requisition}', [ProductRequisitionController::class, 'destroy'])->name('requisitions.destroy');
 
     // Reports route
-    Route::get('/reports', [ReportController::class, 'index'])->name('reports.index');
-    Route::get('/reports/sales/{start_date}/{end_date}', [ReportController::class, 'sales'])->name('reports.sales');
+    Route::get('/reports/products', [ReportController::class, 'products_report'])->name('reports.products');
+    Route::get('/reports/products/pdf', [ReportController::class, 'products_pdf'])->name('reports.products.pdf');
+    Route::get('/reports', [ReportController::class, 'products_report'])->name('reports.index');
+    Route::get('/reports/sales/{start_date}/{end_date}', [ReportController::class, 'general_sales'])->name('reports.sales');
     Route::get('/reports/sales/{start_date}/{end_date}/pdf', [ReportController::class, 'salesPdf'])->name('reports.sales.pdf');
     Route::get('/reports/stock-adjustments', [ReportController::class, 'stockAdjustments'])->name('reports.stock-adjustments');
 });

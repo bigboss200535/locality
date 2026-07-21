@@ -95,10 +95,16 @@
                                                                 </button>
                                                             </li> -->
                                                             <li>
+                                                                <a class="dropdown-item" href="{{ route('purchase-orders.show', $order->purchase_order_id) }}">
+                                                                    View Details
+                                                                </a>
+                                                            </li>
+                                                            <li>
                                                                 <button type="button" class="dropdown-item" data-bs-toggle="modal" data-bs-target="#editPurchaseOrderModal-{{ $order->purchase_order_id }}">
                                                                     Edit 
                                                                 </button>
                                                             </li>
+                                                            
                                                              @if(auth()->user()->role_id === '1001')
                                                             <li>
                                                                 

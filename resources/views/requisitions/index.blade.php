@@ -184,13 +184,13 @@
                         <h5 class="modal-title" id="addRequisitionModalLabel">Add New Requisition</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
-                    <form action="{{ route('requisitions.store') }}" method="POST">
+                    <form action="{{ route('requisitions.store') }}" method="POST" x-data="requisitionApp()" @submit.prevent="submitForm($event)">
                         @csrf
                         <div class="modal-body">
                             <div class="row">
                                 <div class="col-md-6 mb-3">
                                     <label for="issue_store_id" class="form-label">Issue Store <span class="text-muted">(must be in same tenant)</span></label>
-                                    <select class="form-select" id="issue_store_id" name="issue_store_id" required>
+                                    <select class="form-select" id="issue_store_id" name="issue_store_id" x-model="issueStoreId" required>
                                         <option value="" disabled selected>-Select Issue Store-</option>
                                         @foreach($stores as $store)
                                             <option value="{{ $store->store_id }}">{{ $store->store_name }}</option>
@@ -202,39 +202,74 @@
                                     <input type="date" class="form-control" id="requisition_date" name="requisition_date" value="{{ date('Y-m-d') }}" required>
                                 </div>
                             </div>
-                            <div class="row">
-                                <div class="col-md-6 mb-3">
-                                    <label for="product_id" class="form-label">Product</label>
-                                    <select class="form-select" id="product_id" name="product_id" required>
-                                        <option value="" disabled selected>-Select Product-</option>
-                                        @foreach($products as $product)
-                                            <option value="{{ $product->product_id }}">{{ strtoupper($product->product_name) }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                                <div class="col-md-6 mb-3">
-                                    <label for="quantity" class="form-label">Quantity</label>
-                                    <input type="number" step="0.01" class="form-control" id="quantity" name="quantity" min="0.01" placeholder="Enter quantity" required>
-                                </div>
+
+                            <div class="mb-3">
+                                <label for="comments" class="form-label">Comments</label>
+                                <textarea class="form-control" id="comments" name="comments" rows="1" placeholder="Optional comments"></textarea>
                             </div>
-                            <div class="row">
-                                <div class="col-md-6 mb-3">
-                                    <label for="unit_price" class="form-label">Unit Price (GHs)</label>
-                                    <input type="number" step="0.01" class="form-control" id="unit_price" name="unit_price" placeholder="0.00">
-                                </div>
-                                <div class="col-md-6 mb-3">
-                                    <label for="comments" class="form-label">Comments</label>
-                                    <textarea class="form-control" id="comments" name="comments" rows="1" placeholder="Optional comments"></textarea>
-                                </div>
-                            </div>
-                            @if($stores->isEmpty())
-                                <div class="alert alert-warning py-2 mb-0">
-                                    <i class="fa fa-circle-exclamation me-1"></i> No other stores found in your tenant. Requisitions require an issue store with stock.
+
+                            <h6 class="fw-bold mb-2">Requisition Items</h6>
+                            @if($products->isEmpty())
+                                <div class="alert alert-warning py-2 mb-2">
+                                    <i class="fa fa-circle-exclamation me-1"></i> No active products found. Please add products first.
                                 </div>
                             @endif
-                            @if($products->isEmpty())
-                                <div class="alert alert-warning py-2 mb-0">
-                                    <i class="fa fa-circle-exclamation me-1"></i> No active products found. Please add products first.
+                            <div class="table-responsive">
+                                <table class="table table-sm table-bordered mb-0">
+                                    <thead class="bg-light">
+                                        <tr>
+                                            <th>Product</th>
+                                            <th style="width: 120px;">Qty</th>
+                                            <th style="width: 150px;">Unit Price (GHs)</th>
+                                            <th style="width: 120px;">Total</th>
+                                            <th style="width: 60px;"></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <template x-for="(item, index) in items" :key="index">
+                                            <tr>
+                                                <td>
+                                                    <select class="form-select form-select-sm" x-model="item.product_id" required>
+                                                        <option value="" disabled>-Select Product-</option>
+                                                        @foreach($products as $product)
+                                                            <option value="{{ $product->product_id }}">{{ strtoupper($product->product_name) }}</option>
+                                                        @endforeach
+                                                    </select>
+                                                </td>
+                                                <td>
+                                                    <input type="number" step="0.01" class="form-control form-control-sm" x-model.number="item.quantity" min="0.01" required>
+                                                </td>
+                                                <td>
+                                                    <input type="number" step="0.01" class="form-control form-control-sm" x-model.number="item.unit_price" min="0" required>
+                                                </td>
+                                                <td class="text-end align-middle">
+                                                    GHs <span x-text="(parseFloat(item.quantity || 0) * parseFloat(item.unit_price || 0)).toFixed(2)"></span>
+                                                </td>
+                                                <td class="text-center align-middle">
+                                                    <button type="button" class="btn btn-sm btn-link text-danger p-0" @click="removeItem(index)">
+                                                        <i class="fa fa-trash-can"></i>
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        </template>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <button type="button" class="btn btn-sm btn-outline-primary mt-2" @click="addItem()">
+                                <i class="fa fa-plus me-1"></i> Add Product
+                            </button>
+
+                            <template x-for="(item, index) in items" :key="'hidden-' + index">
+                                <div>
+                                    <input type="hidden" :name="'products[' + index + '][product_id]'" :value="item.product_id">
+                                    <input type="hidden" :name="'products[' + index + '][quantity]'" :value="item.quantity">
+                                    <input type="hidden" :name="'products[' + index + '][unit_price]'" :value="item.unit_price">
+                                </div>
+                            </template>
+
+                            @if($stores->isEmpty())
+                                <div class="alert alert-warning py-2 mb-0 mt-3">
+                                    <i class="fa fa-circle-exclamation me-1"></i> No other stores found in your tenant. Requisitions require an issue store with stock.
                                 </div>
                             @endif
                         </div>
@@ -269,4 +304,32 @@
         </footer>
         <!-- end Footer -->
     </div>
+
+    <script>
+        function requisitionApp() {
+            return {
+                issueStoreId: '',
+                items: [{ product_id: '', quantity: 1, unit_price: 0 }],
+                addItem() {
+                    this.items.push({ product_id: '', quantity: 1, unit_price: 0 });
+                },
+                removeItem(index) {
+                    this.items.splice(index, 1);
+                },
+                submitForm(event) {
+                    if (this.items.length === 0) {
+                        alert('Please add at least one product item.');
+                        return;
+                    }
+                    for (let item of this.items) {
+                        if (!item.product_id || parseFloat(item.quantity) <= 0) {
+                            alert('Please select a product and enter a valid quantity for all items.');
+                            return;
+                        }
+                    }
+                    event.target.submit();
+                }
+            };
+        }
+    </script>
 </x-app-layout>
